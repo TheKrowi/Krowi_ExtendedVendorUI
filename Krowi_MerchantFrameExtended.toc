@@ -1,0 +1,35 @@
+## Interface: 100105
+## Title: Krowi's |cFF1D92C2Merchant Frame Extended|r
+## Version: 0.1-alpha1
+## Author: Krowi-Frostmane EU
+## LoadWith: Blizzard_MerchantFrame
+## SavedVariables: KrowiMFE_Options, KrowiMFE_SavedData
+## Notes: Extends the size of your Merchant Frame.
+## X-Discord-Invite-Link: https://discord.gg/mdBFQJYeQZ
+## X-Discord-Server-Name: Krowi's Addons
+## X-CurseForge: https://www.curseforge.com/wow/addons/krowi-achievement-filter
+## X-Curse-Project-ID: 413582
+## X-Wago: https://addons.wago.io/addons/krowi-achievement-filter
+## X-Wago-Project-ID: XrNkx46a
+## X-WoWInterface: https://www.wowinterface.com/downloads/info26229-KrowisAchievementFilter
+## X-WoWInterface-Project-ID: 26229
+
+API.lua
+
+Libs\Files.xml
+
+Plugins\Files.xml
+
+MetaData.lua
+
+Localization\Files.xml
+
+Krowi_MerchantFrameExtended.lua
+Globals.lua
+
+Objects\Files.xml
+
+Options\Files.xml
+Icon.lua
+
+GUI\Files.xml

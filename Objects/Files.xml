@@ -1,0 +1,12 @@
+<Ui>
+    <Script file="Objects.lua" />
+    <Script file="DualItemListSide.lua" />
+    <Script file="Scope.lua" />
+    <Script file="InstanceType.lua" />
+    <Script file="EqualityOperator.lua" />
+    <Script file="ItemQuality.lua" />
+    <Script file="InventoryType.lua" />
+    <Script file="CriteriaType.lua" />
+    <Script file="ItemType.lua" />
+    <Script file="AutoSellRule.lua" />
+</Ui>
