@@ -103,57 +103,6 @@ options.OptionsTable.args["General"] = {
                     }
                 }
             }
-        },
-        Debug = {
-            order = OrderPP(), type = "group",
-            name = addon.L["Debug"],
-            args = {
-                Debug = {
-                    order = OrderPP(), type = "group", inline = true,
-                    name = addon.L["Debug"],
-                    args = {
-                        -- Description = {
-                        --     order = OrderPP(), type = "description", width = "full", fontSize = "medium",
-                        --     name = addon.L["Debug Desc"],
-                        -- },
-                        -- TooltipShowAutoSellRules = {
-                        --     order = OrderPP(), type = "toggle", width = AdjustedWidth(),
-                        --     name = addon.L["TooltipShowAutoSellRules"],
-                        --     desc = addon.L["TooltipShowAutoSellRules Desc"]:AddDefaultValueText_KMFE("Debug.TooltipShowItemInfo"),
-                        --     get = function() return addon.Options.db.Debug.TooltipShowItemInfo; end,
-                        --     set = function(_, value) addon.Options.db.Debug.TooltipShowItemInfo = value; end
-                        -- },
-                        -- Blank1 = {order = OrderPP(), type = "description", width = AdjustedWidth(2), name = ""},
-                        -- ScreenshotMode = {
-                        --     order = OrderPP(), type = "execute",
-                        --     name = addon.L["Screenshot Mode"],
-                        --     desc = addon.L["Screenshot Mode Desc"],
-                        --     func = HandleScreenshotMode
-                        -- },
-                        -- AutoSellPrintChatMessage = {
-                        --     order = OrderPP(), type = "toggle", width = AdjustedWidth(),
-                        --     name = addon.L["AutoSellPrintChatMessage"],
-                        --     desc = addon.L["AutoSellPrintChatMessage Desc"]:AddDefaultValueText_KMFE("AutoSell.PrintChatMessage"),
-                        --     get = function() return addon.Options.db.AutoSell.PrintChatMessage; end,
-                        --     set = function(_, value) addon.Options.db.AutoSell.PrintChatMessage = value; end
-                        -- },
-                        -- Blank2 = {order = OrderPP(), type = "description", width = AdjustedWidth(), name = ""},
-                        -- ExportCriteria = {
-                        --     order = OrderPP(), type = "execute",
-                        --     name = addon.L["Export Criteria"],
-                        --     desc = addon.L["Export Criteria Desc"],
-                        --     func = ExportCriteria
-                        -- },
-                        -- ShowPlaceholdersFilter = {
-                        --     order = OrderPP(), type = "toggle", width = AdjustedWidth(),
-                        --     name = addon.L["Show placeholders filter"],
-                        --     desc = addon.L["Show placeholders filter Desc"]:AddDefaultValueText_KAF("ShowPlaceholdersFilter"),
-                        --     get = function() return addon.Options.db.ShowPlaceholdersFilter; end,
-                        --     set = function() addon.Options.db.ShowPlaceholdersFilter = not addon.Options.db.ShowPlaceholdersFilter; end
-                        -- }
-                    }
-                }
-            }
         }
     }
 };

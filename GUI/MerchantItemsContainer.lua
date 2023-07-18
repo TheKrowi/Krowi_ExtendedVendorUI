@@ -21,15 +21,7 @@ for i = 1, 12, 1 do
 	tinsert(itemSlotTable, _G["MerchantItem" .. i]);
 end
 
--- local function ResetItemSlots()
---     for _, itemSlot in next, itemSlotTable do
--- 		itemSlot:Hide();
--- 	end
--- end
-
 function merchantItemsContainer:HideAll()
-    -- print("HideAll")
-    -- ResetItemSlots();
     for _, itemSlot in next, itemSlotTable do
 		itemSlot:Hide();
 	end
@@ -104,7 +96,6 @@ function merchantItemsContainer:DrawItemSlots(numRows, numColumns, offsetX, offs
             end
         end
     end
-    -- print(numRows * numColumns)
 end
 
 local function DrawMerchantBuyBackItem(show)

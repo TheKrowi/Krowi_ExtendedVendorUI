@@ -42,7 +42,6 @@ function globalStrings.Load(L)
     L["Item Level"] = STAT_AVERAGE_ITEM_LEVEL;
     L["Soulbound"] = ITEM_SOULBOUND;
     L["Quality"] = QUALITY;
-    
     L["Direction"] = HUD_EDIT_MODE_SETTING_BAGS_DIRECTION;
     L["General"] = GENERAL;
     L["Info"] = INFO;

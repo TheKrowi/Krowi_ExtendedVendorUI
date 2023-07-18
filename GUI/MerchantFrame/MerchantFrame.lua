@@ -7,8 +7,6 @@ local merchantItemsContainer = addon.GUI.MerchantItemsContainer;
 local originalWidth, originalHeight = MerchantFrame:GetSize();
 
 do -- [[ Set some permanent MerchantFrame changes ]]
-	-- MerchantFrameBottomRightBorder:SetTexCoord(91 / 256, (91 + 76) / 256, 0, 0.4765625);
-
 	local bottomExtensionRightBorder = MerchantFrame:CreateTexture("KrowiMFE_BottomExtensionRightBorder");
 	bottomExtensionRightBorder:SetSize(76, 61);
 	bottomExtensionRightBorder:SetTexture("Interface/MerchantFrame/UI-Merchant-BottomBorder");
@@ -36,8 +34,6 @@ function merchantFrame:Load()
 end
 
 hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
-	-- KrowiV_EmbeddedJunkListFrame:Hide();
-	-- KrowiV_EmbeddedIgnoreListFrame:Hide();
 	local numColumns = addon.Options.db.NumColumns - merchantItemsContainer.DefaultMerchantInfoNumColumns;
 	local numRows = addon.Options.db.NumRows - merchantItemsContainer.DefaultMerchantInfoNumRows;
 	local itemWidth = merchantItemsContainer.OffsetX + merchantItemsContainer.ItemWidth;
@@ -62,8 +58,6 @@ hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
 end);
 
 hooksecurefunc("MerchantFrame_UpdateBuybackInfo", function()
-	-- KrowiV_EmbeddedJunkListFrame:Hide();
-	-- KrowiV_EmbeddedIgnoreListFrame:Hide();
 	MerchantFrame:SetSize(originalWidth, originalHeight);
 	KrowiMFE_BottomExtensionRightBorder:Hide();
 	KrowiMFE_BottomExtensionLeftBorder:Hide();
@@ -81,8 +75,6 @@ end);
 
 hooksecurefunc(MerchantFrame, "Show", function(self)
 	SetMerchantFilter(LE_LOOT_FILTER_ALL);
-
-	-- KrowiV_AutoSellListFrame:ShowWithMerchantFrame();
 end);
 
 function KrowiV_ShowIgnoreList_OnLoad(self)
@@ -94,64 +86,3 @@ function KrowiV_ShowJunkList_OnLoad(self)
 	self:SetText(addon.L["Junk List"]);
 	PanelTemplates_SetNumTabs(MerchantFrame, MerchantFrame.numTabs + 1);
 end
-
-function MerchantFrame_Update()
-	if MerchantFrame.lastTab ~= MerchantFrame.selectedTab then
-		MerchantFrame_CloseStackSplitFrame();
-		MerchantFrame.lastTab = MerchantFrame.selectedTab;
-	end
-	MerchantFrame_UpdateFilterString()
-	if MerchantFrame.selectedTab == 1 then
-		MerchantFrame_UpdateMerchantInfo();
-	-- elseif MerchantFrame.selectedTab == 3 then
-	-- 	merchantFrame.UpdateIgnoreInfo();
-	-- elseif MerchantFrame.selectedTab == 4 then
-	-- 	merchantFrame.UpdateJunkInfo();
-	else
-		MerchantFrame_UpdateBuybackInfo();
-	end
-end
-
--- function merchantFrame.UpdateIgnoreInfo()
--- 	merchantItemsContainer:HideAll();
--- 	-- MerchantFrameBottomRightBorder:Hide();
--- 	KrowiMFE_BottomExtensionRightBorder:Hide();
--- 	KrowiMFE_BottomExtensionLeftBorder:Hide();
--- 	KrowiMFE_BottomExtensionMidBorder:Hide();
--- 	MerchantRepairAllButton:Hide();
--- 	MerchantRepairItemButton:Hide();
--- 	MerchantBuyBackItem:Hide();
--- 	MerchantPrevPageButton:Hide();
--- 	MerchantNextPageButton:Hide();
--- 	MerchantFrameBottomLeftBorder:Hide();
--- 	-- MerchantFrameBottomRightBorder:Hide();
--- 	-- MerchantRepairText:Hide();
--- 	UndoFrame:Hide();
--- 	MerchantPageText:Hide();
--- 	MerchantGuildBankRepairButton:Hide();
--- 	MerchantFrame:SetWidth(610);
--- 	KrowiV_EmbeddedJunkListFrame:Hide();
--- 	KrowiV_EmbeddedIgnoreListFrame:ShowWithMerchantFrame();
--- end
-
--- function merchantFrame.UpdateJunkInfo()
--- 	merchantItemsContainer:HideAll();
--- 	-- MerchantFrameBottomRightBorder:Hide();
--- 	KrowiMFE_BottomExtensionRightBorder:Hide();
--- 	KrowiMFE_BottomExtensionLeftBorder:Hide();
--- 	KrowiMFE_BottomExtensionMidBorder:Hide();
--- 	MerchantRepairAllButton:Hide();
--- 	MerchantRepairItemButton:Hide();
--- 	MerchantBuyBackItem:Hide();
--- 	MerchantPrevPageButton:Hide();
--- 	MerchantNextPageButton:Hide();
--- 	MerchantFrameBottomLeftBorder:Hide();
--- 	-- MerchantFrameBottomRightBorder:Hide();
--- 	-- MerchantRepairText:Hide();
--- 	UndoFrame:Hide();
--- 	MerchantPageText:Hide();
--- 	MerchantGuildBankRepairButton:Hide();
--- 	MerchantFrame:SetWidth(610);
--- 	KrowiV_EmbeddedIgnoreListFrame:Hide();
--- 	KrowiV_EmbeddedJunkListFrame:ShowWithMerchantFrame(true);
--- end
