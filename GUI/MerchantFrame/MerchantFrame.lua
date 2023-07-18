@@ -2,7 +2,6 @@
 local _, addon = ...;
 addon.GUI.MerchantFrame = {};
 local merchantFrame = addon.GUI.MerchantFrame;
-local merchantItemsContainer = addon.GUI.MerchantItemsContainer;
 
 local originalWidth, originalHeight = MerchantFrame:GetSize();
 
@@ -30,14 +29,14 @@ do -- [[ Set some permanent MerchantFrame changes ]]
 end
 
 function merchantFrame:Load()
-	merchantItemsContainer:LoadMaxNumItemSlots();
+	addon.GUI.MerchantItemsContainer:LoadMaxNumItemSlots();
 end
 
 hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
-	local numColumns = addon.Options.db.NumColumns - merchantItemsContainer.DefaultMerchantInfoNumColumns;
-	local numRows = addon.Options.db.NumRows - merchantItemsContainer.DefaultMerchantInfoNumRows;
-	local itemWidth = merchantItemsContainer.OffsetX + merchantItemsContainer.ItemWidth;
-	local itemHeight = merchantItemsContainer.OffsetMerchantInfoY + merchantItemsContainer.ItemHeight;
+	local numColumns = addon.Options.db.NumColumns - addon.GUI.MerchantItemsContainer.DefaultMerchantInfoNumColumns;
+	local numRows = addon.Options.db.NumRows - addon.GUI.MerchantItemsContainer.DefaultMerchantInfoNumRows;
+	local itemWidth = addon.GUI.MerchantItemsContainer.OffsetX + addon.GUI.MerchantItemsContainer.ItemWidth;
+	local itemHeight = addon.GUI.MerchantItemsContainer.OffsetMerchantInfoY + addon.GUI.MerchantItemsContainer.ItemHeight;
 
 	local width = originalWidth + numColumns * itemWidth;
 	local height = originalHeight + numRows * itemHeight;
@@ -54,7 +53,6 @@ hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
 		KrowiMFE_BottomExtensionLeftBorder:Hide();
 		KrowiMFE_BottomExtensionMidBorder:Hide();
 	end
-	UndoFrame:Show();
 end);
 
 hooksecurefunc("MerchantFrame_UpdateBuybackInfo", function()
@@ -67,9 +65,9 @@ end);
 -- Hook onto MerchantFrame_UpdateFilterString so we're ready for MerchantFrame_UpdateMerchantInfo and/or MerchantFrame_UpdateBuybackInfo
 hooksecurefunc("MerchantFrame_UpdateFilterString", function()
 	if MerchantFrame.selectedTab == 1 then
-		merchantItemsContainer:PrepareMerchantInfo();
+		addon.GUI.MerchantItemsContainer:PrepareMerchantInfo();
 	else
-		merchantItemsContainer:PrepareBuybackInfo();
+		addon.GUI.MerchantItemsContainer:PrepareBuybackInfo();
 	end
 end);
 

@@ -36,24 +36,17 @@ local function GetItemSlot(index)
 	return frame;
 end
 
-function merchantItemsContainer:GetHighestNumRows()
-    return addon.Options.db.NumRows > self.DefaultBuybackInfoNumRows and addon.Options.db.NumRows or self.DefaultBuybackInfoNumRows;
-end
-
-function merchantItemsContainer:GetHighestNumColumns()
-    return addon.Options.db.NumColumns > self.DefaultBuybackInfoNumColumns and addon.Options.db.NumColumns or self.DefaultBuybackInfoNumColumns;
-end
-
 function merchantItemsContainer:LoadMaxNumItemSlots()
-    local highestNumRows = self:GetHighestNumRows();
-    local highestNumColumns = self:GetHighestNumColumns();
-    MERCHANT_ITEMS_PER_PAGE = highestNumRows * highestNumColumns;
-    if #itemSlotTable < MERCHANT_ITEMS_PER_PAGE then
-        for i = 1, MERCHANT_ITEMS_PER_PAGE, 1 do
+    local maxNumRows = math.max(addon.Options.db.NumRows, self.DefaultBuybackInfoNumRows);
+    local maxNumColumns = math.max(addon.Options.db.NumColumns, self.DefaultBuybackInfoNumColumns);
+    local maxNumItems = maxNumRows * maxNumColumns;
+    if #itemSlotTable < maxNumItems then
+        for i = 1, maxNumItems, 1 do
             local itemSlot = GetItemSlot(i);
             itemSlot:Hide();
         end
     end
+    MERCHANT_ITEMS_PER_PAGE = addon.Options.db.NumRows * addon.Options.db.NumColumns;
 end
 
 function merchantItemsContainer:PrepareMerchantInfo()
@@ -101,15 +94,18 @@ end
 local function DrawMerchantBuyBackItem(show)
     if show then
         MerchantBuyBackItem:ClearAllPoints();
-        MerchantBuyBackItem:SetPoint("BOTTOMRIGHT", MerchantFrameBottomLeftBorder, "BOTTOMRIGHT", -4, 8);
+        MerchantBuyBackItem:SetPoint("BOTTOMRIGHT", MerchantFrameBottomLeftBorder, "BOTTOMRIGHT", -14, 8);
 	    MerchantBuyBackItem:Show();
+	    UndoFrame:Show();
     else
         MerchantBuyBackItem:Hide();
+	    UndoFrame:Hide();
     end
 end
 
 function merchantItemsContainer:DrawForMerchantInfo()
 	self:DrawItemSlots(infoNumRows, infoNumColumns, self.OffsetX, self.OffsetMerchantInfoY);
+    HideRemainingItemSlots(infoNumRows * infoNumColumns + 1);
 	DrawMerchantBuyBackItem(true);
 end
 hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
