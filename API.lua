@@ -1,7 +1,13 @@
 -- [[ Namespaces ]] --
-local addonName, addon = ...;
+local _, addon = ...;
+addon.Api = {};
+local api = addon.Api;
 
-do --[[ KrowiV_InjectOptions ]]
+function api.Load()
+	KrowiMFE_MerchantItemsContainer = addon.Gui.MerchantItemsContainer;
+end
+
+do --[[ KrowiMFE_InjectOptions ]]
 	KrowiMFE_InjectOptions = {};
 
     function KrowiMFE_InjectOptions:SetOptionsTable(optionsTable)

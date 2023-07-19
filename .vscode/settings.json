@@ -205,7 +205,8 @@
         "KrowiV_EmbeddedJunkListFrame",
         "KrowiV_JunkListFrame",
         "KrowiV_AutoSellListFrame",
-        "UndoFrame"
+        "UndoFrame",
+        "SOURCES"
     ],
     "fsdeploy.nodes": [
         {

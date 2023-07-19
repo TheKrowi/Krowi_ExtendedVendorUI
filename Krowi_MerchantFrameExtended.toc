@@ -1,6 +1,6 @@
 ## Interface: 100105
 ## Title: Krowi's |cFF1D92C2Merchant Frame Extended|r
-## Version: 0.1-alpha4
+## Version: 1.0-alpha1
 ## Author: Krowi-Frostmane EU
 ## LoadWith: Blizzard_MerchantFrame
 ## SavedVariables: KrowiMFE_Options, KrowiMFE_SavedData
@@ -18,18 +18,13 @@ API.lua
 
 Libs\Files.xml
 
-Plugins\Files.xml
-
 MetaData.lua
 
 Localization\Files.xml
 
 Krowi_MerchantFrameExtended.lua
-Globals.lua
-
-Objects\Files.xml
 
 Options\Files.xml
 Icon.lua
 
-GUI\Files.xml
+Gui\Files.xml

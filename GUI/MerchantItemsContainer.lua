@@ -1,8 +1,7 @@
 -- [[ Namespaces ]] --
 local _, addon = ...;
-addon.GUI.MerchantItemsContainer = {};
-local merchantItemsContainer = addon.GUI.MerchantItemsContainer;
-KrowiMFE_MerchantItemsContainer = merchantItemsContainer;
+addon.Gui.MerchantItemsContainer = {};
+local merchantItemsContainer = addon.Gui.MerchantItemsContainer;
 
 merchantItemsContainer.FirstOffsetX = 11;
 merchantItemsContainer.FirstOffsetY = -69;
@@ -57,12 +56,17 @@ function merchantItemsContainer:PrepareBuybackInfo()
     infoNumRows, infoNumColumns = self.DefaultBuybackInfoNumRows, self.DefaultBuybackInfoNumColumns;
 end
 
-local function HideRemainingItemSlots(startIndex)
-    local numItemSlots = #itemSlotTable;
-    for i = startIndex, numItemSlots, 1 do
-        itemSlotTable[i]:Hide();
-    end
+function merchantItemsContainer:PrepareInfo()
+    if MerchantFrame.selectedTab == 1 then
+		self:PrepareMerchantInfo();
+	else
+		self:PrepareBuybackInfo();
+	end
 end
+
+hooksecurefunc("MerchantFrame_UpdateFilterString", function()
+	merchantItemsContainer:PrepareInfo();
+end);
 
 function merchantItemsContainer:DrawItemSlot(index, row, column, offsetX, offsetY)
     local itemSlot = GetItemSlot(index);
@@ -91,10 +95,17 @@ function merchantItemsContainer:DrawItemSlots(numRows, numColumns, offsetX, offs
     end
 end
 
-local function DrawMerchantBuyBackItem(show)
+function merchantItemsContainer:HideRemainingItemSlots(startIndex)
+    local numItemSlots = #itemSlotTable;
+    for i = startIndex, numItemSlots, 1 do
+        itemSlotTable[i]:Hide();
+    end
+end
+
+function merchantItemsContainer:DrawMerchantBuyBackItem(show)
     if show then
         MerchantBuyBackItem:ClearAllPoints();
-        MerchantBuyBackItem:SetPoint("BOTTOMRIGHT", MerchantFrameBottomLeftBorder, "BOTTOMRIGHT", -14, 8);
+        MerchantBuyBackItem:SetPoint("BOTTOMLEFT", MerchantFrameBottomLeftBorder, "BOTTOMLEFT", 205, 7);
 	    MerchantBuyBackItem:Show();
 	    UndoFrame:Show();
     else
@@ -105,47 +116,18 @@ end
 
 function merchantItemsContainer:DrawForMerchantInfo()
 	self:DrawItemSlots(infoNumRows, infoNumColumns, self.OffsetX, self.OffsetMerchantInfoY);
-    HideRemainingItemSlots(infoNumRows * infoNumColumns + 1);
-	DrawMerchantBuyBackItem(true);
+    self:HideRemainingItemSlots(infoNumRows * infoNumColumns + 1);
+	self:DrawMerchantBuyBackItem(true);
 end
 hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
-    -- Delay is to address the updating from BAG_UPDATE when sorting the inventory
-    -- addon.Util.DelayFunction("MerchantFrame_UpdateMerchantInfo", 0.1, merchantItemsContainer.DrawForMerchantInfo, merchantItemsContainer);
     merchantItemsContainer:DrawForMerchantInfo();
 end);
 
 function merchantItemsContainer:DrawForBuybackInfo()
 	self:DrawItemSlots(infoNumRows, infoNumColumns, self.OffsetX, self.OffsetBuybackInfoY);
-    HideRemainingItemSlots(infoNumRows * infoNumColumns + 1);
-	DrawMerchantBuyBackItem(false);
+    self:HideRemainingItemSlots(infoNumRows * infoNumColumns + 1);
+	self:DrawMerchantBuyBackItem(false);
 end
 hooksecurefunc("MerchantFrame_UpdateBuybackInfo", function()
-    -- Delay is to address the updating from BAG_UPDATE when sorting the inventory
-    -- addon.Util.DelayFunction("MerchantFrame_UpdateBuybackInfo", 0.1, merchantItemsContainer.DrawForBuybackInfo, merchantItemsContainer);
     merchantItemsContainer:DrawForBuybackInfo();
 end);
-
-local orgGetMerchantNumItems = GetMerchantNumItems;
-local orgGetMerchantItemInfo = GetMerchantItemInfo;
-local customItemIndices = {};
-GetMerchantNumItems = function()
-    -- Uncomment this when we implement custom filters as now the existing ones still work
-    -- SetMerchantFilter(LE_LOOT_FILTER_ALL);
-	local numItems = orgGetMerchantNumItems();
-    customItemIndices = {};
-    for i = 1, numItems, 1 do
-        -- Add filtering here cause now they're just all added
-        -- if (i % 2 == 0) then
-            tinsert(customItemIndices, i);
-        -- end
-    end
-    -- print("Total:", numItems, "Shown:", #customItemIndices)
-    return #customItemIndices;
-end
-
-GetMerchantItemInfo = function(index)
-    index = customItemIndices[index];
-    local name, texture, price, stackCount, numAvailable, isPurchasable, isUsable, extendedCost, currencyID, spellID = orgGetMerchantItemInfo(index);
-
-    return name, texture, price, stackCount, numAvailable, isPurchasable, isUsable, extendedCost, currencyID, spellID;
-end

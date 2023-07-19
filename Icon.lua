@@ -12,7 +12,7 @@ local function CreateIcon()
         icon = "Interface/PaperDollInfoFrame/UI-GearManager-ItemIntoBag",
         OnClick = function(self, button)
             if button == "LeftButton" then
-                -- addon.GUI.ToggleAchievementFrame(addonName, addon.L["Expansions"]);
+                -- addon.Gui.ToggleAchievementFrame(addonName, addon.L["Expansions"]);
             elseif button == "RightButton" then
                 addon.Options.Open();
             end
