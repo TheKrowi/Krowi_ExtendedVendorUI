@@ -11,4 +11,8 @@ function globalStrings.Load(L)
     L["Sources"] = SOURCES;
     L["Icon"] = EMBLEM_SYMBOL;
     L["Minimap"] = MINIMAP_LABEL;
+    L["Game Menu"] = MAINMENU_BUTTON;
+    L["Interface"] = UIOPTIONS_MENU;
+    L["AddOns"] = ADDONS;
+    L["Options"] = GAMEOPTIONS_MENU;
 end

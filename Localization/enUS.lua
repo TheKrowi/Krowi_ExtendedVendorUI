@@ -31,3 +31,5 @@ L["Rows first"] = "Rows first";
 L["Columns first"] = "Columns first";
 L["Rows"] = "Rows";
 L["Columns"] = "Columns";
+L["Hide"] = "Hide";
+L["Are you sure you want to hide the options button?"] = "Are you sure you want to hide the options button?\nThe options button can be shown again via {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options}";
