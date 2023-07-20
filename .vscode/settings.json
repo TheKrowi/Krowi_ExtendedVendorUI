@@ -206,7 +206,14 @@
         "KrowiV_JunkListFrame",
         "KrowiV_AutoSellListFrame",
         "UndoFrame",
-        "SOURCES"
+        "SOURCES",
+        "MerchantFramePortrait",
+        "KrowiMFE_OptionsButton",
+        "StaticPopup_IsCustomGenericConfirmationShown",
+        "StaticPopup_ShowCustomGenericConfirmation",
+        "MAINMENU_BUTTON",
+        "UIOPTIONS_MENU",
+        "ADDONS"
     ],
     "fsdeploy.nodes": [
         {

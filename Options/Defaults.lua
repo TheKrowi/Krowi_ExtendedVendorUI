@@ -10,6 +10,7 @@ options.Defaults = {
         Direction = addon.L["Rows first"],
         Minimap = {
             hide = true -- not ShowMinimapIcon
-        }
+        },
+        ShowOptionsButton = true
     }
 };

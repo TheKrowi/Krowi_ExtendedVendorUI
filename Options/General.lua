@@ -26,6 +26,16 @@ local function MinimapShowMinimapIconSet()
     end
 end
 
+local function OptionsButtonShowOptionsButtonSet(_, value)
+    addon.Options.db.ShowOptionsButton = value;
+    KrowiMFE_OptionsButton:ShowHide();
+end
+
+local function OptionsButtonOpenOptionsFunc()
+    local menu = KrowiMFE_OptionsButton:BuildMenu();
+    menu:Open();
+end
+
 options.OptionsTable.args["General"] = {
     type = "group", childGroups = "tab",
     name = addon.L["General"],
@@ -102,6 +112,32 @@ options.OptionsTable.args["General"] = {
                         }
                     }
                 }
+            }
+        },
+        Options = {
+            order = OrderPP(), type = "group",
+            name = addon.L["Options"],
+            args = {
+                OptionsButton = {
+                    order = OrderPP(), type = "group", inline = true,
+                    name = addon.L["Options Button"],
+                    args = {
+                        ShowOptionsButton = {
+                            order = OrderPP(), type = "toggle", width = AdjustedWidth(),
+                            name = addon.L["Show options button"],
+                            desc = addon.L["Show options button Desc"]:AddDefaultValueText_KMFE("ShowOptionsButton"),
+                            get = function() return addon.Options.db.ShowOptionsButton; end,
+                            set = OptionsButtonShowOptionsButtonSet
+                        },
+                        Blank1 = {order = OrderPP(), type = "description", width = AdjustedWidth(), name = ""},
+                        OpenOptions = {
+                            order = OrderPP(), type = "execute", width = AdjustedWidth(),
+                            name = addon.L["Options"],
+                            desc = addon.L["Options Desc"],
+                            func = OptionsButtonOpenOptionsFunc
+                        }
+                    }
+                },
             }
         }
     }
