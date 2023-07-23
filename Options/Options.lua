@@ -11,7 +11,7 @@ else
 end
 
 options.OptionsTable = {
-    name = addon.MetaData.Title,
+    name = addon.Metadata.Title,
     type = "group",
     childGroups = "tab",
     args = {}
@@ -20,9 +20,9 @@ options.OptionsTable = {
 local function Open()
     if addon.IsWrathClassic then
         InterfaceAddOnsList_Update(); -- This way the correct category will be shown when calling InterfaceOptionsFrame_OpenToCategory
-        InterfaceOptionsFrame_OpenToCategory(addon.MetaData.Title);
+        InterfaceOptionsFrame_OpenToCategory(addon.Metadata.Title);
         for _, button in next, InterfaceOptionsFrameAddOns.buttons do
-            if button.element and button.element.name == addon.MetaData.Title and button.element.collapsed then
+            if button.element and button.element.name == addon.Metadata.Title and button.element.collapsed then
                 OptionsListButtonToggle_OnClick(button.toggle);
                 break;
             end
@@ -30,8 +30,8 @@ local function Open()
         return;
     end
 
-    Settings.GetCategory(addon.MetaData.Title).expanded = true;
-    Settings.OpenToCategory(addon.MetaData.Title, true);
+    Settings.GetCategory(addon.Metadata.Title).expanded = true;
+    Settings.OpenToCategory(addon.Metadata.Title, true);
 end
 
 function options.Load()
@@ -50,7 +50,7 @@ function options.Load()
 end
 
 string["InjectAddonName_KMFE"] = function(str)
-    return str:ReplaceVars{addonName = addon.MetaData.Title};
+    return str:ReplaceVars{addonName = addon.Metadata.Title};
 end
 
 string["AddDefaultValueText_KMFE"] = function(self, valuePath, values)

@@ -9,8 +9,8 @@ local OrderPP = KrowiMFE_InjectOptions.AutoOrderPlusPlus;
 local AdjustedWidth = KrowiMFE_InjectOptions.AdjustedWidth;
 
 function general.RegisterOptionsTable()
-    LibStub("AceConfig-3.0"):RegisterOptionsTable(addon.MetaData.Title, options.OptionsTable.args.General);
-    LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addon.MetaData.Title, addon.MetaData.Title, nil);
+    LibStub("AceConfig-3.0"):RegisterOptionsTable(addon.Metadata.Title, options.OptionsTable.args.General);
+    LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addon.Metadata.Title, addon.Metadata.Title, nil);
 end
 
 function general.PostLoad()
@@ -50,22 +50,22 @@ options.OptionsTable.args["General"] = {
                     args = {
                         Version = {
                             order = OrderPP(), type = "description", width = AdjustedWidth(), fontSize = "medium",
-                            name = (addon.L["Version"] .. ": "):SetColorYellow() .. addon.MetaData.Version,
+                            name = (addon.L["Version"] .. ": "):SetColorYellow() .. addon.Metadata.Version,
                         },
                         Build = {
                             order = OrderPP(), type = "description", width = AdjustedWidth(), fontSize = "medium",
-                            name = (addon.L["Build"] .. ": "):SetColorYellow() .. addon.MetaData.Build,
+                            name = (addon.L["Build"] .. ": "):SetColorYellow() .. addon.Metadata.Build,
                         },
                         Blank1 = {order = OrderPP(), type = "description", width = AdjustedWidth(), name = ""},
                         Author = {
                             order = OrderPP(), type = "description", width = AdjustedWidth(2), fontSize = "medium",
-                            name = (addon.L["Author"] .. ": "):SetColorYellow() .. addon.MetaData.Author,
+                            name = (addon.L["Author"] .. ": "):SetColorYellow() .. addon.Metadata.Author,
                         },
                         Discord = {
                             order = OrderPP(), type = "execute", width = AdjustedWidth(),
                             name = addon.L["Discord"],
-                            desc = addon.L["Discord Desc"]:ReplaceVars(addon.MetaData.DiscordServerName),
-                            func = function() LibStub("Krowi_PopopDialog-1.0").ShowExternalLink(addon.MetaData.DiscordInviteLink); end
+                            desc = addon.L["Discord Desc"]:ReplaceVars(addon.Metadata.DiscordServerName),
+                            func = function() LibStub("Krowi_PopopDialog-1.0").ShowExternalLink(addon.Metadata.DiscordInviteLink); end
                         }
                     }
                 },
@@ -77,19 +77,19 @@ options.OptionsTable.args["General"] = {
                             order = OrderPP(), type = "execute", width = AdjustedWidth(),
                             name = addon.L["CurseForge"],
                             desc = addon.L["CurseForge Desc"]:InjectAddonName_KMFE():ReplaceVars(addon.L["CurseForge"]),
-                            func = function() LibStub("Krowi_PopopDialog-1.0").ShowExternalLink(addon.MetaData.CurseForge); end
+                            func = function() LibStub("Krowi_PopopDialog-1.0").ShowExternalLink(addon.Metadata.CurseForge); end
                         },
                         Wago = {
                             order = OrderPP(), type = "execute", width = AdjustedWidth(),
                             name = addon.L["Wago"],
                             desc = addon.L["Wago Desc"]:InjectAddonName_KMFE():ReplaceVars(addon.L["Wago"]),
-                            func = function() LibStub("Krowi_PopopDialog-1.0").ShowExternalLink(addon.MetaData.Wago); end
+                            func = function() LibStub("Krowi_PopopDialog-1.0").ShowExternalLink(addon.Metadata.Wago); end
                         },
                         WoWInterface = {
                             order = OrderPP(), type = "execute", width = AdjustedWidth(),
                             name = addon.L["WoWInterface"],
                             desc = addon.L["WoWInterface Desc"]:InjectAddonName_KMFE():ReplaceVars(addon.L["WoWInterface"]),
-                            func = function() LibStub("Krowi_PopopDialog-1.0").ShowExternalLink(addon.MetaData.WoWInterface); end
+                            func = function() LibStub("Krowi_PopopDialog-1.0").ShowExternalLink(addon.Metadata.WoWInterface); end
                         }
                     }
                 }

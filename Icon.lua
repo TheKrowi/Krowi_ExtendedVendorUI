@@ -8,7 +8,7 @@ local icon = addon.Icon; -- Local icon object
 local function CreateIcon()
     icon.MerchantFrameExtendedLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Krowi_MerchantFrameExtendedLDB", {
         type = "launcher",
-        label = addon.MetaData.Title,
+        label = addon.Metadata.Title,
         icon = "Interface/PaperDollInfoFrame/UI-GearManager-ItemIntoBag",
         OnClick = function(self, button)
             if button == "LeftButton" then
@@ -19,7 +19,7 @@ local function CreateIcon()
         end,
         OnTooltipShow = function(tt)
             tt:ClearLines();
-            tt:AddDoubleLine(addon.MetaData.Title, addon.MetaData.BuildVersion);
+            tt:AddDoubleLine(addon.Metadata.Title, addon.Metadata.BuildVersion);
             -- tt:AddLine(" "); -- Empty line
 		    GameTooltip_AddBlankLineToTooltip(tt);
             -- tt:AddLine(addon.L["Left click"] .. " " .. addon.L["Icon Right click"]:SetColorAddonBlue());
