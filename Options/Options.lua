@@ -17,6 +17,8 @@ options.OptionsTable = {
     args = {}
 };
 
+addon.InjectOptions:SetWidthMultiplier(options.WidthMultiplier);
+
 local function Open()
     if addon.IsWrathClassic then
         InterfaceAddOnsList_Update(); -- This way the correct category will be shown when calling InterfaceOptionsFrame_OpenToCategory
@@ -50,7 +52,7 @@ function options.Load()
 end
 
 string["InjectAddonName_KMFE"] = function(str)
-    return str:ReplaceVars{addonName = addon.Metadata.Title};
+    return str:K_ReplaceVars{addonName = addon.Metadata.Title};
 end
 
 string["AddDefaultValueText_KMFE"] = function(self, valuePath, values)

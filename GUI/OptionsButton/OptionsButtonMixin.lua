@@ -46,7 +46,7 @@ local function ReplaceVarsWithMenu(str, vars)
     vars["addonName"] = addon.Metadata.Title;
     return addon.Util.ReplaceVars(str, vars);
 end
-string.ReplaceVarsWithMenu = ReplaceVarsWithMenu;
+string.K_ReplaceVarsWithMenu = ReplaceVarsWithMenu;
 
 local function HideOptionsButtonCallback(self)
 	addon.Options.db.ShowOptionsButton = false;
@@ -81,7 +81,7 @@ function KrowiMFE_OptionsButtonMixin:BuildMenu()
 			if not StaticPopup_IsCustomGenericConfirmationShown("KrowiMFE_ConfirmHideOptionsButton") then
 				StaticPopup_ShowCustomGenericConfirmation(
 					{
-						text = addon.L["Are you sure you want to hide the options button?"]:ReplaceVarsWithMenu{
+						text = addon.L["Are you sure you want to hide the options button?"]:K_ReplaceVarsWithMenu{
 							general = addon.L["General"],
 							options = addon.L["Options"]
 						},
