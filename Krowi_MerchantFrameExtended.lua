@@ -9,7 +9,7 @@ addon.IsDragonflightRetail = major == "10";
 
 -- [[ Ace ]] --
 addon.L = LibStub(addon.Libs.AceLocale):GetLocale(addonName);
-addon.InjectOptions:SetLocalization(addon.L);
+-- addon.InjectOptions:SetLocalization(addon.L);
 
 -- [[ Load addon ]] --
 local loadHelper = CreateFrame("Frame");
