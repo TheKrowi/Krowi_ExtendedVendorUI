@@ -21,7 +21,7 @@ function loadHelper:OnEvent(event, arg1, arg2)
             addon.InjectOptions:SetOptionsTable(addon.Options.OptionsTable);
             addon.InjectOptions:SetDefaultOptions(addon.Options.Defaults.profile);
 
-            addon.Options.Load();
+            addon.Options:Load(addon);
 
             addon.Gui.MerchantItemsContainer:LoadMaxNumItemSlots();
 
