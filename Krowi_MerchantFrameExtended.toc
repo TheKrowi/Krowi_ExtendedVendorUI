@@ -1,10 +1,15 @@
 ## Interface: 100105
 ## Title: Krowi's |cFF1D92C2Merchant Frame Extended|r
-## Version: 2.0-alpha6
+## X-Prefix: KrowiMFE
+## Version: 2.0-alpha7
 ## Author: Krowi-Frostmane EU
 ## LoadWith: Blizzard_MerchantFrame
 ## SavedVariables: KrowiMFE_Options, KrowiMFE_SavedData
 ## Notes: Extends the size of your Merchant Frame.
+## AddonCompartmentFuncOnEnter: KrowiMFE_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: KrowiMFE_OnAddonCompartmentLeave
+## AddonCompartmentFunc: KrowiMFE_OnAddonCompartmentClick
+## IconTexture: interface/paperdollinfoframe/ui-gearmanager-itemintobag
 ## X-Discord-Invite-Link: https://discord.gg/mdBFQJYeQZ
 ## X-Discord-Server-Name: Krowi's Addons
 ## X-CurseForge: https://www.curseforge.com/wow/addons/krowis-merchant-frame-extended

@@ -1,6 +1,6 @@
--- [[ Namespaces ]] --
 local _, addon = ...;
-addon.Options = addon.Util.Options:New("KrowiMFE_Options", addon.Metadata.Title, addon.InjectOptions); -- Will be overwritten in Load (intended)
+
+-- addon.Options = addon.Util.Options:New(addon);
 local options = addon.Options;
 
 string.KMFE_InjectAddonName = function(str)

@@ -18,8 +18,8 @@ function general.PostLoad()
 end
 
 local function MinimapShowMinimapIconSet()
-    addon.Options.db.ShowMinimapIcon = not addon.Options.db.ShowMinimapIcon;
-    if addon.Options.db.ShowMinimapIcon then
+    addon.Options.db.profile.ShowMinimapIcon = not addon.Options.db.profile.ShowMinimapIcon;
+    if addon.Options.db.profile.ShowMinimapIcon then
         addon.Icon:Show("Krowi_MerchantFrameExtendedLDB");
     else
         addon.Icon:Hide("Krowi_MerchantFrameExtendedLDB");
@@ -27,7 +27,7 @@ local function MinimapShowMinimapIconSet()
 end
 
 local function OptionsButtonShowOptionsButtonSet(_, value)
-    addon.Options.db.ShowOptionsButton = value;
+    addon.Options.db.profile.ShowOptionsButton = value;
     KrowiMFE_OptionsButton:ShowHide();
 end
 
@@ -107,7 +107,7 @@ options.OptionsTable.args["General"] = {
                             order = OrderPP(), type = "toggle", width = AdjustedWidth(),
                             name = addon.L["Show minimap icon"],
                             desc = addon.L["Show minimap icon Desc"]:KMFE_AddDefaultValueText("ShowMinimapIcon"),
-                            get = function() return addon.Options.db.ShowMinimapIcon; end,
+                            get = function() return addon.Options.db.profile.ShowMinimapIcon; end,
                             set = MinimapShowMinimapIconSet
                         }
                     }
@@ -126,7 +126,7 @@ options.OptionsTable.args["General"] = {
                             order = OrderPP(), type = "toggle", width = AdjustedWidth(),
                             name = addon.L["Show options button"],
                             desc = addon.L["Show options button Desc"]:KMFE_AddDefaultValueText("ShowOptionsButton"),
-                            get = function() return addon.Options.db.ShowOptionsButton; end,
+                            get = function() return addon.Options.db.profile.ShowOptionsButton; end,
                             set = OptionsButtonShowOptionsButtonSet
                         },
                         Blank1 = {order = OrderPP(), type = "description", width = AdjustedWidth(), name = ""},
