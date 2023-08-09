@@ -120,7 +120,7 @@ options.OptionsTable.args["General"] = {
             args = {
                 OptionsButton = {
                     order = OrderPP(), type = "group", inline = true,
-                    name = addon.L["Options Button"],
+                    name = addon.L["Options button"],
                     args = {
                         ShowOptionsButton = {
                             order = OrderPP(), type = "toggle", width = AdjustedWidth(),

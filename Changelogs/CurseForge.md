@@ -1,7 +1,9 @@
 <p><h3>Added</h3></p>
 <ul>
-<li>First release</li>
-<li>Adjust the Merchant Window's number of rows and columns and the direction the items should be shown</li>
-<li>Options can now be changed from the full options menu</li>
-<li>The options button can now be hidden</li>
+<li>Now uses the Addon compartment (minimap button is still available for those who use it)</li>
+<li>Introduced Profiles</li>
+</ul>
+<p><h3>Changed</h3></p>
+<ul>
+<li>Lots of backend code is now shared between all my addons</li>
 </ul>
