@@ -9,6 +9,7 @@ addon.IsDragonflightRetail = major == "10";
 
 -- [[ Ace ]] --
 addon.L = LibStub(addon.Libs.AceLocale):GetLocale(addonName);
+-- addon.InjectOptions:SetLocalization(addon.L);
 
 -- [[ Load addon ]] --
 local loadHelper = CreateFrame("Frame");
@@ -17,14 +18,11 @@ loadHelper:RegisterEvent("ADDON_LOADED");
 function loadHelper:OnEvent(event, arg1, arg2)
     if event == "ADDON_LOADED" then
         if arg1 == "Krowi_MerchantFrameExtended" then -- This always needs to load
-            KrowiMFE_InjectOptions:SetOptionsTable(addon.Options.OptionsTable);
-            KrowiMFE_InjectOptions:SetOptions(addon.Options.Defaults.profile);
-
-            addon.Options.Load();
+            addon.Options:Load();
 
             addon.Gui.MerchantItemsContainer:LoadMaxNumItemSlots();
 
-            addon.Icon.Load();
+            addon.Icon:Load(addon);
 
             addon.Api.Load();
         end

@@ -213,7 +213,8 @@
         "StaticPopup_ShowCustomGenericConfirmation",
         "MAINMENU_BUTTON",
         "UIOPTIONS_MENU",
-        "ADDONS"
+        "ADDONS",
+        "NORMAL_FONT_COLOR_CODE"
     ],
     "fsdeploy.nodes": [
         {

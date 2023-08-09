@@ -36,8 +36,8 @@ local function GetItemSlot(index)
 end
 
 function merchantItemsContainer:LoadMaxNumItemSlots()
-    local maxNumRows = math.max(addon.Options.db.NumRows, self.DefaultBuybackInfoNumRows);
-    local maxNumColumns = math.max(addon.Options.db.NumColumns, self.DefaultBuybackInfoNumColumns);
+    local maxNumRows = math.max(addon.Options.db.profile.NumRows, self.DefaultBuybackInfoNumRows);
+    local maxNumColumns = math.max(addon.Options.db.profile.NumColumns, self.DefaultBuybackInfoNumColumns);
     local maxNumItems = maxNumRows * maxNumColumns;
     if #itemSlotTable < maxNumItems then
         for i = 1, maxNumItems, 1 do
@@ -45,11 +45,11 @@ function merchantItemsContainer:LoadMaxNumItemSlots()
             itemSlot:Hide();
         end
     end
-    MERCHANT_ITEMS_PER_PAGE = addon.Options.db.NumRows * addon.Options.db.NumColumns;
+    MERCHANT_ITEMS_PER_PAGE = addon.Options.db.profile.NumRows * addon.Options.db.profile.NumColumns;
 end
 
 function merchantItemsContainer:PrepareMerchantInfo()
-    infoNumRows, infoNumColumns = addon.Options.db.NumRows, addon.Options.db.NumColumns;
+    infoNumRows, infoNumColumns = addon.Options.db.profile.NumRows, addon.Options.db.profile.NumColumns;
 end
 
 function merchantItemsContainer:PrepareBuybackInfo()
@@ -78,7 +78,7 @@ function merchantItemsContainer:DrawItemSlot(index, row, column, offsetX, offset
 end
 
 function merchantItemsContainer:DrawItemSlots(numRows, numColumns, offsetX, offsetY)
-    if addon.Options.db.Direction == addon.L["Columns first"] then
+    if addon.Options.db.profile.Direction == addon.L["Columns first"] then
         for row = 1, numRows, 1 do
             for column = 1, numColumns, 1 do
                 local index = (column - 1) * numRows + row;

@@ -32,8 +32,8 @@ do -- [[ Set some permanent MerchantFrame changes ]]
 end
 
 hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
-	local numExtraColumns = addon.Options.db.NumColumns - merchantItemsContainer.DefaultMerchantInfoNumColumns;
-	local numExtraRows = addon.Options.db.NumRows - merchantItemsContainer.DefaultMerchantInfoNumRows;
+	local numExtraColumns = addon.Options.db.profile.NumColumns - merchantItemsContainer.DefaultMerchantInfoNumColumns;
+	local numExtraRows = addon.Options.db.profile.NumRows - merchantItemsContainer.DefaultMerchantInfoNumRows;
 	local itemWidth = merchantItemsContainer.OffsetX + merchantItemsContainer.ItemWidth;
 	local itemHeight = merchantItemsContainer.OffsetMerchantInfoY + merchantItemsContainer.ItemHeight;
 	local width = originalWidth + numExtraColumns * itemWidth;

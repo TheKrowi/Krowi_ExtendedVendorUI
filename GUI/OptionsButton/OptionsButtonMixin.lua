@@ -5,7 +5,7 @@ local merchantItemsContainer = addon.Gui.MerchantItemsContainer;
 KrowiMFE_OptionsButtonMixin = {};
 
 function KrowiMFE_OptionsButtonMixin:ShowHide()
-    if addon.Options.db.ShowOptionsButton then
+    if addon.Options.db.profile.ShowOptionsButton then
         self:Show();
         return;
     end
@@ -43,13 +43,13 @@ local function ReplaceVarsWithMenu(str, vars)
     vars["gameMenu"] = addon.L["Game Menu"];
     vars["interface"] = addon.L["Interface"];
     vars["addOns"] = addon.L["AddOns"];
-    vars["addonName"] = addon.MetaData.Title;
-    return addon.Util.ReplaceVars(str, vars);
+    vars["addonName"] = addon.Metadata.Title;
+    return addon.Util.Strings.ReplaceVars(str, vars);
 end
-string.ReplaceVarsWithMenu = ReplaceVarsWithMenu;
+string.K_ReplaceVarsWithMenu = ReplaceVarsWithMenu;
 
 local function HideOptionsButtonCallback(self)
-	addon.Options.db.ShowOptionsButton = false;
+	addon.Options.db.profile.ShowOptionsButton = false;
 	self:ShowHide();
 end
 
@@ -60,19 +60,19 @@ function KrowiMFE_OptionsButtonMixin:BuildMenu()
 	menu:Clear();
 
 	local direction = menuItem:New({Text = addon.L["Direction"]});
-	self:AddRadioButton(menu, direction, addon.L["Rows first"], addon.Options.db, {"Direction"}, UpdateView);
-	self:AddRadioButton(menu, direction, addon.L["Columns first"], addon.Options.db, {"Direction"}, UpdateView);
+	self:AddRadioButton(menu, direction, addon.L["Rows first"], addon.Options.db.profile, {"Direction"}, UpdateView);
+	self:AddRadioButton(menu, direction, addon.L["Columns first"], addon.Options.db.profile, {"Direction"}, UpdateView);
 	menu:Add(direction);
 
 	local rows = menuItem:New({Text = addon.L["Rows"]});
 	for i = 1, 10, 1 do
-		self:AddRadioButton(menu, rows, i, addon.Options.db, {"NumRows"}, UpdateView);
+		self:AddRadioButton(menu, rows, i, addon.Options.db.profile, {"NumRows"}, UpdateView);
 	end
 	menu:Add(rows);
 
 	local columns = menuItem:New({Text = addon.L["Columns"]});
 	for i = 2, 6, 1 do
-		self:AddRadioButton(menu, columns, i, addon.Options.db, {"NumColumns"}, UpdateView);
+		self:AddRadioButton(menu, columns, i, addon.Options.db.profile, {"NumColumns"}, UpdateView);
 	end
 	menu:Add(columns);
 	menu:AddFull({
@@ -81,7 +81,7 @@ function KrowiMFE_OptionsButtonMixin:BuildMenu()
 			if not StaticPopup_IsCustomGenericConfirmationShown("KrowiMFE_ConfirmHideOptionsButton") then
 				StaticPopup_ShowCustomGenericConfirmation(
 					{
-						text = addon.L["Are you sure you want to hide the options button?"]:ReplaceVarsWithMenu{
+						text = addon.L["Are you sure you want to hide the options button?"]:K_ReplaceVarsWithMenu{
 							general = addon.L["General"],
 							options = addon.L["Options"]
 						},

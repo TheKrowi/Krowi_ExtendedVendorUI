@@ -11,20 +11,24 @@ L["TAB"] = tab;
 -- Load strings into the localization that are already localized by Blizzard
 addon.GlobalStrings.Load(L);
 
-L["Default value"] = "Valeur par défaut";
-L["Checked"] = "Coché";
-L["Unchecked"] = "Non coché";
-L["Build"] = "Version";
-L["Author"] = "Auteur";
-L["Discord"] = "Discord";
-L["Discord Desc"] = "Ouvre une fenêtre avec un lien vers le serveur Discord {serverName}. Sur ce serveur vous pourrez poster des commentaires, des rapports, des remarques, des idées et toute autre chose.";
-L["CurseForge"] = "CurseForge";
-L["CurseForge Desc"] = "Ouvre une fenêtre avec un lien vers la page {addonName} {curseForge}.";
-L["Wago"] = "Wago";
-L["Wago Desc"] = "Ouvre une fenêtre avec un lien vers la page {addonName} {wago}.";
-L["WoWInterface"] = "WoWInterface";
-L["WoWInterface Desc"] = "Ouvre une fenêtre avec un lien vers la page {addonName} {woWInterface}.";
-L["Show minimap icon"] = "Afficher l'icone sur la mini-map";
-L["Show minimap icon Desc"] = "Afficher ou masquer l'icône sur la mini-map.";
-L["Right click"] = "Clic droit";
-L["Icon Right click"] = "pour les options.";
+-- [[ https://legacy.curseforge.com/wow/addons/krowi-merchant-frame-extended/localization ]] --
+-- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
+
+L["Author"] = "Auteur"
+L["Build"] = "Version"
+L["Checked"] = "Coché"
+L["CurseForge"] = true
+L["CurseForge Desc"] = "Ouvre une fenêtre avec un lien vers la page {addonName} {curseForge}."
+L["Default value"] = "Valeur par défaut"
+L["Discord"] = true
+L["Discord Desc"] = "Ouvre une fenêtre avec un lien vers le serveur Discord {serverName}. Sur ce serveur vous pourrez poster des commentaires, des rapports, des remarques, des idées et toute autre chose."
+L["Icon Right click"] = "pour les options."
+L["Right click"] = "Clic droit"
+L["Show minimap icon"] = "Afficher l'icone sur la mini-map"
+L["Show minimap icon Desc"] = "Afficher ou masquer l'icône sur la mini-map."
+L["Unchecked"] = "Non coché"
+L["Wago"] = true
+L["Wago Desc"] = "Ouvre une fenêtre avec un lien vers la page {addonName} {wago}."
+L["WoWInterface"] = true
+L["WoWInterface Desc"] = "Ouvre une fenêtre avec un lien vers la page {addonName} {woWInterface}."
+
