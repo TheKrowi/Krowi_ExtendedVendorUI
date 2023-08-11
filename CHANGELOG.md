@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 2.1 - 2023-08-11
+### Changed
+- Updated Util lib
+
 ## 2.0 - 2023-08-09
 ### Added
 - Now uses the Addon compartment (minimap button is still available for those who use it)

@@ -7,3 +7,7 @@
 <ul>
 <li>Lots of backend code is now shared between all my addons</li>
 </ul>
+<p><h3>Changed (2.1)</h3></p>
+<ul>
+<li>Updated Util lib</li>
+</ul>

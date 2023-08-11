@@ -22,7 +22,7 @@ function loadHelper:OnEvent(event, arg1, arg2)
 
             addon.Gui.MerchantItemsContainer:LoadMaxNumItemSlots();
 
-            addon.Icon:Load(addon);
+            addon.Icon:Load();
 
             addon.Api.Load();
         end
