@@ -8,3 +8,8 @@
 [LIST]
 [*]Lots of backend code is now shared between all my addons
 [/LIST]
+
+[B]Changed (2.1)[/B]
+[LIST]
+[*]Updated Util lib
+[/LIST]

@@ -2,7 +2,7 @@
 ## Title: Krowi's |cFF1D92C2Merchant Frame Extended|r
 ## X-Prefix: KrowiMFE
 ## X-Acronym: KMFE
-## Version: 2.0
+## Version: 2.1
 ## Author: Krowi-Frostmane EU
 ## LoadWith: Blizzard_MerchantFrame
 ## SavedVariables: KrowiMFE_Options, KrowiMFE_SavedData

@@ -4,3 +4,6 @@
 
 ### Changed
 - Lots of backend code is now shared between all my addons
+
+### Changed (2.1)
+- Updated Util lib
