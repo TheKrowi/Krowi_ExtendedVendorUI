@@ -146,7 +146,7 @@ options.OptionsTable.args["General"] = {
                             func = OptionsButtonOpenOptionsFunc
                         }
                     }
-                },
+                }
             }
         }
     }
