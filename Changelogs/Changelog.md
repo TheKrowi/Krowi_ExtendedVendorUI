@@ -1,9 +1,5 @@
 ### Added
-- Now uses the Addon compartment (minimap button is still available for those who use it)
-- Introduced Profiles
+- Left clicking the minimap icon or addon compartment record now opens the options for the vendor window
 
 ### Changed
-- Lots of backend code is now shared between all my addons
-
-### Changed (2.1)
-- Updated Util lib
+- Renamed the addon from Krowi's Merchant Frame Extended to Krowi's Extended Vendor UI

@@ -65,10 +65,6 @@ function merchantItemsContainer:PrepareInfo()
 end
 
 hooksecurefunc("MerchantFrame_UpdateFilterString", function()
-    if not addon.Options.db then
-        return;
-    end
-
 	merchantItemsContainer:PrepareInfo();
 end);
 
@@ -82,7 +78,7 @@ function merchantItemsContainer:DrawItemSlot(index, row, column, offsetX, offset
 end
 
 function merchantItemsContainer:DrawItemSlots(numRows, numColumns, offsetX, offsetY)
-    if addon.Options.db and addon.Options.db.profile.Direction == addon.L["Columns first"] then
+    if addon.Options.db.profile.Direction == addon.L["Columns first"] then
         for row = 1, numRows, 1 do
             for column = 1, numColumns, 1 do
                 local index = (column - 1) * numRows + row;
