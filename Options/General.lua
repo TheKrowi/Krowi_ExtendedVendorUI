@@ -1,5 +1,5 @@
 -- [[ Namespaces ]] --
-local _, addon = ...;
+local addonName, addon = ...;
 local options = addon.Options;
 options.General = {};
 local general = options.General;
@@ -7,27 +7,36 @@ tinsert(options.OptionsTables, general);
 
 local OrderPP = addon.InjectOptions.AutoOrderPlusPlus;
 local AdjustedWidth = addon.InjectOptions.AdjustedWidth;
+local RefreshOptions; -- Assigned at the end of the file
 
 function general.RegisterOptionsTable()
     LibStub("AceConfig-3.0"):RegisterOptionsTable(addon.Metadata.Title, options.OptionsTable.args.General);
     LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addon.Metadata.Title, addon.Metadata.Title, nil);
 end
 
-function general.PostLoad()
-
+function general.OnProfileChanged(db, newProfile)
+    RefreshOptions();
 end
 
-local function MinimapShowMinimapIconSet()
-    addon.Options.db.profile.ShowMinimapIcon = not addon.Options.db.profile.ShowMinimapIcon;
+function general.OnProfileCopied(db, sourceProfile)
+    RefreshOptions();
+end
+
+function general.OnProfileReset(db)
+    RefreshOptions();
+end
+
+local function MinimapShowMinimapIconSet(_, value)
+    addon.Options.db.profile.ShowMinimapIcon = value or addon.Options.db.profile.ShowMinimapIcon;
     if addon.Options.db.profile.ShowMinimapIcon then
-        addon.Icon:Show("Krowi_MerchantFrameExtendedLDB");
+        addon.Icon:Show(addonName .. "LDB");
     else
-        addon.Icon:Hide("Krowi_MerchantFrameExtendedLDB");
+        addon.Icon:Hide(addonName .. "LDB");
     end
 end
 
 local function OptionsButtonShowOptionsButtonSet(_, value)
-    addon.Options.db.profile.ShowOptionsButton = value;
+    addon.Options.db.profile.ShowOptionsButton = value or addon.Options.db.profile.ShowOptionsButton;
     KrowiEVU_OptionsButton:ShowHide();
 end
 
@@ -142,3 +151,8 @@ options.OptionsTable.args["General"] = {
         }
     }
 };
+
+function RefreshOptions()
+    MinimapShowMinimapIconSet();
+    OptionsButtonShowOptionsButtonSet();
+end
