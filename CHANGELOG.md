@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.0 - 2023-08-14
+### Added
+- Left clicking the minimap icon or addon compartment record now opens the options for the vendor window
+
+### Changed
+- Renamed the addon from Krowi's Merchant Frame Extended to Krowi's Extended Vendor UI
+
 ## 2.1 - 2023-08-11
 ### Changed
 - Updated Util lib

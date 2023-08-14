@@ -2,9 +2,9 @@
 local _, addon = ...;
 local merchantItemsContainer = addon.Gui.MerchantItemsContainer;
 
-KrowiMFE_OptionsButtonMixin = {};
+KrowiEVU_OptionsButtonMixin = {};
 
-function KrowiMFE_OptionsButtonMixin:ShowHide()
+function KrowiEVU_OptionsButtonMixin:ShowHide()
     if addon.Options.db.profile.ShowOptionsButton then
         self:Show();
         return;
@@ -12,7 +12,7 @@ function KrowiMFE_OptionsButtonMixin:ShowHide()
     self:Hide();
 end
 
-function KrowiMFE_OptionsButtonMixin:AddRadioButton(parentMenu, _menu, text, options, keys, func)
+function KrowiEVU_OptionsButtonMixin:AddRadioButton(parentMenu, _menu, text, options, keys, func)
     _menu:AddFull({
 		Text = text,
 		Checked = function() -- Same
@@ -55,7 +55,7 @@ end
 
 local menu = LibStub("Krowi_Menu-1.0");
 local menuItem = LibStub("Krowi_MenuItem-1.0");
-function KrowiMFE_OptionsButtonMixin:BuildMenu()
+function KrowiEVU_OptionsButtonMixin:BuildMenu()
 	-- Reset menu
 	menu:Clear();
 
@@ -78,7 +78,7 @@ function KrowiMFE_OptionsButtonMixin:BuildMenu()
 	menu:AddFull({
 		Text = addon.L["Hide"],
 		Func = function()
-			if not StaticPopup_IsCustomGenericConfirmationShown("KrowiMFE_ConfirmHideOptionsButton") then
+			if not StaticPopup_IsCustomGenericConfirmationShown("KrowiEVU_ConfirmHideOptionsButton") then
 				StaticPopup_ShowCustomGenericConfirmation(
 					{
 						text = addon.L["Are you sure you want to hide the options button?"]:K_ReplaceVarsWithMenu{
@@ -88,7 +88,7 @@ function KrowiMFE_OptionsButtonMixin:BuildMenu()
 						callback = function()
 							HideOptionsButtonCallback(self);
 						end,
-						referenceKey = "KrowiMFE_ConfirmHideOptionsButton"
+						referenceKey = "KrowiEVU_ConfirmHideOptionsButton"
 					}
 				);
 			end
@@ -97,7 +97,7 @@ function KrowiMFE_OptionsButtonMixin:BuildMenu()
 	return menu;
 end
 
-function KrowiMFE_OptionsButtonMixin:MyOnMouseDown()
+function KrowiEVU_OptionsButtonMixin:MyOnMouseDown()
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 	self:BuildMenu();
     menu:Toggle(self, 96, 15);

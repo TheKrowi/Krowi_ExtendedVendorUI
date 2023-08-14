@@ -4,5 +4,5 @@ addon.Api = {};
 local api = addon.Api;
 
 function api.Load()
-	KrowiMFE_MerchantItemsContainer = addon.Gui.MerchantItemsContainer;
+	KrowiEVU_MerchantItemsContainer = addon.Gui.MerchantItemsContainer;
 end
