@@ -27,6 +27,7 @@ function general.OnProfileReset(db)
 end
 
 local function MinimapShowMinimapIconSet(_, value)
+    if addon.Options.db.profile.ShowMinimapIcon == value then return; end
     addon.Options.db.profile.ShowMinimapIcon = value;
     if addon.Options.db.profile.ShowMinimapIcon then
         addon.Icon:Show(addonName .. "LDB");
@@ -36,6 +37,7 @@ local function MinimapShowMinimapIconSet(_, value)
 end
 
 local function OptionsButtonShowOptionsButtonSet(_, value)
+    if addon.Options.db.profile.ShowOptionsButton == value then return; end
     addon.Options.db.profile.ShowOptionsButton = value;
     KrowiEVU_OptionsButton:ShowHide();
 end
@@ -153,6 +155,7 @@ options.OptionsTable.args["General"] = {
 };
 
 function RefreshOptions()
-    MinimapShowMinimapIconSet(nil, addon.Options.db.profile.ShowMinimapIcon);
-    OptionsButtonShowOptionsButtonSet(nil, addon.Options.db.profile.ShowOptionsButton);
+    local profile = addon.Options.db.profile;
+    MinimapShowMinimapIconSet(nil, profile.ShowMinimapIcon);
+    OptionsButtonShowOptionsButtonSet(nil, profile.ShowOptionsButton);
 end
