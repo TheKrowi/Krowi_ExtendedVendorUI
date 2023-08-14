@@ -7,13 +7,13 @@ tinsert(options.OptionsTables, general);
 
 local OrderPP = addon.InjectOptions.AutoOrderPlusPlus;
 local AdjustedWidth = addon.InjectOptions.AdjustedWidth;
-local RefreshOptions; -- Assigned at the end of the file
 
 function general.RegisterOptionsTable()
     LibStub("AceConfig-3.0"):RegisterOptionsTable(addon.Metadata.Title, options.OptionsTable.args.General);
     LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addon.Metadata.Title, addon.Metadata.Title, nil);
 end
 
+local RefreshOptions; -- Assigned at the end of the file
 function general.OnProfileChanged(db, newProfile)
     RefreshOptions();
 end
@@ -27,7 +27,7 @@ function general.OnProfileReset(db)
 end
 
 local function MinimapShowMinimapIconSet(_, value)
-    addon.Options.db.profile.ShowMinimapIcon = value or addon.Options.db.profile.ShowMinimapIcon;
+    addon.Options.db.profile.ShowMinimapIcon = value;
     if addon.Options.db.profile.ShowMinimapIcon then
         addon.Icon:Show(addonName .. "LDB");
     else
@@ -36,7 +36,7 @@ local function MinimapShowMinimapIconSet(_, value)
 end
 
 local function OptionsButtonShowOptionsButtonSet(_, value)
-    addon.Options.db.profile.ShowOptionsButton = value or addon.Options.db.profile.ShowOptionsButton;
+    addon.Options.db.profile.ShowOptionsButton = value;
     KrowiEVU_OptionsButton:ShowHide();
 end
 
@@ -153,6 +153,6 @@ options.OptionsTable.args["General"] = {
 };
 
 function RefreshOptions()
-    MinimapShowMinimapIconSet();
-    OptionsButtonShowOptionsButtonSet();
+    MinimapShowMinimapIconSet(nil, addon.Options.db.profile.ShowMinimapIcon);
+    OptionsButtonShowOptionsButtonSet(nil, addon.Options.db.profile.ShowOptionsButton);
 end
