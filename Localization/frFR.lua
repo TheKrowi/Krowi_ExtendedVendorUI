@@ -11,7 +11,7 @@ L["TAB"] = tab;
 -- Load strings into the localization that are already localized by Blizzard
 addon.GlobalStrings.Load(L);
 
--- [[ https://legacy.curseforge.com/wow/addons/krowi-merchant-frame-extended/localization ]] --
+-- [[ https://legacy.curseforge.com/wow/addons/krowi-extended-vendor-ui/localization ]] --
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
 L["Author"] = "Auteur"
@@ -31,4 +31,3 @@ L["Wago"] = true
 L["Wago Desc"] = "Ouvre une fenêtre avec un lien vers la page {addonName} {wago}."
 L["WoWInterface"] = true
 L["WoWInterface Desc"] = "Ouvre une fenêtre avec un lien vers la page {addonName} {woWInterface}."
-

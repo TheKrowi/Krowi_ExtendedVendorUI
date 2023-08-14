@@ -9,26 +9,26 @@ do -- [[ Set some permanent MerchantFrame changes ]]
 	MerchantFrameBottomLeftBorder:SetTexCoord(0.001953125, 0.5, 0.00390625, 0.2421875);
 	MerchantFrameBottomLeftBorder:SetPoint("BOTTOMLEFT", MerchantFrame, "BOTTOMLEFT", 1, 26);
 
-	local bottomExtensionRightBorder = MerchantFrame:CreateTexture("KrowiMFE_BottomExtensionRightBorder");
+	local bottomExtensionRightBorder = MerchantFrame:CreateTexture("KrowiEVU_BottomExtensionRightBorder");
 	bottomExtensionRightBorder:SetSize(78, 61);
 	bottomExtensionRightBorder:SetTexture("Interface/MerchantFrame/Merchant");
 	bottomExtensionRightBorder:SetTexCoord(0.5, 0.650390625, 0.00390625, 0.2421875);
 	bottomExtensionRightBorder:SetPoint("BOTTOMRIGHT", MerchantFrame, "BOTTOMRIGHT", -1, 26);
 
-	local bottomExtensionLeftBorder = MerchantFrame:CreateTexture("KrowiMFE_BottomExtensionLeftBorder");
+	local bottomExtensionLeftBorder = MerchantFrame:CreateTexture("KrowiEVU_BottomExtensionLeftBorder");
 	bottomExtensionLeftBorder:SetSize(78, 61);
 	bottomExtensionLeftBorder:SetTexture("Interface/MerchantFrame/Merchant");
 	bottomExtensionLeftBorder:SetTexCoord(0.240234375, 0.390625, 0.00390625, 0.2421875);
 	bottomExtensionLeftBorder:SetPoint("TOPLEFT", MerchantFrameBottomLeftBorder, "TOPRIGHT", 0, 0);
 
-	local bottomExtensionMidBorder = MerchantFrame:CreateTexture("KrowiMFE_BottomExtensionMidBorder");
+	local bottomExtensionMidBorder = MerchantFrame:CreateTexture("KrowiEVU_BottomExtensionMidBorder");
 	bottomExtensionMidBorder:SetTexture("Interface/MerchantFrame/Merchant");
 	bottomExtensionMidBorder:SetTexCoord(0.01953125, 0.373046875, 0.00390625, 0.2421875);
 	bottomExtensionMidBorder:SetPoint("TOPLEFT", bottomExtensionLeftBorder, "TOPRIGHT", 0, 0);
 	bottomExtensionMidBorder:SetPoint("BOTTOMRIGHT", bottomExtensionRightBorder, "BOTTOMLEFT", 0, 0);
 
 	MerchantPrevPageButton:SetPoint("BOTTOMLEFT", MerchantFrameBottomLeftBorder, "TOPLEFT", 8, -5);
-	MerchantNextPageButton:SetPoint("BOTTOMRIGHT", KrowiMFE_BottomExtensionRightBorder, "TOPRIGHT", -7, -5);
+	MerchantNextPageButton:SetPoint("BOTTOMRIGHT", KrowiEVU_BottomExtensionRightBorder, "TOPRIGHT", -7, -5);
 end
 
 hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
@@ -43,18 +43,18 @@ hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
 	end
 	MerchantFrame:SetSize(width, height);
 	if numExtraColumns > 0 then
-		KrowiMFE_BottomExtensionLeftBorder:Show();
-		KrowiMFE_BottomExtensionMidBorder:Show();
+		KrowiEVU_BottomExtensionLeftBorder:Show();
+		KrowiEVU_BottomExtensionMidBorder:Show();
 	else
-		KrowiMFE_BottomExtensionLeftBorder:Hide();
-		KrowiMFE_BottomExtensionMidBorder:Hide();
+		KrowiEVU_BottomExtensionLeftBorder:Hide();
+		KrowiEVU_BottomExtensionMidBorder:Hide();
 	end
-	KrowiMFE_BottomExtensionRightBorder:Show();
+	KrowiEVU_BottomExtensionRightBorder:Show();
 end);
 
 hooksecurefunc("MerchantFrame_UpdateBuybackInfo", function()
 	MerchantFrame:SetSize(originalWidth, originalHeight);
-	KrowiMFE_BottomExtensionLeftBorder:Hide();
-	KrowiMFE_BottomExtensionMidBorder:Hide();
-	KrowiMFE_BottomExtensionRightBorder:Hide();
+	KrowiEVU_BottomExtensionLeftBorder:Hide();
+	KrowiEVU_BottomExtensionMidBorder:Hide();
+	KrowiEVU_BottomExtensionRightBorder:Hide();
 end);
