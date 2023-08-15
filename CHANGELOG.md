@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.0 - 2023-08-15
+### Added
+- Implemented proper handling of profile change, copy and reset
+
 ## 3.0 - 2023-08-14
 ### Added
 - Left clicking the minimap icon or addon compartment record now opens the options for the vendor window
