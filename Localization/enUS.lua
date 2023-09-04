@@ -1,19 +1,12 @@
--- [[ English texts by Krowi, 2023-07-19 ]] --
-
--- [[ Namespaces ]] --
 local addonName, addon = ...;
 local L = LibStub(addon.Libs.AceLocale):NewLocale(addonName, "enUS", true, true);
 
-
-local tab = "|T:1:8|t";
-L["TAB"] = tab;
-
--- Load strings into the localization that are already localized by Blizzard
-addon.GlobalStrings.Load(L);
+addon.L = L;
 
 -- [[ https://legacy.curseforge.com/wow/addons/krowi-extended-vendor-ui/localization ]] --
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
+-- [[ Exported at 2023-08-20 18-17-39 ]] --
 L["Are you sure you want to hide the options button?"] = [=[Are you sure you want to hide the options button?
 The options button can be shown again via {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options}]=]
 L["Author"] = true

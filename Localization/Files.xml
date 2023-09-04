@@ -1,6 +1,6 @@
 <Ui>
-    <Script file="GlobalStrings.lua" />
     <Script file="enUS.lua" />
     <Script file="deDE.lua" />
     <Script file="frFR.lua" />
+    <Script file="GlobalStrings.lua" />
 </Ui>
