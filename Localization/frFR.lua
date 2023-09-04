@@ -1,19 +1,12 @@
--- [[ French translation by Astiraïs, 2023-07-19 ]] --
-
--- [[ Namespaces ]] --
 local addonName, addon = ...;
 local L = LibStub(addon.Libs.AceLocale):NewLocale(addonName, "frFR");
 if not L then return end
-
-local tab = "|T:1:8|t";
-L["TAB"] = tab;
-
--- Load strings into the localization that are already localized by Blizzard
-addon.GlobalStrings.Load(L);
+addon.L = L;
 
 -- [[ https://legacy.curseforge.com/wow/addons/krowi-extended-vendor-ui/localization ]] --
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
+-- [[ Exported at 2023-08-20 18-17-40 ]] --
 L["Author"] = "Auteur"
 L["Build"] = "Version"
 L["Checked"] = "Coché"

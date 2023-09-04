@@ -1,2 +1,3 @@
-### Added
-- Implemented proper handling of profile change, copy and reset
+### Changed
+- Optimized exports
+- Updated Util lib

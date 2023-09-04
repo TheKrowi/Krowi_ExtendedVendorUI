@@ -1,4 +1,5 @@
-<p><h3>Added</h3></p>
+<p><h3>Changed</h3></p>
 <ul>
-<li>Implemented proper handling of profile change, copy and reset</li>
+<li>Optimized exports</li>
+<li>Updated Util lib</li>
 </ul>

@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 5.0 - 2023-09-04
+### Changed
+- Optimized exports
+- Updated Util lib
+
 ## 4.0 - 2023-08-15
 ### Added
 - Implemented proper handling of profile change, copy and reset

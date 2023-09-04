@@ -1,4 +1,5 @@
-[B]Added[/B]
+[B]Changed[/B]
 [LIST]
-[*]Implemented proper handling of profile change, copy and reset
+[*]Optimized exports
+[*]Updated Util lib
 [/LIST]
