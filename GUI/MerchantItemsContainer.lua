@@ -107,10 +107,8 @@ function merchantItemsContainer:DrawMerchantBuyBackItem(show)
         MerchantBuyBackItem:ClearAllPoints();
         MerchantBuyBackItem:SetPoint("BOTTOMLEFT", MerchantFrameBottomLeftBorder, "BOTTOMLEFT", 205, 7);
 	    MerchantBuyBackItem:Show();
-	    UndoFrame:Show();
     else
         MerchantBuyBackItem:Hide();
-	    UndoFrame:Hide();
     end
 end
 
