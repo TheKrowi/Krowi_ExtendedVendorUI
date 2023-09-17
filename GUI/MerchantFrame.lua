@@ -29,6 +29,9 @@ do -- [[ Set some permanent MerchantFrame changes ]]
 
 	MerchantPrevPageButton:SetPoint("BOTTOMLEFT", MerchantFrameBottomLeftBorder, "TOPLEFT", 8, -5);
 	MerchantNextPageButton:SetPoint("BOTTOMRIGHT", KrowiEVU_BottomExtensionRightBorder, "TOPRIGHT", -7, -5);
+
+	-- MerchantFrameLootFilter:Hide();
+	MerchantFrameLootFilter:SetPoint("TOPRIGHT", MerchantFrame, -150, -28);
 end
 
 hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
@@ -58,3 +61,35 @@ hooksecurefunc("MerchantFrame_UpdateBuybackInfo", function()
 	KrowiEVU_BottomExtensionMidBorder:Hide();
 	KrowiEVU_BottomExtensionRightBorder:Hide();
 end);
+
+local items = {};
+
+hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
+	items = {};
+end);
+
+local origGetMerchantItemInfo = GetMerchantItemInfo;
+GetMerchantItemInfo = function(index)
+	if GetMerchantFilter() < LE_LOOT_FILTER_NEW_RANGE then
+		return origGetMerchantItemInfo(index);
+	end
+
+	return unpack(items[index]);
+end
+
+local origGetMerchantNumItems = GetMerchantNumItems;
+GetMerchantNumItems = function()
+	local lootFilter = GetMerchantFilter();
+	if lootFilter < LE_LOOT_FILTER_NEW_RANGE then
+		return origGetMerchantNumItems();
+	end
+
+	local numMerchantItems = origGetMerchantNumItems();
+	for i = 1, numMerchantItems, 1 do
+		local itemId = GetMerchantItemID(i);
+		if addon.LootFilters:Validate(lootFilter, itemId) then
+			tinsert(items, {origGetMerchantItemInfo(i)});
+		end
+	end
+	return #items;
+end

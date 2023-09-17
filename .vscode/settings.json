@@ -214,7 +214,21 @@
         "UIOPTIONS_MENU",
         "ADDONS",
         "NORMAL_FONT_COLOR_CODE",
-        "AddonCompartmentFrame"
+        "AddonCompartmentFrame",
+        "MerchantFrameLootFilter",
+        "GetNumSpecializations",
+        "GetSpecializationInfo",
+        "UnitSex",
+        "GetMerchantFilter",
+        "LE_LOOT_FILTER_SPEC1",
+        "MerchantFrame_SetFilter",
+        "LE_LOOT_FILTER_CLASS",
+        "LE_LOOT_FILTER_SPEC4",
+        "ALL_SPECS",
+        "ITEM_BIND_ON_EQUIP",
+        "LE_LOOT_FILTER_BOE",
+        "ALL",
+        "GetMerchantItemID"
     ],
     "fsdeploy.nodes": [
         {
