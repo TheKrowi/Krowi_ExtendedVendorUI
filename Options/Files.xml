@@ -4,5 +4,6 @@
     <Script file="Defaults.lua" />
     
     <Script file="General.lua" />
-    <Script file="..\Libs\Krowi_Util\Options\Profiles.lua" />
+    <Script file="Profiles.lua" />
+    <!-- <Script file="..\Libs\Krowi_Util\Options\Profiles.lua" /> -->
 </Ui>

@@ -26,6 +26,24 @@ function KrowiEVU_FilterButtonMixin:AddLootFilterRadioButton(parentMenu, _menu, 
 	});
 end
 
+function KrowiEVU_FilterButtonMixin:AddCheckBox(_menu, text, keys)
+	local _filters = addon.Filters.db.profile;
+    _menu:AddFull({
+		Text = text,
+		Checked = function() -- Using function here, we force the GUI to get the value again instead of only once (caused visual bugs)
+			return addon.Util.ReadNestedKeys(_filters, keys); -- e.g.: return filters.Completion.Completed;
+		end,
+		Func = function()
+			addon.Util.WriteNestedKeys(_filters, keys, not addon.Util.ReadNestedKeys(_filters, keys));
+			MerchantFrame_SetFilter(nil, GetMerchantFilter());
+		end,
+		IsNotRadio = true,
+		NotCheckable = false,
+		KeepShownOnClick = true,
+		IgnoreAsMenuSelection = true
+	});
+end
+
 local menu = LibStub("Krowi_Menu-1.0");
 local menuItem = LibStub("Krowi_MenuItem-1.0");
 function KrowiEVU_FilterButtonMixin:BuildMenu()
@@ -61,8 +79,11 @@ function KrowiEVU_FilterButtonMixin:BuildMenu()
 
 	menu:AddSeparator();
 
-	self:AddLootFilterRadioButton(menu, menu, addon.L["Pets"], LE_LOOT_FILTER_PETS, addon.L["Pets"], addon.L["Pets"]);
-	self:AddLootFilterRadioButton(menu, menu, addon.L["Mounts"], LE_LOOT_FILTER_MOUNTS, addon.L["Mounts"], addon.L["Mounts"]);
+	-- self:AddLootFilterRadioButton(menu, menu, addon.L["Pets"], LE_LOOT_FILTER_PETS, addon.L["Pets"], addon.L["Pets"]);
+	-- self:AddLootFilterRadioButton(menu, menu, addon.L["Mounts"], LE_LOOT_FILTER_MOUNTS, addon.L["Mounts"], addon.L["Mounts"]);
+
+	self:AddCheckBox(menu, addon.L["Hide owned pets"], {"HideOwnedPets"});
+	self:AddCheckBox(menu, addon.L["Hide collected mounts"], {"HideCollectedMounts"});
 
 	return menu;
 end

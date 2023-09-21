@@ -70,9 +70,9 @@ end);
 
 local origGetMerchantItemInfo = GetMerchantItemInfo;
 GetMerchantItemInfo = function(index)
-	if GetMerchantFilter() < LE_LOOT_FILTER_NEW_RANGE then
-		return origGetMerchantItemInfo(index);
-	end
+	-- if GetMerchantFilter() < LE_LOOT_FILTER_NEW_RANGE then
+	-- 	return origGetMerchantItemInfo(index);
+	-- end
 
 	return unpack(items[index]);
 end
@@ -80,14 +80,14 @@ end
 local origGetMerchantNumItems = GetMerchantNumItems;
 GetMerchantNumItems = function()
 	local lootFilter = GetMerchantFilter();
-	if lootFilter < LE_LOOT_FILTER_NEW_RANGE then
-		return origGetMerchantNumItems();
-	end
+	-- if lootFilter < LE_LOOT_FILTER_NEW_RANGE then
+	-- 	return origGetMerchantNumItems();
+	-- end
 
 	local numMerchantItems = origGetMerchantNumItems();
 	for i = 1, numMerchantItems, 1 do
 		local itemId = GetMerchantItemID(i);
-		if addon.LootFilters:Validate(lootFilter, itemId) then
+		if addon.Filters:Validate(lootFilter, itemId) then
 			tinsert(items, {origGetMerchantItemInfo(i)});
 		end
 	end

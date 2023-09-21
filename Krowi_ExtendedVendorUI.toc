@@ -5,7 +5,7 @@
 ## Version: 6.0-beta1
 ## Author: Krowi-Frostmane EU
 ## LoadWith: Blizzard_MerchantFrame
-## SavedVariables: KrowiEVU_Options
+## SavedVariables: KrowiEVU_Options, KrowiEVU_Filters
 ## Notes: Extends the size of your Merchant Frame.
 ## AddonCompartmentFuncOnEnter: KrowiEVU_OnAddonCompartmentEnter
 ## AddonCompartmentFuncOnLeave: KrowiEVU_OnAddonCompartmentLeave
@@ -32,6 +32,6 @@ Options\Files.xml
 Libs\Krowi_Util\Icon.lua
 Icon.lua
 
-LootFilters.lua
+Filters.lua
 
 Gui\Files.xml

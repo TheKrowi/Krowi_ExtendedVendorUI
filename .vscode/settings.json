@@ -228,7 +228,9 @@
         "ITEM_BIND_ON_EQUIP",
         "LE_LOOT_FILTER_BOE",
         "ALL",
-        "GetMerchantItemID"
+        "GetMerchantItemID",
+        "C_PetJournal",
+        "C_MountJournal"
     ],
     "fsdeploy.nodes": [
         {
