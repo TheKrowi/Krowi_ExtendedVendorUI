@@ -1,10 +1,5 @@
-[B]Changed[/B]
+[B]Added[/B]
 [LIST]
-[*]Optimized exports
-[*]Updated Util lib
-[/LIST]
-
-[B]Fixed (5.1)[/B]
-[LIST]
-[*]Removed the not existing UndoFrame
+[*]Hide owned pets filter
+[*]Hide collected mounts filter
 [/LIST]

@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 6.0-beta1 - 2023-09-21
+### Added
+- Hide owned pets filter
+- Hide collected mounts filter
+
 ## 5.1 - 2023-09-06
 ### Fixed
 - Removed the not existing UndoFrame
