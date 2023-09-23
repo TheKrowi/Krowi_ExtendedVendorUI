@@ -14,9 +14,32 @@ merchantItemsContainer.DefaultBuybackInfoNumRows = 6;
 merchantItemsContainer.DefaultBuybackInfoNumColumns = 2;
 merchantItemsContainer.ItemWidth, merchantItemsContainer.ItemHeight = MerchantItem1:GetSize();
 
+-- Choosing to overwrite this function as not to mess with the GameTooltip's SetMerchantItem
+local function ItemSlotOnEnter(button)
+	GameTooltip:SetOwner(button, "ANCHOR_RIGHT");
+	if MerchantFrame.selectedTab == 1 then
+		GameTooltip:SetMerchantItem(addon.CachedItems[button:GetID()]);
+		GameTooltip_ShowCompareItem(GameTooltip);
+		MerchantFrame.itemHover = button:GetID();
+	else
+		GameTooltip:SetBuybackItem(button:GetID());
+		if IsModifiedClick("DRESSUP") and button.hasItem then
+			ShowInspectCursor();
+		else
+			ShowBuybackSellCursor(button:GetID());
+		end
+	end
+end
+
+local function SetOnEnter(frame)
+    frame:SetScript("OnEnter", ItemSlotOnEnter);
+    frame.UpdateTooltip = ItemSlotOnEnter;
+end
+
 local infoNumRows, infoNumColumns = 0, 0;
 local itemSlotTable = {};
 for i = 1, 12, 1 do
+    SetOnEnter(_G["MerchantItem" .. i].ItemButton);
 	tinsert(itemSlotTable, _G["MerchantItem" .. i]);
 end
 
@@ -31,6 +54,7 @@ local function GetItemSlot(index)
 		return itemSlotTable[index];
 	end
 	local frame = CreateFrame("Frame", "MerchantItem" .. index, MerchantFrame, "MerchantItemTemplate");
+    SetOnEnter(frame.ItemButton);
 	itemSlotTable[index] = frame;
 	return frame;
 end

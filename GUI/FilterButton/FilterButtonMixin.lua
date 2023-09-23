@@ -10,7 +10,7 @@ function KrowiEVU_FilterButtonMixin:ShowHide()
     self:Hide();
 end
 
-function KrowiEVU_FilterButtonMixin:AddLootFilterRadioButton(parentMenu, _menu, text, lootFilter, selectedName, filterName)
+function KrowiEVU_FilterButtonMixin:AddLootFilterRadioButton(parentMenu, _menu, text, lootFilter)
     _menu:AddFull({
 		Text = text,
 		Checked = function()
@@ -18,8 +18,8 @@ function KrowiEVU_FilterButtonMixin:AddLootFilterRadioButton(parentMenu, _menu, 
 		end,
 		Func = function()
 			MerchantFrame_SetFilter(nil, lootFilter);
-			parentMenu:SetSelectedName(selectedName);
-			self:SetText(filterName);
+			parentMenu:SetSelectedName(text);
+			self:SetText(text);
 		end,
 		NotCheckable = false,
 		KeepShownOnClick = true
@@ -79,11 +79,15 @@ function KrowiEVU_FilterButtonMixin:BuildMenu()
 
 	menu:AddSeparator();
 
-	-- self:AddLootFilterRadioButton(menu, menu, addon.L["Pets"], LE_LOOT_FILTER_PETS, addon.L["Pets"], addon.L["Pets"]);
-	-- self:AddLootFilterRadioButton(menu, menu, addon.L["Mounts"], LE_LOOT_FILTER_MOUNTS, addon.L["Mounts"], addon.L["Mounts"]);
+	self:AddLootFilterRadioButton(menu, menu, addon.L["Pets only"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"]);
+	self:AddLootFilterRadioButton(menu, menu, addon.L["Mounts only"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"]);
+	self:AddLootFilterRadioButton(menu, menu, addon.L["Toys only"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"]);
 
-	self:AddCheckBox(menu, addon.L["Hide owned pets"], {"HideOwnedPets"});
+	menu:AddSeparator();
+
+	self:AddCheckBox(menu, addon.L["Hide collected pets"], {"HideCollectedPets"});
 	self:AddCheckBox(menu, addon.L["Hide collected mounts"], {"HideCollectedMounts"});
+	self:AddCheckBox(menu, addon.L["Hide collected toys"], {"HideCollectedToys"});
 
 	return menu;
 end

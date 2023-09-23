@@ -1,9 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 6.0-beta2 - 2023-09-24
+### Added
+- Hide collected toys filter
+
+### Fixed
+- Sell All Junk Items button now stays on the left side of the window
+
 ## 6.0-beta1 - 2023-09-21
 ### Added
-- Hide owned pets filter
+- Hide collected pets filter
 - Hide collected mounts filter
 
 ## 5.1 - 2023-09-06

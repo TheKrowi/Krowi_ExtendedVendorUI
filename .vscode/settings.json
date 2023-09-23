@@ -230,7 +230,20 @@
         "ALL",
         "GetMerchantItemID",
         "C_PetJournal",
-        "C_MountJournal"
+        "C_MountJournal",
+        "C_ToyBox",
+        "PlayerHasToy",
+        "MerchantSellAllJunkButton",
+        "GetMerchantItemLink",
+        "GetMerchantItemCostInfo",
+        "GetMerchantItemCostItem",
+        "MAX_ITEM_COST",
+        "GameTooltip_ShowCompareItem",
+        "IsModifiedClick",
+        "ShowInspectCursor",
+        "ShowBuybackSellCursor",
+        "GetItemSpecInfo",
+        "wipe"
     ],
     "fsdeploy.nodes": [
         {
@@ -244,13 +257,13 @@
     "fsdeploy.deployWorkspaceOnSave": true,
     "Lua.diagnostics.disable": [
         "deprecated",
-        "undefined-field",
         "unused-function",
         "assign-type-mismatch",
         "cast-local-type",
         "redundant-parameter",
         "unbalanced-assignments",
         "ambiguity-1",
-        "missing-return"
+        "missing-return",
+        "empty-block"
     ],
 }
