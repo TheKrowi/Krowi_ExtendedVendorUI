@@ -2,14 +2,11 @@
 [LIST]
 [*]Hide collected pets filter
 [*]Hide collected mounts filter
-[/LIST]
-
-[B]Added (6.0)[/B]
-[LIST]
 [*]Hide collected toys filter
+[*]Custom filter to show a combination of items
 [/LIST]
 
-[B]Fixed (6.0)[/B]
+[B]Fixed[/B]
 [LIST]
 [*]Sell All Junk Items button now stays on the left side of the window
 [/LIST]

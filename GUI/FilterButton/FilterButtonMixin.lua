@@ -10,6 +10,13 @@ function KrowiEVU_FilterButtonMixin:ShowHide()
     self:Hide();
 end
 
+function KrowiEVU_FilterButtonMixin:AddTitle(menu, text)
+	menu:AddFull({
+		Text = text,
+		IsTitle = true
+	});
+end
+
 function KrowiEVU_FilterButtonMixin:AddLootFilterRadioButton(parentMenu, _menu, text, lootFilter)
     _menu:AddFull({
 		Text = text,
@@ -51,6 +58,7 @@ function KrowiEVU_FilterButtonMixin:BuildMenu()
 	menu:Clear();
 
 	local className = UnitClass("player");
+	self:AddTitle(menu, addon.L["Default filters"]);
 	local class = menuItem:New({
 		Text = className,
 		Checked = function()
@@ -79,15 +87,36 @@ function KrowiEVU_FilterButtonMixin:BuildMenu()
 
 	menu:AddSeparator();
 
-	self:AddLootFilterRadioButton(menu, menu, addon.L["Pets only"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"]);
-	self:AddLootFilterRadioButton(menu, menu, addon.L["Mounts only"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"]);
-	self:AddLootFilterRadioButton(menu, menu, addon.L["Toys only"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"]);
+	self:AddTitle(menu, addon.L["Only show"]);
+	self:AddLootFilterRadioButton(menu, menu, addon.L["Pets"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"]);
+	self:AddLootFilterRadioButton(menu, menu, addon.L["Mounts"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"]);
+	self:AddLootFilterRadioButton(menu, menu, addon.L["Toys"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"]);
+
+	local custom = menuItem:New({
+		Text = addon.L["Custom"],
+		Checked = function()
+			return GetMerchantFilter() == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"];
+		end,
+		Func = function()
+			MerchantFrame_SetFilter(nil, _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"]);
+			menu:SetSelectedName(addon.L["Custom"]);
+			self:SetText(addon.L["Custom"]);
+		end,
+		NotCheckable = false,
+		KeepShownOnClick = true
+	});
+	self:AddCheckBox(custom, addon.L["Pets"], {"Custom", "Pets"});
+	self:AddCheckBox(custom, addon.L["Mounts"], {"Custom", "Mounts"});
+	self:AddCheckBox(custom, addon.L["Toys"], {"Custom", "Toys"});
+	self:AddCheckBox(custom, addon.L["Other"], {"Custom", "Other"});
+	menu:Add(custom);
 
 	menu:AddSeparator();
 
-	self:AddCheckBox(menu, addon.L["Hide collected pets"], {"HideCollectedPets"});
-	self:AddCheckBox(menu, addon.L["Hide collected mounts"], {"HideCollectedMounts"});
-	self:AddCheckBox(menu, addon.L["Hide collected toys"], {"HideCollectedToys"});
+	self:AddTitle(menu, addon.L["Hide collected"]);
+	self:AddCheckBox(menu, addon.L["Pets"], {"HideCollectedPets"});
+	self:AddCheckBox(menu, addon.L["Mounts"], {"HideCollectedMounts"});
+	self:AddCheckBox(menu, addon.L["Toys"], {"HideCollectedToys"});
 
 	return menu;
 end

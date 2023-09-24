@@ -6,12 +6,19 @@ _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_NEW_RANGE"] = 100;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"] = 101;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"] = 102;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"] = 103;
+_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"] = 200;
 
 local defaults = {
 	profile = {
 		HideCollectedPets = false,
 		HideCollectedMounts = false,
-		HideCollectedToys = false
+		HideCollectedToys = false,
+		Custom = {
+			Pets = true,
+			Mounts = true,
+			Toys = true,
+			Other = true
+		}
 	}
 };
 
@@ -35,6 +42,8 @@ function filters:Validate(lootFilter, itemId)
 		return self:ValidateMountsOnly(itemId);
     elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"] then
 		return self:ValidateToysOnly(itemId);
+    elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"] then
+		return self:ValidateCustom(itemId);
 	else
 		if self.IsPet(itemId) and addon.Filters.db.profile.HideCollectedPets then
 			return not self.IsPetCollected(itemId);
@@ -112,5 +121,41 @@ do -- Toys
 
 	function filters.IsToyCollected(itemId)
 		return PlayerHasToy(itemId);
+	end
+end
+
+do -- Custom
+	function filters:ValidateCustom(itemId)
+		if self.IsPet(itemId) then
+			if addon.Filters.db.profile.Custom.Pets then
+				if addon.Filters.db.profile.HideCollectedPets then
+					return not self.IsPetCollected(itemId);
+				end
+				return true;
+			end
+			return false;
+		end
+
+		if self.IsMount(itemId) then
+			if addon.Filters.db.profile.Custom.Mounts then
+				if addon.Filters.db.profile.HideCollectedMounts then
+					return not self.IsMountCollected(itemId);
+				end
+				return true;
+			end
+			return false;
+		end
+
+		if self.IsToy(itemId) then
+			if addon.Filters.db.profile.Custom.Toys then
+				if addon.Filters.db.profile.HideCollectedToys then
+					return not self.IsToyCollected(itemId);
+				end
+				return true;
+			end
+			return false;
+		end
+
+		return addon.Filters.db.profile.Custom.Other;
 	end
 end

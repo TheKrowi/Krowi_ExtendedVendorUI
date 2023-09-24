@@ -1,9 +1,8 @@
 ### Added
 - Hide collected pets filter
 - Hide collected mounts filter
-
-### Added (6.0)
 - Hide collected toys filter
+- Custom filter to show a combination of items
 
-### Fixed (6.0)
+### Fixed
 - Sell All Junk Items button now stays on the left side of the window
