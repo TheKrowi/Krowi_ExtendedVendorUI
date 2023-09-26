@@ -62,7 +62,7 @@ hooksecurefunc("MerchantFrame_UpdateBuybackInfo", function()
 	KrowiEVU_BottomExtensionRightBorder:Hide();
 end);
 
-addon.CachedItems = {};
+addon.CachedItemIndices = {};
 
 hooksecurefunc("MerchantFrame_UpdateRepairButtons", function()
 	if not CanMerchantRepair() then
@@ -72,52 +72,52 @@ end);
 
 local origGetMerchantItemInfo = GetMerchantItemInfo;
 GetMerchantItemInfo = function(index)
-	return origGetMerchantItemInfo(addon.CachedItems[index]);
+	return origGetMerchantItemInfo(addon.CachedItemIndices[index]);
 end
 
 local origCanAffordMerchantItem = CanAffordMerchantItem;
 CanAffordMerchantItem = function(index)
-	return origCanAffordMerchantItem(addon.CachedItems[index]);
+	return origCanAffordMerchantItem(addon.CachedItemIndices[index]);
 end
 
 local origGetMerchantItemLink = GetMerchantItemLink;
 GetMerchantItemLink = function(index)
-	return origGetMerchantItemLink(addon.CachedItems[index]);
+	return origGetMerchantItemLink(addon.CachedItemIndices[index]);
 end
 
 local origGetMerchantItemID = GetMerchantItemID;
 GetMerchantItemID = function(index)
-	return origGetMerchantItemID(addon.CachedItems[index]);
+	return origGetMerchantItemID(addon.CachedItemIndices[index]);
 end
 
 local origGetMerchantItemCostInfo = GetMerchantItemCostInfo;
 GetMerchantItemCostInfo = function(index)
-	return origGetMerchantItemCostInfo(addon.CachedItems[index]);
+	return origGetMerchantItemCostInfo(addon.CachedItemIndices[index]);
 end
 
 local origGetMerchantItemCostItem = GetMerchantItemCostItem;
 GetMerchantItemCostItem = function(index, itemIndex)
-	return origGetMerchantItemCostItem(addon.CachedItems[index], itemIndex);
+	return origGetMerchantItemCostItem(addon.CachedItemIndices[index], itemIndex);
 end
 
 local origGetMerchantNumItems = GetMerchantNumItems;
 GetMerchantNumItems = function()
-	wipe(addon.CachedItems);
+	wipe(addon.CachedItemIndices);
 
 	local lootFilter = GetMerchantFilter();
 	local numMerchantItems = origGetMerchantNumItems();
 	for i = 1, numMerchantItems, 1 do
 		local itemId = origGetMerchantItemID(i);
 		if addon.Filters:Validate(lootFilter, itemId) then
-			tinsert(addon.CachedItems, i);
+			tinsert(addon.CachedItemIndices, i);
 		end
 	end
-	return #addon.CachedItems;
+	return #addon.CachedItemIndices;
 end
 
 local origBuyMerchantItem = BuyMerchantItem;
 BuyMerchantItem = function(index)
-	origBuyMerchantItem(addon.CachedItems[index]);
+	origBuyMerchantItem(addon.CachedItemIndices[index]);
 end
 
 local origPickupMerchantItem = PickupMerchantItem;
@@ -126,54 +126,33 @@ PickupMerchantItem = function(index)
 		origPickupMerchantItem(0);
 		return;
 	end
-	origPickupMerchantItem(addon.CachedItems[index]);
+	origPickupMerchantItem(addon.CachedItemIndices[index]);
 end
 
 local origGetMerchantItemMaxStack = GetMerchantItemMaxStack;
 GetMerchantItemMaxStack = function(index)
-	origGetMerchantItemMaxStack(addon.CachedItems[index]);
+	origGetMerchantItemMaxStack(addon.CachedItemIndices[index]);
 end
 
--- Overwriting this function cause we can't change return data with hooking
+local origMerchantFrame_GetProductInfo = MerchantFrame_GetProductInfo;
 function MerchantFrame_GetProductInfo(itemButton)
-	local itemName;
-	local itemQuality = 1;
-	local r, g, b = 1, 1, 1;
-	if itemButton.link then
-		itemName, _, itemQuality = GetItemInfo(itemButton.link);
-	end
-	local specs = {};
-	if itemName then
-		--It's an item
-		r, g, b = GetItemQualityColor(itemQuality);
-		specs = GetItemSpecInfo(itemButton.link, specs);
-	else
-		--Not an item. Could be currency or something. Just use what's on the button.
-		itemName = itemButton.name;
-		r, g, b = GetItemQualityColor(1);
-	end
-	local productInfo = {
-		texture = itemButton.texture,
-		name = itemName,
-		color = {r, g, b, 1},
-		link = itemButton.link,
-		index = addon.CachedItems[itemButton:GetID()]
-	};
+	local productInfo, specs = origMerchantFrame_GetProductInfo(itemButton);
+	productInfo.index = addon.CachedItemIndices[itemButton:GetID()];
 	return productInfo, specs;
 end
 
 StaticPopupDialogs["CONFIRM_PURCHASE_TOKEN_ITEM"].OnAccept = function()
-	BuyMerchantItem(addon.CachedItems[MerchantFrame.itemIndex], MerchantFrame.count);
+	BuyMerchantItem(addon.CachedItemIndices[MerchantFrame.itemIndex], MerchantFrame.count);
 end
 
 StaticPopupDialogs["CONFIRM_PURCHASE_NONREFUNDABLE_ITEM"].OnAccept = function()
-	BuyMerchantItem(addon.CachedItems[MerchantFrame.itemIndex], MerchantFrame.count);
+	BuyMerchantItem(addon.CachedItemIndices[MerchantFrame.itemIndex], MerchantFrame.count);
 end
 
 StaticPopupDialogs["CONFIRM_PURCHASE_ITEM_DELAYED"].OnAccept = function()
-	BuyMerchantItem(addon.CachedItems[MerchantFrame.itemIndex], MerchantFrame.count);
+	BuyMerchantItem(addon.CachedItemIndices[MerchantFrame.itemIndex], MerchantFrame.count);
 end
 
 StaticPopupDialogs["CONFIRM_HIGH_COST_ITEM"].OnAccept = function()
-	BuyMerchantItem(addon.CachedItems[MerchantFrame.itemIndex], MerchantFrame.count);
+	BuyMerchantItem(addon.CachedItemIndices[MerchantFrame.itemIndex], MerchantFrame.count);
 end
