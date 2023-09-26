@@ -7,6 +7,7 @@ _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"] = 101;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"] = 102;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"] = 103;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"] = 200;
+_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_SEARCH"] = 201;
 
 local defaults = {
 	profile = {
@@ -44,6 +45,8 @@ function filters:Validate(lootFilter, itemId)
 		return self:ValidateToysOnly(itemId);
     elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"] then
 		return self:ValidateCustom(itemId);
+    elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_SEARCH"] then
+		return self:ValidateSearch(itemId);
 	else
 		if self.IsPet(itemId) and addon.Filters.db.profile.HideCollectedPets then
 			return not self.IsPetCollected(itemId);
@@ -157,5 +160,15 @@ do -- Custom
 		end
 
 		return addon.Filters.db.profile.Custom.Other;
+	end
+end
+
+do -- Search
+	function filters:ValidateSearch(itemId)
+		local name = GetItemInfo(itemId);
+		if strfind(name:lower(), KrowiEVU_SearchBox:GetText():lower(), 1, true) then
+			return true;
+		end
+		return false;
 	end
 end

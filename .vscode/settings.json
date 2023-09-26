@@ -243,7 +243,12 @@
         "ShowInspectCursor",
         "ShowBuybackSellCursor",
         "GetItemSpecInfo",
-        "wipe"
+        "wipe",
+        "KrowiEVU_FilterButton",
+        "SearchBoxTemplate_OnTextChanged",
+        "KrowiEVU_SearchBox",
+        "strfind",
+        "SearchBoxTemplateClearButton_OnClick"
     ],
     "fsdeploy.nodes": [
         {

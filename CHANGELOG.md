@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Hide collected mounts filter
 - Hide collected toys filter
 - Custom filter to show a combination of items
+- Search field
 
 ### Fixed
 - Sell All Junk Items button now stays on the left side of the window

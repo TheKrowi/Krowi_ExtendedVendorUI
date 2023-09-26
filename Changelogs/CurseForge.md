@@ -4,6 +4,7 @@
 <li>Hide collected mounts filter</li>
 <li>Hide collected toys filter</li>
 <li>Custom filter to show a combination of items</li>
+<li>Search field</li>
 </ul>
 <p><h3>Fixed</h3></p>
 <ul>
