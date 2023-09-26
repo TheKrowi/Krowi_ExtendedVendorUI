@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 6.0-beta3 - 2023-09-24
+## 6.0-beta4 - 2023-09-26
 ### Added
 - Hide collected pets filter
 - Hide collected mounts filter
