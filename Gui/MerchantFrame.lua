@@ -130,8 +130,8 @@ GetMerchantNumItems = function()
 end
 
 local origBuyMerchantItem = BuyMerchantItem;
-BuyMerchantItem = function(index)
-	origBuyMerchantItem(GetCachedIndex(index));
+BuyMerchantItem = function(index, quantity)
+	origBuyMerchantItem(GetCachedIndex(index), quantity);
 end
 
 local origPickupMerchantItem = PickupMerchantItem;
@@ -145,7 +145,7 @@ end
 
 local origGetMerchantItemMaxStack = GetMerchantItemMaxStack;
 GetMerchantItemMaxStack = function(index)
-	origGetMerchantItemMaxStack(GetCachedIndex(index));
+	return origGetMerchantItemMaxStack(GetCachedIndex(index));
 end
 
 local origMerchantFrame_GetProductInfo = MerchantFrame_GetProductInfo;
