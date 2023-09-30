@@ -9,4 +9,5 @@
 <p><h3>Fixed</h3></p>
 <ul>
 <li>Sell All Junk Items button now stays on the left side of the window</li>
+<li>Auctionator compatibility</li>
 </ul>

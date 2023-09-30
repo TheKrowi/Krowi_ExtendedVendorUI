@@ -10,4 +10,5 @@
 [B]Fixed[/B]
 [LIST]
 [*]Sell All Junk Items button now stays on the left side of the window
+[*]Auctionator compatibility
 [/LIST]
