@@ -80,34 +80,38 @@ end);
 
 addon.CachedItemIndices = {};
 
+local function GetCachedIndex(index)
+	return addon.CachedItemIndices[index] or 0;
+end
+
 local origGetMerchantItemInfo = GetMerchantItemInfo;
 GetMerchantItemInfo = function(index)
-	return origGetMerchantItemInfo(addon.CachedItemIndices[index]);
+	return origGetMerchantItemInfo(GetCachedIndex(index));
 end
 
 local origCanAffordMerchantItem = CanAffordMerchantItem;
 CanAffordMerchantItem = function(index)
-	return origCanAffordMerchantItem(addon.CachedItemIndices[index]);
+	return origCanAffordMerchantItem(GetCachedIndex(index));
 end
 
 local origGetMerchantItemLink = GetMerchantItemLink;
 GetMerchantItemLink = function(index)
-	return origGetMerchantItemLink(addon.CachedItemIndices[index]);
+	return origGetMerchantItemLink(GetCachedIndex(index));
 end
 
 local origGetMerchantItemID = GetMerchantItemID;
 GetMerchantItemID = function(index)
-	return origGetMerchantItemID(addon.CachedItemIndices[index]);
+	return origGetMerchantItemID(GetCachedIndex(index));
 end
 
 local origGetMerchantItemCostInfo = GetMerchantItemCostInfo;
 GetMerchantItemCostInfo = function(index)
-	return origGetMerchantItemCostInfo(addon.CachedItemIndices[index]);
+	return origGetMerchantItemCostInfo(GetCachedIndex(index));
 end
 
 local origGetMerchantItemCostItem = GetMerchantItemCostItem;
 GetMerchantItemCostItem = function(index, itemIndex)
-	return origGetMerchantItemCostItem(addon.CachedItemIndices[index], itemIndex);
+	return origGetMerchantItemCostItem(GetCachedIndex(index), itemIndex);
 end
 
 local origGetMerchantNumItems = GetMerchantNumItems;
@@ -127,7 +131,7 @@ end
 
 local origBuyMerchantItem = BuyMerchantItem;
 BuyMerchantItem = function(index)
-	origBuyMerchantItem(addon.CachedItemIndices[index]);
+	origBuyMerchantItem(GetCachedIndex(index));
 end
 
 local origPickupMerchantItem = PickupMerchantItem;
@@ -136,12 +140,12 @@ PickupMerchantItem = function(index)
 		origPickupMerchantItem(0);
 		return;
 	end
-	origPickupMerchantItem(addon.CachedItemIndices[index]);
+	origPickupMerchantItem(GetCachedIndex(index));
 end
 
 local origGetMerchantItemMaxStack = GetMerchantItemMaxStack;
 GetMerchantItemMaxStack = function(index)
-	origGetMerchantItemMaxStack(addon.CachedItemIndices[index]);
+	origGetMerchantItemMaxStack(GetCachedIndex(index));
 end
 
 local origMerchantFrame_GetProductInfo = MerchantFrame_GetProductInfo;

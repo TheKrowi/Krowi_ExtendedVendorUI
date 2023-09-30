@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 6.0-beta4 - 2023-09-26
+## 6.0-beta5 - 2023-09-26
 ### Added
 - Hide collected pets filter
 - Hide collected mounts filter
@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Sell All Junk Items button now stays on the left side of the window
+- Auctionator compatibility
 
 ## 5.1 - 2023-09-06
 ### Fixed
