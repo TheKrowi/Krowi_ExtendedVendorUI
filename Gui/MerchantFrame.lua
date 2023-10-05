@@ -156,17 +156,17 @@ function MerchantFrame_GetProductInfo(itemButton)
 end
 
 StaticPopupDialogs["CONFIRM_PURCHASE_TOKEN_ITEM"].OnAccept = function()
-	BuyMerchantItem(addon.CachedItemIndices[MerchantFrame.itemIndex], MerchantFrame.count);
+	BuyMerchantItem(MerchantFrame.itemIndex, MerchantFrame.count);
 end
 
 StaticPopupDialogs["CONFIRM_PURCHASE_NONREFUNDABLE_ITEM"].OnAccept = function()
-	BuyMerchantItem(addon.CachedItemIndices[MerchantFrame.itemIndex], MerchantFrame.count);
+	BuyMerchantItem(MerchantFrame.itemIndex, MerchantFrame.count);
 end
 
 StaticPopupDialogs["CONFIRM_PURCHASE_ITEM_DELAYED"].OnAccept = function()
-	BuyMerchantItem(addon.CachedItemIndices[MerchantFrame.itemIndex], MerchantFrame.count);
+	BuyMerchantItem(MerchantFrame.itemIndex, MerchantFrame.count);
 end
 
 StaticPopupDialogs["CONFIRM_HIGH_COST_ITEM"].OnAccept = function()
-	BuyMerchantItem(addon.CachedItemIndices[MerchantFrame.itemIndex], MerchantFrame.count);
+	BuyMerchantItem(MerchantFrame.itemIndex, MerchantFrame.count);
 end
