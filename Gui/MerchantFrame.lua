@@ -32,6 +32,16 @@ do -- [[ Set some permanent MerchantFrame changes ]]
 
 	MerchantFrameLootFilter:Hide();
 	-- MerchantFrameLootFilter:SetPoint("TOPRIGHT", MerchantFrame, -150, -28);
+
+	MerchantMoneyInset:SetPoint("TOPLEFT", MerchantFrame, "BOTTOMRIGHT", -169, 27);
+	-- <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="4"/>
+	-- MerchantExtraCurrencyInset:SetPoint("TOPRIGHT", MerchantFrame, "BOTTOMLEFT", 169, 27);
+	MerchantExtraCurrencyInset:ClearAllPoints();
+	MerchantExtraCurrencyInset:SetPoint("BOTTOMRIGHT", -167, 4);
+	MerchantExtraCurrencyInset:SetPoint("TOPLEFT", MerchantFrame, "BOTTOMRIGHT", -332, 27);
+	MerchantExtraCurrencyBg:ClearAllPoints();
+	MerchantExtraCurrencyBg:SetPoint("TOPRIGHT", MerchantExtraCurrencyInset, -3, -2);
+	MerchantExtraCurrencyBg:SetPoint("BOTTOMLEFT", MerchantExtraCurrencyInset, 3, 2);
 end
 
 hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
@@ -122,7 +132,7 @@ GetMerchantNumItems = function()
 	local numMerchantItems = origGetMerchantNumItems();
 	for i = 1, numMerchantItems, 1 do
 		local itemId = origGetMerchantItemID(i);
-		if addon.Filters:Validate(lootFilter, itemId) then
+		if itemId == nil or addon.Filters:Validate(lootFilter, itemId) then
 			tinsert(addon.CachedItemIndices, i);
 		end
 	end

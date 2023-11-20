@@ -10,4 +10,6 @@
 <ul>
 <li>Sell All Junk Items button now stays on the left side of the window</li>
 <li>Auctionator compatibility</li>
+<li>Torghast should no longer throw errors</li>
+<li>Extra currency slot is now also anchored to the right of the window</li>
 </ul>

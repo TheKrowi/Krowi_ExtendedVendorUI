@@ -248,7 +248,10 @@
         "SearchBoxTemplate_OnTextChanged",
         "KrowiEVU_SearchBox",
         "strfind",
-        "SearchBoxTemplateClearButton_OnClick"
+        "SearchBoxTemplateClearButton_OnClick",
+        "MerchantMoneyInset",
+        "MerchantExtraCurrencyInset",
+        "MerchantExtraCurrencyBg"
     ],
     "fsdeploy.nodes": [
         {

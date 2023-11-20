@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 6.0-beta7 - 2023-10-05
+## 6.0 - 2023-11-20
 ### Added
 - Hide collected pets filter
 - Hide collected mounts filter
@@ -12,6 +12,8 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Sell All Junk Items button now stays on the left side of the window
 - Auctionator compatibility
+- Torghast should no longer throw errors
+- Extra currency slot is now also anchored to the right of the window
 
 ## 5.1 - 2023-09-06
 ### Fixed
