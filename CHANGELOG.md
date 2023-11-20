@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 6.1 - 2023-11-20
+### Fixed
+- Any potential errors that would occur when using both KAF and KEVU
+
 ## 6.0 - 2023-11-20
 ### Added
 - Hide collected pets filter
