@@ -1,9 +1,15 @@
-<p><h3>Changed</h3></p>
+<p><h3>Added</h3></p>
 <ul>
-<li>Optimized exports</li>
-<li>Updated Util lib</li>
+<li>Hide collected pets filter</li>
+<li>Hide collected mounts filter</li>
+<li>Hide collected toys filter</li>
+<li>Custom filter to show a combination of items</li>
+<li>Search field</li>
 </ul>
-<p><h3>Fixed (5.1)</h3></p>
+<p><h3>Fixed</h3></p>
 <ul>
-<li>Removed the not existing UndoFrame</li>
+<li>Sell All Junk Items button now stays on the left side of the window</li>
+<li>Auctionator compatibility</li>
+<li>Torghast should no longer throw errors</li>
+<li>Extra currency slot is now also anchored to the right of the window</li>
 </ul>
