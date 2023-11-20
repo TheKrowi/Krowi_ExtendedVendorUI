@@ -17,3 +17,7 @@
 <ul>
 <li>Any potential errors that would occur when using both KAF and KEVU</li>
 </ul>
+<p><h3>Added (6.2)</h3></p>
+<ul>
+<li>CIMI compatibility</li>
+</ul>

@@ -1,7 +1,8 @@
-local addonName, addon = ...;
-local L = LibStub(addon.Libs.AceLocale):NewLocale(addonName, "enUS", true, true);
-
+local _, addon = ...;
+local L = addon.Localization.GetDefaultLocale();
 addon.L = L;
+
+addon.Plugins:LoadLocalization(L);
 
 -- [[ https://legacy.curseforge.com/wow/addons/krowi-extended-vendor-ui/localization ]] --
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --

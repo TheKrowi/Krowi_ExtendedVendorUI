@@ -13,3 +13,6 @@
 
 ### Fixed (6.1)
 - Any potential errors that would occur when using both KAF and KEVU
+
+### Added (6.2)
+- CIMI compatibility
