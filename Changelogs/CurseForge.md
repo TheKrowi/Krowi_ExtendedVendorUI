@@ -13,3 +13,7 @@
 <li>Torghast should no longer throw errors</li>
 <li>Extra currency slot is now also anchored to the right of the window</li>
 </ul>
+<p><h3>Fixed (6.1)</h3></p>
+<ul>
+<li>Any potential errors that would occur when using both KAF and KEVU</li>
+</ul>
