@@ -17,7 +17,7 @@ loadHelper:RegisterEvent("ADDON_LOADED");
 function loadHelper:OnEvent(event, arg1, arg2)
     if event == "ADDON_LOADED" then
         if arg1 == addonName then -- This always needs to load
-            addon.Options:Load();
+            addon.Options:Load(true);
 
             addon.Gui.MerchantItemsContainer:LoadMaxNumItemSlots();
 
