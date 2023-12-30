@@ -16,3 +16,6 @@
 
 ### Added (6.2)
 - CIMI compatibility
+
+### Fixed (6.2)
+- Alt currencies should now have the correct tooltip

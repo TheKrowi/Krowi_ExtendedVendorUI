@@ -21,3 +21,7 @@
 <ul>
 <li>CIMI compatibility</li>
 </ul>
+<p><h3>Fixed (6.2)</h3></p>
+<ul>
+<li>Alt currencies should now have the correct tooltip</li>
+</ul>

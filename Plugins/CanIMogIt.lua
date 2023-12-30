@@ -5,11 +5,13 @@ local canIMogIt = plugins.CanIMogIt;
 tinsert(plugins.Plugins, canIMogIt);
 
 function canIMogIt.Load()
-    hooksecurefunc("MerchantFrame_SetFilter", function()
-        C_Timer.After(0.1, function()
-            MerchantFrame_CIMIOnClick();
+    if MerchantFrame_CIMIOnClick then
+        hooksecurefunc("MerchantFrame_SetFilter", function()
+            C_Timer.After(0.1, function()
+                MerchantFrame_CIMIOnClick();
+            end);
         end);
-    end);
+    end
 end
 
 function canIMogIt.InjectOptions()

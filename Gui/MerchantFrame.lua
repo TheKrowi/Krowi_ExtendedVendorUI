@@ -94,6 +94,24 @@ local function GetCachedIndex(index)
 	return addon.CachedItemIndices[index] or 0;
 end
 
+hooksecurefunc("MerchantFrame_UpdateAltCurrency", function(index, indexOnPage, canAfford)
+	local itemCount = GetMerchantItemCostInfo(index);
+	if itemCount <= 0 then
+		return;
+	end
+
+	local frameName = "MerchantItem" .. indexOnPage .. "AltCurrencyFrame";
+	local usedCurrencies = 0;
+	for i = 1, MAX_ITEM_COST do
+		local itemTexture = GetMerchantItemCostItem(index, i);
+		if itemTexture then
+			usedCurrencies = usedCurrencies + 1;
+			local button = _G[frameName.."Item"..usedCurrencies];
+			button.index = GetCachedIndex(index);
+		end
+	end
+end);
+
 local origGetMerchantItemInfo = GetMerchantItemInfo;
 GetMerchantItemInfo = function(index)
 	return origGetMerchantItemInfo(GetCachedIndex(index));
