@@ -106,7 +106,7 @@ hooksecurefunc("MerchantFrame_UpdateAltCurrency", function(index, indexOnPage, c
 		local itemTexture = GetMerchantItemCostItem(index, i);
 		if itemTexture then
 			usedCurrencies = usedCurrencies + 1;
-			local button = _G[frameName.."Item"..usedCurrencies];
+			local button = _G[frameName .. "Item" .. usedCurrencies];
 			button.index = GetCachedIndex(index);
 		end
 	end

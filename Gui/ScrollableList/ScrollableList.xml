@@ -1,0 +1,28 @@
+<Ui>
+    <Script file="ScrollableListMixin.lua"/>
+
+    <Frame name="KrowiV_ScrollableList_Template" mixin="KrowiV_ScrollableListMixin" virtual="true">
+        <Frames>
+            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList"/>
+            <EventFrame parentKey="ScrollBar" inherits="WowTrimScrollBar">
+                <Anchors>
+                    <Anchor point="TOPRIGHT"/>
+                    <Anchor point="BOTTOMRIGHT"/>
+                </Anchors>
+            </EventFrame>
+            <EditBox name="$parentSearchBox" inherits="SearchBoxTemplate" mixin="KrowiV_ScrollableListMixin" parentKey="SearchBox" letters="40">
+                <Size x="145" y="20"/>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="0" y="0"/>
+                </Anchors>
+                <Scripts>
+                    <OnTextChanged method="OnSearchTextChanged"/>
+                    <OnHide method="ClearSearch"/>
+                </Scripts>
+            </EditBox>
+        </Frames>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+</Ui>

@@ -15,18 +15,18 @@ merchantItemsContainer.DefaultBuybackInfoNumColumns = 2;
 merchantItemsContainer.ItemWidth, merchantItemsContainer.ItemHeight = MerchantItem1:GetSize();
 
 -- Choosing to overwrite this function as not to mess with the GameTooltip's SetMerchantItem
-local function ItemSlotOnEnter(button)
-	GameTooltip:SetOwner(button, "ANCHOR_RIGHT");
+local function ItemSlotOnEnter(frame)
+	GameTooltip:SetOwner(frame, "ANCHOR_RIGHT");
 	if MerchantFrame.selectedTab == 1 then
-		GameTooltip:SetMerchantItem(addon.CachedItemIndices[button:GetID()]);
+		GameTooltip:SetMerchantItem(addon.CachedItemIndices[frame:GetID()]);
 		GameTooltip_ShowCompareItem(GameTooltip);
-		MerchantFrame.itemHover = button:GetID();
+		MerchantFrame.itemHover = frame:GetID();
 	else
-		GameTooltip:SetBuybackItem(button:GetID());
-		if IsModifiedClick("DRESSUP") and button.hasItem then
+		GameTooltip:SetBuybackItem(frame:GetID());
+		if IsModifiedClick("DRESSUP") and frame.hasItem then
 			ShowInspectCursor();
 		else
-			ShowBuybackSellCursor(button:GetID());
+			ShowBuybackSellCursor(frame:GetID());
 		end
 	end
 end
@@ -36,10 +36,34 @@ local function SetOnEnter(frame)
     frame.UpdateTooltip = ItemSlotOnEnter;
 end
 
+local shoppinglist = {};
+
+local function SetOnClick(frame)
+    frame:HookScript("OnClick", function(self, button)
+        if not IsModifiedClick("ALT") then
+            return;
+        end
+
+        for i = 1, MAX_ITEM_COST do
+            local itemTexture, itemValue, itemLink = GetMerchantItemCostItem(self:GetID(), i);
+            if itemTexture then
+                print(itemTexture, itemValue, itemLink)
+                shoppinglist[tostring(itemLink)] = shoppinglist[tostring(itemLink)] and shoppinglist[tostring(itemLink)] + itemValue or itemValue;
+            end
+        end
+
+        print("Shoppinglist content:")
+        for key, value in pairs(shoppinglist) do
+            print(key, value);
+        end
+    end);
+end
+
 local infoNumRows, infoNumColumns = 0, 0;
 local itemSlotTable = {};
 for i = 1, 12, 1 do
     SetOnEnter(_G["MerchantItem" .. i].ItemButton);
+    SetOnClick(_G["MerchantItem" .. i].ItemButton);
 	tinsert(itemSlotTable, _G["MerchantItem" .. i]);
 end
 
@@ -55,6 +79,7 @@ local function GetItemSlot(index)
 	end
 	local frame = CreateFrame("Frame", "MerchantItem" .. index, MerchantFrame, "MerchantItemTemplate");
     SetOnEnter(frame.ItemButton);
+    SetOnClick(frame.ItemButton);
 	itemSlotTable[index] = frame;
 	return frame;
 end

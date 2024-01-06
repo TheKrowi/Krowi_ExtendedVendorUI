@@ -27,6 +27,14 @@ function loadHelper:OnEvent(event, arg1, arg2)
             addon.Icon:Load();
 
             addon.Api.Load();
+
+            -- local frame = CreateFrame("Frame", "Test", UIParent, "KrowiV_SingleItemListFrame_Template");
+            -- -- frame:SetResizable(true);
+            -- -- frame:SetScript("OnDragStart", function(self) self:StartSizing() end);
+            -- -- frame:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end);
+            -- frame:SetSize(250,250);
+            -- frame:SetPoint("CENTER");
+            -- frame:Show();
         end
     end
 end
