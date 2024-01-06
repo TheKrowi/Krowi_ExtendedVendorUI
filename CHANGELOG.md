@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 6.2 - 2023-11-21
+## 6.2 - 2024-01-06
 ### Added
 - CIMI compatibility
 
