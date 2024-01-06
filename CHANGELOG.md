@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 6.2 - 2024-01-06
+### Added
+- CIMI compatibility
+
+### Fixed
+- Alt currencies should now have the correct tooltip
+- Check if an item is a pet is now more reliable
+
 ## 6.1 - 2023-11-20
 ### Fixed
 - Any potential errors that would occur when using both KAF and KEVU

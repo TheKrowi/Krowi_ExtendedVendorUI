@@ -17,3 +17,12 @@
 <ul>
 <li>Any potential errors that would occur when using both KAF and KEVU</li>
 </ul>
+<p><h3>Added (6.2)</h3></p>
+<ul>
+<li>CIMI compatibility</li>
+</ul>
+<p><h3>Fixed (6.2)</h3></p>
+<ul>
+<li>Alt currencies should now have the correct tooltip</li>
+<li>Check if an item is a pet is now more reliable</li>
+</ul>

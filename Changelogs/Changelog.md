@@ -13,3 +13,10 @@
 
 ### Fixed (6.1)
 - Any potential errors that would occur when using both KAF and KEVU
+
+### Added (6.2)
+- CIMI compatibility
+
+### Fixed (6.2)
+- Alt currencies should now have the correct tooltip
+- Check if an item is a pet is now more reliable

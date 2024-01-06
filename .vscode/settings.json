@@ -251,7 +251,9 @@
         "SearchBoxTemplateClearButton_OnClick",
         "MerchantMoneyInset",
         "MerchantExtraCurrencyInset",
-        "MerchantExtraCurrencyBg"
+        "MerchantExtraCurrencyBg",
+        "IsAddOnLoaded",
+        "MerchantFrame_CIMIOnClick"
     ],
     "fsdeploy.nodes": [
         {

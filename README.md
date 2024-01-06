@@ -8,16 +8,16 @@
 <a href='https://ko-fi.com/E1E6G64LS' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi2.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
 ## Locations
-<a href="https://www.curseforge.com/wow/addons/krowi-merchant-frame-extended" alt="Curseforge">
-  <img src="https://img.shields.io/badge/Curseforge-Krowi's%20Merchant%20Frame%20Extended-orange" />
+<a href="https://www.curseforge.com/wow/addons/krowi-extended-vendor-ui" alt="Curseforge">
+  <img src="https://img.shields.io/badge/Curseforge-Krowi's%20Extended%20Vendor%20UI-orange" />
 </a>
 <br>
-<a href="https://addons.wago.io/addons/krowi-merchant-frame-extended" alt="Wago.io">
-  <img src="https://img.shields.io/badge/Wago.io-Krowi's%20Merchant%20Frame%20Extended-red" />
+<a href="https://addons.wago.io/addons/krowi-extended-vendor-ui" alt="Wago.io">
+  <img src="https://img.shields.io/badge/Wago.io-Krowi's%20Extended%20Vendor%20UI-red" />
 </a>
 <br>
 <a href="https://www.wowinterface.com/downloads/info26611-KrowisMerchantFrameExtended" alt="WowInterface">
-  <img src="https://img.shields.io/badge/WowInterface-Krowi's%20Merchant%20Frame%20Extended-yellow" />
+  <img src="https://img.shields.io/badge/WowInterface-Krowi's%20Extended%20Vendor%20UI-yellow" />
 </a>
 
 [Click here for full description](Descriptions/Description.md)
