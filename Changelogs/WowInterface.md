@@ -28,4 +28,5 @@
 [B]Fixed (6.2)[/B]
 [LIST]
 [*]Alt currencies should now have the correct tooltip
+[*]Check if an item is a pet is now more reliable
 [/LIST]

@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Alt currencies should now have the correct tooltip
+- Check if an item is a pet is now more reliable
 
 ## 6.1 - 2023-11-20
 ### Fixed

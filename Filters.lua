@@ -77,7 +77,12 @@ do -- Pets
 
 	function filters.IsPet(itemId)
 		local classId, subclassId = select(12, GetItemInfo(itemId));
-		return classId == Enum.ItemClass.Miscellaneous and subclassId == Enum.ItemMiscellaneousSubclass.CompanionPet;
+		if classId ~= Enum.ItemClass.Miscellaneous or subclassId ~= Enum.ItemMiscellaneousSubclass.CompanionPet then
+			return false;
+		end
+
+		local name = C_PetJournal.GetPetInfoByItemID(itemId);
+		return name ~= nil;
 	end
 
 	function filters.IsPetCollected(itemId)
