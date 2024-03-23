@@ -171,7 +171,7 @@ end
 do -- Search
 	function filters:ValidateSearch(itemId)
 		local name = GetItemInfo(itemId);
-		if strfind(name:lower(), KrowiEVU_SearchBox:GetText():lower(), 1, true) then
+		if name and strfind(name:lower(), KrowiEVU_SearchBox:GetText():lower(), 1, true) then
 			return true;
 		end
 		return false;
