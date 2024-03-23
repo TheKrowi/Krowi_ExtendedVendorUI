@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 6.3 - 2024-03-23
+### Fixed
+- NPCs that have items with incorrect data should no longer throw errors
+
 ## 6.2 - 2024-01-06
 ### Added
 - CIMI compatibility

@@ -26,3 +26,7 @@
 <li>Alt currencies should now have the correct tooltip</li>
 <li>Check if an item is a pet is now more reliable</li>
 </ul>
+<p><h3>Fixed (6.3)</h3></p>
+<ul>
+<li>NPCs that have items with incorrect data should no longer throw errors</li>
+</ul>
