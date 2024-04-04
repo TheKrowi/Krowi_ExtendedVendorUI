@@ -6,6 +6,7 @@ _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_NEW_RANGE"] = 100;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"] = 101;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"] = 102;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"] = 103;
+_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG"] = 104;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"] = 200;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_SEARCH"] = 201;
 
@@ -14,10 +15,12 @@ local defaults = {
 		HideCollectedPets = false,
 		HideCollectedMounts = false,
 		HideCollectedToys = false,
+		HideCollectedTransmog = false,
 		Custom = {
 			Pets = true,
 			Mounts = true,
 			Toys = true,
+			Transmog = true,
 			Other = true
 		}
 	}
@@ -43,6 +46,8 @@ function filters:Validate(lootFilter, itemId)
 		return self:ValidateMountsOnly(itemId);
     elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"] then
 		return self:ValidateToysOnly(itemId);
+    elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG"] then
+		return self:ValidateTransmogOnly(itemId);
     elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"] then
 		return self:ValidateCustom(itemId);
     elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_SEARCH"] then
@@ -58,6 +63,10 @@ function filters:Validate(lootFilter, itemId)
 
 		if self.IsToy(itemId) and addon.Filters.db.profile.HideCollectedToys then
 			return not self.IsToyCollected(itemId);
+		end
+		
+		if self.IsTransmog(itemId) and addon.Filters.db.profile.HideCollectedTransmog then
+			return not self.IsTransmogCollected(itemId);
 		end
 	end
 
@@ -132,6 +141,27 @@ do -- Toys
 	end
 end
 
+do -- Transmog
+	function filters:ValidateTransmogOnly(itemId)
+		if not self.IsTransmog(itemId) then
+			return false;
+		end
+		if addon.Filters.db.profile.HideCollectedTransmog then
+			return not self.IsTransmogCollected(itemId);
+		end
+		return true;
+	end
+
+	function filters.IsTransmog(itemId)
+		itemId = C_TransmogCollection.GetItemInfo(itemId);
+		return itemId ~= nil;
+	end
+
+	function filters.IsTransmogCollected(itemId)
+		return C_TransmogCollection.PlayerHasTransmog(itemId);
+	end
+end
+
 do -- Custom
 	function filters:ValidateCustom(itemId)
 		if self.IsPet(itemId) then
@@ -158,6 +188,16 @@ do -- Custom
 			if addon.Filters.db.profile.Custom.Toys then
 				if addon.Filters.db.profile.HideCollectedToys then
 					return not self.IsToyCollected(itemId);
+				end
+				return true;
+			end
+			return false;
+		end
+
+		if self.IsTransmog(itemId) then
+			if addon.Filters.db.profile.Custom.Transmog then
+				if addon.Filters.db.profile.HideCollectedTransmog then
+					return not self.IsTransmogCollected(itemId);
 				end
 				return true;
 			end

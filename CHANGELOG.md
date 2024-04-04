@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 7.0 - 2024-04-04
+### Added
+- Transmog filters
+
 ## 6.3 - 2024-03-23
 ### Fixed
 - NPCs that have items with incorrect data should no longer throw errors
