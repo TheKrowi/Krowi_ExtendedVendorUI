@@ -4,25 +4,27 @@ local merchantItemsContainer = addon.Gui.MerchantItemsContainer;
 local originalWidth, originalHeight = MerchantFrame:GetSize();
 
 do -- [[ Set some permanent MerchantFrame changes ]]
+	local tex = addon.Util.IsMainline and "Interface/MerchantFrame/UI-Merchant-BottomBorder" or "Interface/AddOns/Krowi_ExtendedVendorUI/Media/UI-Merchant-BottomBorder";
+
 	MerchantFrameBottomLeftBorder:SetSize(256, 61);
-	MerchantFrameBottomLeftBorder:SetTexture("Interface/MerchantFrame/Merchant");
+	MerchantFrameBottomLeftBorder:SetTexture(tex);
 	MerchantFrameBottomLeftBorder:SetTexCoord(0.001953125, 0.5, 0.00390625, 0.2421875);
 	MerchantFrameBottomLeftBorder:SetPoint("BOTTOMLEFT", MerchantFrame, "BOTTOMLEFT", 1, 26);
 
 	local bottomExtensionRightBorder = MerchantFrame:CreateTexture("KrowiEVU_BottomExtensionRightBorder");
 	bottomExtensionRightBorder:SetSize(78, 61);
-	bottomExtensionRightBorder:SetTexture("Interface/MerchantFrame/Merchant");
+	bottomExtensionRightBorder:SetTexture(tex);
 	bottomExtensionRightBorder:SetTexCoord(0.5, 0.650390625, 0.00390625, 0.2421875);
 	bottomExtensionRightBorder:SetPoint("BOTTOMRIGHT", MerchantFrame, "BOTTOMRIGHT", -1, 26);
 
 	local bottomExtensionLeftBorder = MerchantFrame:CreateTexture("KrowiEVU_BottomExtensionLeftBorder");
 	bottomExtensionLeftBorder:SetSize(78, 61);
-	bottomExtensionLeftBorder:SetTexture("Interface/MerchantFrame/Merchant");
+	bottomExtensionLeftBorder:SetTexture(tex);
 	bottomExtensionLeftBorder:SetTexCoord(0.240234375, 0.390625, 0.00390625, 0.2421875);
 	bottomExtensionLeftBorder:SetPoint("TOPLEFT", MerchantFrameBottomLeftBorder, "TOPRIGHT", 0, 0);
 
 	local bottomExtensionMidBorder = MerchantFrame:CreateTexture("KrowiEVU_BottomExtensionMidBorder");
-	bottomExtensionMidBorder:SetTexture("Interface/MerchantFrame/Merchant");
+	bottomExtensionMidBorder:SetTexture(tex);
 	bottomExtensionMidBorder:SetTexCoord(0.01953125, 0.373046875, 0.00390625, 0.2421875);
 	bottomExtensionMidBorder:SetPoint("TOPLEFT", bottomExtensionLeftBorder, "TOPRIGHT", 0, 0);
 	bottomExtensionMidBorder:SetPoint("BOTTOMRIGHT", bottomExtensionRightBorder, "BOTTOMLEFT", 0, 0);
@@ -30,18 +32,22 @@ do -- [[ Set some permanent MerchantFrame changes ]]
 	MerchantPrevPageButton:SetPoint("BOTTOMLEFT", MerchantFrameBottomLeftBorder, "TOPLEFT", 8, -5);
 	MerchantNextPageButton:SetPoint("BOTTOMRIGHT", KrowiEVU_BottomExtensionRightBorder, "TOPRIGHT", -7, -5);
 
-	MerchantFrameLootFilter:Hide();
-	-- MerchantFrameLootFilter:SetPoint("TOPRIGHT", MerchantFrame, -150, -28);
+	if MerchantFrameLootFilter then
+		MerchantFrameLootFilter:Hide();
+		-- MerchantFrameLootFilter:SetPoint("TOPRIGHT", MerchantFrame, -150, -28);
+	end
 
 	MerchantMoneyInset:SetPoint("TOPLEFT", MerchantFrame, "BOTTOMRIGHT", -169, 27);
-	-- <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="4"/>
-	-- MerchantExtraCurrencyInset:SetPoint("TOPRIGHT", MerchantFrame, "BOTTOMLEFT", 169, 27);
-	MerchantExtraCurrencyInset:ClearAllPoints();
-	MerchantExtraCurrencyInset:SetPoint("BOTTOMRIGHT", -167, 4);
-	MerchantExtraCurrencyInset:SetPoint("TOPLEFT", MerchantFrame, "BOTTOMRIGHT", -332, 27);
-	MerchantExtraCurrencyBg:ClearAllPoints();
-	MerchantExtraCurrencyBg:SetPoint("TOPRIGHT", MerchantExtraCurrencyInset, -3, -2);
-	MerchantExtraCurrencyBg:SetPoint("BOTTOMLEFT", MerchantExtraCurrencyInset, 3, 2);
+	if MerchantExtraCurrencyInset then
+		-- <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="4"/>
+		-- MerchantExtraCurrencyInset:SetPoint("TOPRIGHT", MerchantFrame, "BOTTOMLEFT", 169, 27);
+		MerchantExtraCurrencyInset:ClearAllPoints();
+		MerchantExtraCurrencyInset:SetPoint("BOTTOMRIGHT", -167, 4);
+		MerchantExtraCurrencyInset:SetPoint("TOPLEFT", MerchantFrame, "BOTTOMRIGHT", -332, 27);
+		MerchantExtraCurrencyBg:ClearAllPoints();
+		MerchantExtraCurrencyBg:SetPoint("TOPRIGHT", MerchantExtraCurrencyInset, -3, -2);
+		MerchantExtraCurrencyBg:SetPoint("BOTTOMLEFT", MerchantExtraCurrencyInset, 3, 2);
+	end
 end
 
 hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
@@ -183,18 +189,26 @@ function MerchantFrame_GetProductInfo(itemButton)
 	return productInfo, specs;
 end
 
-StaticPopupDialogs["CONFIRM_PURCHASE_TOKEN_ITEM"].OnAccept = function()
-	BuyMerchantItem(MerchantFrame.itemIndex, MerchantFrame.count);
+if StaticPopupDialogs["CONFIRM_PURCHASE_TOKEN_ITEM"] then
+	StaticPopupDialogs["CONFIRM_PURCHASE_TOKEN_ITEM"].OnAccept = function()
+		BuyMerchantItem(MerchantFrame.itemIndex, MerchantFrame.count);
+	end
 end
 
-StaticPopupDialogs["CONFIRM_PURCHASE_NONREFUNDABLE_ITEM"].OnAccept = function()
-	BuyMerchantItem(MerchantFrame.itemIndex, MerchantFrame.count);
+if StaticPopupDialogs["CONFIRM_PURCHASE_NONREFUNDABLE_ITEM"] then
+	StaticPopupDialogs["CONFIRM_PURCHASE_NONREFUNDABLE_ITEM"].OnAccept = function()
+		BuyMerchantItem(MerchantFrame.itemIndex, MerchantFrame.count);
+	end
 end
 
-StaticPopupDialogs["CONFIRM_PURCHASE_ITEM_DELAYED"].OnAccept = function()
-	BuyMerchantItem(MerchantFrame.itemIndex, MerchantFrame.count);
+if StaticPopupDialogs["CONFIRM_PURCHASE_ITEM_DELAYED"] then
+	StaticPopupDialogs["CONFIRM_PURCHASE_ITEM_DELAYED"].OnAccept = function()
+		BuyMerchantItem(MerchantFrame.itemIndex, MerchantFrame.count);
+	end
 end
 
-StaticPopupDialogs["CONFIRM_HIGH_COST_ITEM"].OnAccept = function()
-	BuyMerchantItem(MerchantFrame.itemIndex, MerchantFrame.count);
+if StaticPopupDialogs["CONFIRM_HIGH_COST_ITEM"] then
+	StaticPopupDialogs["CONFIRM_HIGH_COST_ITEM"].OnAccept = function()
+		BuyMerchantItem(MerchantFrame.itemIndex, MerchantFrame.count);
+	end
 end

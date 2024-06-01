@@ -26,6 +26,17 @@ local defaults = {
 	}
 };
 
+local merchantFilter;
+if addon.Util.IsCataClassic then
+	function GetMerchantFilter()
+		return merchantFilter;
+	end
+
+	function MerchantFrame_SetFilter(_, newMerchantFilter)
+		merchantFilter = newMerchantFilter;
+	end
+end
+
 function filters:RefreshFilters()
     -- for t, _ in next, addon.Tabs do
     --     addon.Tabs[t].Filters = self.db.profile.Tabs[t];

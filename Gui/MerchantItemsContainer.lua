@@ -88,6 +88,24 @@ function merchantItemsContainer:PrepareInfo()
 	end
 end
 
+if addon.Util.IsCataClassic then
+    function MerchantFrame_UpdateFilterString()
+    end
+
+    function MerchantFrame_Update()
+        if ( MerchantFrame.lastTab ~= MerchantFrame.selectedTab ) then
+            MerchantFrame_CloseStackSplitFrame();
+            MerchantFrame.lastTab = MerchantFrame.selectedTab;
+        end
+        MerchantFrame_UpdateFilterString();
+        if ( MerchantFrame.selectedTab == 1 ) then
+            MerchantFrame_UpdateMerchantInfo();
+        else
+            MerchantFrame_UpdateBuybackInfo();
+        end
+    end
+end
+
 hooksecurefunc("MerchantFrame_UpdateFilterString", function()
 	merchantItemsContainer:PrepareInfo();
 end);
