@@ -1,4 +1,4 @@
-[B]Added[/B]
+[B]Fixed[/B]
 [LIST]
-[*]Transmog filters
+[*]Several bugs due to The War Within changes
 [/LIST]

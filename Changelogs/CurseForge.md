@@ -1,4 +1,4 @@
-<p><h3>Added</h3></p>
+<p><h3>Fixed</h3></p>
 <ul>
-<li>Transmog filters</li>
+<li>Several bugs due to The War Within changes</li>
 </ul>

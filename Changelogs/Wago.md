@@ -1,2 +1,2 @@
-### Added
-- Transmog filters
+### Fixed
+- Several bugs due to The War Within changes
