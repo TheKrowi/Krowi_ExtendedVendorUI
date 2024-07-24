@@ -104,6 +104,8 @@ if addon.Util.IsCataClassic then
             MerchantFrame_UpdateBuybackInfo();
         end
     end
+elseif not MerchantFrame_UpdateFilterString then
+    MerchantFrame_UpdateFilterString = MerchantFrame.FilterDropdown.Update;
 end
 
 hooksecurefunc("MerchantFrame_UpdateFilterString", function()
@@ -147,7 +149,7 @@ end
 function merchantItemsContainer:DrawMerchantBuyBackItem(show)
     if show then
         MerchantBuyBackItem:ClearAllPoints();
-        MerchantBuyBackItem:SetPoint("BOTTOMLEFT", MerchantFrameBottomLeftBorder, "BOTTOMLEFT", 205, 7);
+        MerchantBuyBackItem:SetPoint("BOTTOMLEFT", MerchantFrameBottomLeftBorder, "BOTTOMLEFT", addon.Util.IsMainline and 205 or 175, 7);
 	    MerchantBuyBackItem:Show();
     else
         MerchantBuyBackItem:Hide();

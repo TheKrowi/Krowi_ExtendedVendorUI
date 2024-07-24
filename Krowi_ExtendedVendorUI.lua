@@ -1,12 +1,6 @@
 -- [[ Namespaces ]] --
 local addonName, addon = ...;
 
--- [[ Version data ]] --
-local version = (GetBuildInfo());
-local major = string.match(version, "(%d+)%.(%d+)%.(%d+)(%w?)");
-addon.IsWrathClassic = major == "3";
-addon.IsDragonflightRetail = major == "10";
-
 -- [[ Ace ]] --
 addon.L = LibStub(addon.Libs.AceLocale):GetLocale(addonName);
 
@@ -31,3 +25,12 @@ function loadHelper:OnEvent(event, arg1, arg2)
     end
 end
 loadHelper:SetScript("OnEvent", loadHelper.OnEvent);
+
+if not MerchantFrame_SetFilter then
+    MerchantFrame_SetFilter = function(filter)
+        SetMerchantFilter(filter);
+
+        MerchantFrame.page = 1;
+        MerchantFrame_Update();
+    end
+end

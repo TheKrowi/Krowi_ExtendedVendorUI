@@ -96,7 +96,7 @@ do -- Pets
 	end
 
 	function filters.IsPet(itemId)
-		local classId, subclassId = select(12, GetItemInfo(itemId));
+		local classId, subclassId = select(12, C_Item.GetItemInfo(itemId));
 		if classId ~= Enum.ItemClass.Miscellaneous or subclassId ~= Enum.ItemMiscellaneousSubclass.CompanionPet then
 			return false;
 		end
@@ -122,7 +122,7 @@ do -- Mounts
 	end
 
 	function filters.IsMount(itemId)
-		local classId, subclassId = select(12, GetItemInfo(itemId));
+		local classId, subclassId = select(12, C_Item.GetItemInfo(itemId));
 		return classId == Enum.ItemClass.Miscellaneous and subclassId == Enum.ItemMiscellaneousSubclass.Mount;
 	end
 
@@ -221,7 +221,7 @@ end
 
 do -- Search
 	function filters:ValidateSearch(itemId)
-		local name = GetItemInfo(itemId);
+		local name = C_Item.GetItemInfo(itemId);
 		if name and strfind(name:lower(), KrowiEVU_SearchBox:GetText():lower(), 1, true) then
 			return true;
 		end

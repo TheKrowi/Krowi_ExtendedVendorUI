@@ -254,7 +254,8 @@
         "MerchantExtraCurrencyBg",
         "IsAddOnLoaded",
         "MerchantFrame_CIMIOnClick",
-        "C_TransmogCollection"
+        "C_TransmogCollection",
+        "C_AddOns"
     ],
     "fsdeploy.nodes": [
         {
@@ -273,7 +274,7 @@
         },
         {
             "source":"E:\\World of Warcraft Addon Development\\Krowi_ExtendedVendorUI",
-            "target":"F:\\World of Warcraft\\_classic_ptr_\\Interface\\AddOns\\Krowi_ExtendedVendorUI",
+            "target":"F:\\World of Warcraft\\_beta_\\Interface\\AddOns\\Krowi_ExtendedVendorUI",
             "include":"**/*.{lua,toc,blp,tga,xml,md}",
             "exclude":"**/{.git,.github,.vscode,Changelogs,Descriptions}/**",
             "deleteTargetOnDeploy": true

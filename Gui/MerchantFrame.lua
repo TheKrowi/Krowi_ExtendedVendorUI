@@ -4,28 +4,42 @@ local merchantItemsContainer = addon.Gui.MerchantItemsContainer;
 local originalWidth, originalHeight = MerchantFrame:GetSize();
 
 do -- [[ Set some permanent MerchantFrame changes ]]
-	local tex = addon.Util.IsMainline and "Interface/MerchantFrame/UI-Merchant-BottomBorder" or "Interface/AddOns/Krowi_ExtendedVendorUI/Media/UI-Merchant-BottomBorder";
+	local tex = addon.Util.IsMainline and "Interface/MerchantFrame/Merchant" or "Interface/MerchantFrame/UI-Merchant-BottomBorder";
 
-	MerchantFrameBottomLeftBorder:SetSize(256, 61);
-	MerchantFrameBottomLeftBorder:SetTexture(tex);
-	MerchantFrameBottomLeftBorder:SetTexCoord(0.001953125, 0.5, 0.00390625, 0.2421875);
-	MerchantFrameBottomLeftBorder:SetPoint("BOTTOMLEFT", MerchantFrame, "BOTTOMLEFT", 1, 26);
+	if addon.Util.IsMainline then
+		MerchantFrameBottomLeftBorder:SetSize(256, 61);
+		MerchantFrameBottomLeftBorder:SetTexture(tex);
+		MerchantFrameBottomLeftBorder:SetTexCoord(0.001953125, 0.5, 0.00390625, 0.2421875);
+		MerchantFrameBottomLeftBorder:SetPoint("BOTTOMLEFT", MerchantFrame, "BOTTOMLEFT", 1, 26);
+	end
 
 	local bottomExtensionRightBorder = MerchantFrame:CreateTexture("KrowiEVU_BottomExtensionRightBorder");
 	bottomExtensionRightBorder:SetSize(78, 61);
 	bottomExtensionRightBorder:SetTexture(tex);
-	bottomExtensionRightBorder:SetTexCoord(0.5, 0.650390625, 0.00390625, 0.2421875);
-	bottomExtensionRightBorder:SetPoint("BOTTOMRIGHT", MerchantFrame, "BOTTOMRIGHT", -1, 26);
+	bottomExtensionRightBorder:SetTexCoord(
+		addon.Util.IsMainline and 0.5 or 0,
+		addon.Util.IsMainline and 0.650390625 or 0.296875,
+		addon.Util.IsMainline and 0.00390625 or 0.4765625,
+		addon.Util.IsMainline and 0.2421875 or 0.953125);
+	bottomExtensionRightBorder:SetPoint("BOTTOMRIGHT", MerchantFrame, "BOTTOMRIGHT", addon.Util.IsMainline and -1 or -3, 26);
 
 	local bottomExtensionLeftBorder = MerchantFrame:CreateTexture("KrowiEVU_BottomExtensionLeftBorder");
-	bottomExtensionLeftBorder:SetSize(78, 61);
+	bottomExtensionLeftBorder:SetSize(addon.Util.IsMainline and 78 or 83, 61);
 	bottomExtensionLeftBorder:SetTexture(tex);
-	bottomExtensionLeftBorder:SetTexCoord(0.240234375, 0.390625, 0.00390625, 0.2421875);
+	bottomExtensionLeftBorder:SetTexCoord(
+		addon.Util.IsMainline and 0.240234375 or 90 / 256,
+		addon.Util.IsMainline and 0.390625 or 173 / 256,
+		addon.Util.IsMainline and 0.00390625 or 0,
+		addon.Util.IsMainline and 0.2421875 or 0.4765625);
 	bottomExtensionLeftBorder:SetPoint("TOPLEFT", MerchantFrameBottomLeftBorder, "TOPRIGHT", 0, 0);
 
 	local bottomExtensionMidBorder = MerchantFrame:CreateTexture("KrowiEVU_BottomExtensionMidBorder");
 	bottomExtensionMidBorder:SetTexture(tex);
-	bottomExtensionMidBorder:SetTexCoord(0.01953125, 0.373046875, 0.00390625, 0.2421875);
+	bottomExtensionMidBorder:SetTexCoord(
+		addon.Util.IsMainline and 0.01953125 or 8 / 256,
+		addon.Util.IsMainline and 0.373046875 or 158 / 256,
+		addon.Util.IsMainline and 0.00390625 or 0,
+		addon.Util.IsMainline and 0.2421875 or 0.4765625);
 	bottomExtensionMidBorder:SetPoint("TOPLEFT", bottomExtensionLeftBorder, "TOPRIGHT", 0, 0);
 	bottomExtensionMidBorder:SetPoint("BOTTOMRIGHT", bottomExtensionRightBorder, "BOTTOMLEFT", 0, 0);
 
@@ -79,6 +93,9 @@ hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
 		KrowiEVU_SearchBox:SetPoint("TOPRIGHT", KrowiEVU_FilterButton, "BOTTOMRIGHT", 0, 2);
 	end
 	KrowiEVU_BottomExtensionRightBorder:Show();
+	if not addon.Util.IsMainline then
+		MerchantFrameBottomRightBorder:Hide();
+	end
 end);
 
 hooksecurefunc("MerchantFrame_UpdateBuybackInfo", function()
