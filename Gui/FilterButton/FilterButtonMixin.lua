@@ -91,6 +91,7 @@ function KrowiEVU_FilterButtonMixin:BuildMenu()
 	self:AddLootFilterRadioButton(menu, menu, addon.L["Pets"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"]);
 	self:AddLootFilterRadioButton(menu, menu, addon.L["Mounts"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"]);
 	self:AddLootFilterRadioButton(menu, menu, addon.L["Toys"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"]);
+	self:AddLootFilterRadioButton(menu, menu, addon.L["Transmog"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG"]);
 
 	local custom = menuItem:New({
 		Text = addon.L["Custom"],
@@ -108,6 +109,7 @@ function KrowiEVU_FilterButtonMixin:BuildMenu()
 	self:AddCheckBox(custom, addon.L["Pets"], {"Custom", "Pets"});
 	self:AddCheckBox(custom, addon.L["Mounts"], {"Custom", "Mounts"});
 	self:AddCheckBox(custom, addon.L["Toys"], {"Custom", "Toys"});
+	self:AddCheckBox(custom, addon.L["Transmog"], {"Custom", "Transmog"});
 	self:AddCheckBox(custom, addon.L["Other"], {"Custom", "Other"});
 	menu:Add(custom);
 
@@ -117,6 +119,7 @@ function KrowiEVU_FilterButtonMixin:BuildMenu()
 	self:AddCheckBox(menu, addon.L["Pets"], {"HideCollectedPets"});
 	self:AddCheckBox(menu, addon.L["Mounts"], {"HideCollectedMounts"});
 	self:AddCheckBox(menu, addon.L["Toys"], {"HideCollectedToys"});
+	self:AddCheckBox(menu, addon.L["Transmog"], {"HideCollectedTransmog"});
 
 	return menu;
 end
