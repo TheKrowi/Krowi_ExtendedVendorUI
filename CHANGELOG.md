@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 8.1 - 2024-08-15
+### Fixed
+- Library bug
+
 ## 8.0 - 2024-07-24
 ### Fixed
 - Several bugs due to The War Within changes
