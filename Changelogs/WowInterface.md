@@ -12,3 +12,8 @@
 [LIST]
 [*]The options button should (finally) remember to stay hidden
 [/LIST]
+
+[B]Added (8.3)[/B]
+[LIST]
+[*]Simplified Chinese localization and missing French text
+[/LIST]

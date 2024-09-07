@@ -10,3 +10,7 @@
 <ul>
 <li>The options button should (finally) remember to stay hidden</li>
 </ul>
+<p><h3>Added (8.3)</h3></p>
+<ul>
+<li>Simplified Chinese localization and missing French text</li>
+</ul>
