@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 8.2 - 2024-09-07
+### Fixed
+- The options button should (finally) remember to stay hidden
+
 ## 8.1 - 2024-08-15
 ### Fixed
 - Library bug

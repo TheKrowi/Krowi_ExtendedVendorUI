@@ -7,3 +7,8 @@
 [LIST]
 [*]Library bug
 [/LIST]
+
+[B]Fixed (8.2)[/B]
+[LIST]
+[*]The options button should (finally) remember to stay hidden
+[/LIST]
