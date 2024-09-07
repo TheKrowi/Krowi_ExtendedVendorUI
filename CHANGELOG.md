@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 8.3 - 2024-09-07
+### Added
+- Simplified Chinese localization and missing French text
+
 ## 8.2 - 2024-09-07
 ### Fixed
 - The options button should (finally) remember to stay hidden
