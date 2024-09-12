@@ -129,10 +129,6 @@ function buyEmAll.AfterLoad()
       local originalItemSlot = MerchantItemsContainer:GetItemSlot(i);
       local point, relativeTo, relativePoint, offsetX, offsetY = originalItemSlot:GetPoint();
 
-      print(itemSlot:GetName(), itemSlot:GetPoint())
-      print(originalItemSlot:GetName(), originalItemSlot:GetPoint())
-      print(point, relativePoint, offsetX, offsetY);
-
       itemSlot:ClearAllPoints();
       itemSlot:SetPoint(point, BuyEmAllFrame, relativePoint, offsetX, offsetY);
       itemSlot:Show();
