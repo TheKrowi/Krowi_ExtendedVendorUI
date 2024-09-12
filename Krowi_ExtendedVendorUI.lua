@@ -20,7 +20,7 @@ function loadHelper:OnEvent(event, arg1, arg2)
             addon.Plugins:InjectOptions();
             addon.Options:Load(true);
 
-            addon.Plugins:Load();
+            addon.Plugins:OnInitialize();
 
             addon.Gui.MerchantItemsContainer:LoadMaxNumItemSlots();
 

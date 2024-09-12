@@ -25,6 +25,7 @@ Libs\Files.xml
 API.lua
 
 Plugins\Files.xml
+Plugins\OnInitialize\Files.xml
 
 Localization\Files.xml
 
@@ -37,3 +38,5 @@ Icon.lua
 Filters.lua
 
 Gui\Files.xml
+
+Plugins\AfterAddonLoaded\Files.xml

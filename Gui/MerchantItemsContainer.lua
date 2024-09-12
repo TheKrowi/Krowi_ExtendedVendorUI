@@ -31,7 +31,7 @@ local function ItemSlotOnEnter(button)
 	end
 end
 
-local function SetOnEnter(frame)
+function merchantItemsContainer:SetOnEnter(frame)
     frame:SetScript("OnEnter", ItemSlotOnEnter);
     frame.UpdateTooltip = ItemSlotOnEnter;
 end
@@ -39,7 +39,7 @@ end
 local infoNumRows, infoNumColumns = 0, 0;
 local itemSlotTable = {};
 for i = 1, 12, 1 do
-    SetOnEnter(_G["MerchantItem" .. i].ItemButton);
+    merchantItemsContainer:SetOnEnter(_G["MerchantItem" .. i].ItemButton);
 	tinsert(itemSlotTable, _G["MerchantItem" .. i]);
 end
 
@@ -49,12 +49,12 @@ function merchantItemsContainer:HideAll()
 	end
 end
 
-local function GetItemSlot(index)
+function merchantItemsContainer:GetItemSlot(index)
 	if itemSlotTable[index] then
 		return itemSlotTable[index];
 	end
 	local frame = CreateFrame("Frame", "MerchantItem" .. index, MerchantFrame, "MerchantItemTemplate");
-    SetOnEnter(frame.ItemButton);
+    merchantItemsContainer:SetOnEnter(frame.ItemButton);
 	itemSlotTable[index] = frame;
 	return frame;
 end
@@ -65,7 +65,7 @@ function merchantItemsContainer:LoadMaxNumItemSlots()
     local maxNumItems = maxNumRows * maxNumColumns;
     if #itemSlotTable < maxNumItems then
         for i = 1, maxNumItems, 1 do
-            local itemSlot = GetItemSlot(i);
+            local itemSlot = self:GetItemSlot(i);
             itemSlot:Hide();
         end
     end
@@ -93,7 +93,7 @@ hooksecurefunc(MerchantFrame.FilterDropdown, "Update", function()
 end);
 
 function merchantItemsContainer:DrawItemSlot(index, row, column, offsetX, offsetY)
-    local itemSlot = GetItemSlot(index);
+    local itemSlot = self:GetItemSlot(index);
     local calculatedOffsetX = self.FirstOffsetX + (column - 1) * (offsetX + self.ItemWidth);
     local calculatedOffsetY = self.FirstOffsetY - (row - 1) * (offsetY + self.ItemHeight);
     itemSlot:ClearAllPoints();

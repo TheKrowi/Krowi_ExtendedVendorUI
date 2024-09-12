@@ -29,10 +29,18 @@ function plugins:InjectOptions()
     end
 end
 
-function plugins:Load()
+function plugins:OnInitialize()
     for _, plugin in next, self.Plugins do
-        if type(plugin.Load) == "function" then
-            plugin.Load();
+        if type(plugin.OnInitialize) == "function" then
+            plugin.OnInitialize();
+        end
+    end
+end
+
+function plugins:OnAddonLoaded()
+    for _, plugin in next, self.Plugins do
+        if type(plugin.OnAddonLoaded) == "function" then
+            plugin.OnAddonLoaded();
         end
     end
 end

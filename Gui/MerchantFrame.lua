@@ -31,7 +31,6 @@ do -- [[ Set some permanent MerchantFrame changes ]]
 	MerchantNextPageButton:SetPoint("BOTTOMRIGHT", KrowiEVU_BottomExtensionRightBorder, "TOPRIGHT", -7, -5);
 
 	MerchantFrame.FilterDropdown:Hide();
-	-- MerchantFrameLootFilter:SetPoint("TOPRIGHT", MerchantFrame, -150, -28);
 
 	MerchantMoneyInset:SetPoint("TOPLEFT", MerchantFrame, "BOTTOMRIGHT", -169, 27);
 	-- <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="4"/>

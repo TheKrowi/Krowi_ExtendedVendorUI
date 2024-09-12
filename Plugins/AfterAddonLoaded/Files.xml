@@ -1,0 +1,4 @@
+<Ui>
+    <Script file="BuyEmAll.lua" />
+    <Script file="onAddonLoaded.lua" />
+</Ui>
