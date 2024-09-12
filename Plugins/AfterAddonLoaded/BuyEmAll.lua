@@ -56,7 +56,7 @@ local function GetItemSlot(index)
   if itemSlotTable[index] then
     return itemSlotTable[index];
   end
-  local frame = CreateFrame("Frame", "BuyEmAllItem" .. index, BuyEmAllFrame, "MerchantItemTemplate");
+  local frame = CreateFrame("Frame", "BuyEmAllItem" .. index, BuyEmAllFrame, "BuyEmAllItemTemplate");
   MerchantItemsContainer:SetOnEnter(frame.ItemButton);
   itemSlotTable[index] = frame;
   return frame;
