@@ -12,8 +12,8 @@ addon.Plugins:LoadLocalization(L);
 L["Are you sure you want to hide the options button?"] = [=[Vuoi davvero nascondere il pulsante opzioni?
 Il pulsante può essere mostrato di nuovo da {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options}]=]
 L["Author"] = "Autore"
-L["Build"] = "Versione "
-L["Checked"] = "Controllato"
+L["Build"] = "Versione"
+L["Checked"] = "Selezionato"
 L["Columns"] = "Colonne"
 L["Columns first"] = "Prima colonna"
 L["CurseForge"] = "CurseForge"
