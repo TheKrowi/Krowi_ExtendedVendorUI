@@ -255,7 +255,8 @@
         "IsAddOnLoaded",
         "MerchantFrame_CIMIOnClick",
         "C_TransmogCollection",
-        "C_AddOns"
+        "C_AddOns",
+        "C_MerchantFrame"
     ],
     "fsdeploy.nodes": [
         {
