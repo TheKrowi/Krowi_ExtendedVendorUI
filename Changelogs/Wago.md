@@ -9,3 +9,6 @@
 
 ### Added (8.3)
 - Simplified Chinese localization and missing French text
+
+### Fixed (8.4)
+- Vendor items should once again have the correct name, icon and price when filters are applied

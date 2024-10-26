@@ -17,3 +17,8 @@
 [LIST]
 [*]Simplified Chinese localization and missing French text
 [/LIST]
+
+[B]Fixed (8.4)[/B]
+[LIST]
+[*]Vendor items should once again have the correct name, icon and price when filters are applied
+[/LIST]
