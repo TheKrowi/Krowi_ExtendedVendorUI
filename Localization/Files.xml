@@ -8,5 +8,7 @@
     <Script file="deDE.Plugins.lua" />
     <Script file="frFR.lua" />
     <Script file="frFR.Plugins.lua" />
+    <Script file="itIT.lua" />
+    <Script file="itIT.Plugins.lua" />
     <Script file="GlobalStrings.lua" />
 </Ui>

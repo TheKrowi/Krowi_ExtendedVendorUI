@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 8.5 - 2024-10-27
+### Added
+- Italian localization
+
+### Fixed
+- Dorothy (alliance) and Chub (horde) no longer classify the Magic Broom as a mount
+
 ## 8.4 - 2024-10-26
 ### Fixed
 - Vendor items should once again have the correct name, icon and price when filters are applied
