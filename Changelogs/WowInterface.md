@@ -32,3 +32,8 @@
 [LIST]
 [*]Dorothy (alliance) and Chub (horde) no longer classify the Magic Broom as a mount
 [/LIST]
+
+[B]Fixed (8.6)[/B]
+[LIST]
+[*]Removed unwanted item ids printed to the chat window
+[/LIST]

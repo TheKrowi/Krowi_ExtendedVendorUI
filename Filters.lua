@@ -40,7 +40,6 @@ function filters:Load()
 end
 
 function filters:Validate(lootFilter, itemId)
-	print(itemId)
 	if lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"] then
 		return self:ValidatePetsOnly(itemId);
     elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"] then

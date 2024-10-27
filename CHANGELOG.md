@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 8.6 - 2024-10-27
+### Fixed
+- Removed unwanted item ids printed to the chat window
+
 ## 8.5 - 2024-10-27
 ### Added
 - Italian localization
