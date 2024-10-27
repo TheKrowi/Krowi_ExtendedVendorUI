@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 
 ## 8.5 - 2024-10-27
+### Added
+- Italian localization
+
 ### Fixed
 - Dorothy (alliance) and Chub (horde) no longer classify the Magic Broom as a mount
 

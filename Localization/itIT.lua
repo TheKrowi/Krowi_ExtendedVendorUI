@@ -8,7 +8,7 @@ addon.Plugins:LoadLocalization(L);
 -- [[ https://legacy.curseforge.com/wow/addons/krowi-extended-vendor-ui/localization ]] --
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2023-11-20 23-09-37 ]] --
+-- [[ Exported at 2024-10-27 12-33-19 ]] --
 L["Are you sure you want to hide the options button?"] = [=[Vuoi davvero nascondere il pulsante opzioni?
 Il pulsante può essere mostrato di nuovo da {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options}]=]
 L["Author"] = "Autore"
@@ -16,10 +16,10 @@ L["Build"] = "Versione"
 L["Checked"] = "Selezionato"
 L["Columns"] = "Colonne"
 L["Columns first"] = "Prima colonne"
-L["CurseForge"] = "CurseForge"
+L["CurseForge"] = true
 L["CurseForge Desc"] = "Apri un popup con un link alla pagina di {addonName} su {curseForge}."
 L["Default value"] = "Valore di default"
-L["Discord"] = "Discord"
+L["Discord"] = true
 L["Discord Desc"] = "Apri un popup con un link al server discord {serverName}. Quì potrai inserire commenti, reports, osservazioni, idee o qualsiasi altra cosa relativa all'addOn."
 L["Hide"] = "Nascondi"
 L["Icon Left click"] = "Per le opzioni veloci."

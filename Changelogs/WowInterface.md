@@ -22,3 +22,13 @@
 [LIST]
 [*]Vendor items should once again have the correct name, icon and price when filters are applied
 [/LIST]
+
+[B]Added (8.5)[/B]
+[LIST]
+[*]Italian localization
+[/LIST]
+
+[B]Fixed (8.5)[/B]
+[LIST]
+[*]Dorothy (alliance) and Chub (horde) no longer classify the Magic Broom as a mount
+[/LIST]
