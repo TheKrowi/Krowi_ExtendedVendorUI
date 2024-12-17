@@ -7,15 +7,18 @@ _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"] = 101;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"] = 102;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"] = 103;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG"] = 104;
+_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_RECIPES"] = 105;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"] = 200;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_SEARCH"] = 201;
 
 local defaults = {
 	profile = {
-		HideCollectedPets = false,
-		HideCollectedMounts = false,
-		HideCollectedToys = false,
-		HideCollectedTransmog = false,
+		HideCollected = {
+			Pets = false,
+			Mounts = false,
+			Toys = false,
+			Transmog = false
+		},
 		Custom = {
 			Pets = true,
 			Mounts = true,
@@ -53,19 +56,19 @@ function filters:Validate(lootFilter, itemId)
     elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_SEARCH"] then
 		return self:ValidateSearch(itemId);
 	else
-		if self.IsPet(itemId) and addon.Filters.db.profile.HideCollectedPets then
+		if self.IsPet(itemId) and addon.Filters.db.profile.HideCollected.Pets then
 			return not self.IsPetCollected(itemId);
 		end
 
-		if self.IsMount(itemId) and addon.Filters.db.profile.HideCollectedMounts then
+		if self.IsMount(itemId) and addon.Filters.db.profile.HideCollected.Mounts then
 			return not self.IsMountCollected(itemId);
 		end
 
-		if self.IsToy(itemId) and addon.Filters.db.profile.HideCollectedToys then
+		if self.IsToy(itemId) and addon.Filters.db.profile.HideCollected.Toys then
 			return not self.IsToyCollected(itemId);
 		end
 		
-		if self.IsTransmog(itemId) and addon.Filters.db.profile.HideCollectedTransmog then
+		if self.IsTransmog(itemId) and addon.Filters.db.profile.HideCollected.Transmog then
 			return not self.IsTransmogCollected(itemId);
 		end
 	end
@@ -78,14 +81,14 @@ do -- Pets
 		if not self.IsPet(itemId) then
 			return false;
 		end
-		if addon.Filters.db.profile.HideCollectedPets then
+		if addon.Filters.db.profile.HideCollected.Pets then
 			return not self.IsPetCollected(itemId);
 		end
 		return true;
 	end
 
 	function filters.IsPet(itemId)
-		local classId, subclassId = select(12, GetItemInfo(itemId));
+		local classId, subclassId = select(12, C_Item.GetItemInfo(itemId));
 		if classId ~= Enum.ItemClass.Miscellaneous or subclassId ~= Enum.ItemMiscellaneousSubclass.CompanionPet then
 			return false;
 		end
@@ -104,7 +107,7 @@ do -- Mounts
 		if not self.IsMount(itemId) then
 			return false;
 		end
-		if addon.Filters.db.profile.HideCollectedMounts then
+		if addon.Filters.db.profile.HideCollected.Mounts then
 			return not self.IsMountCollected(itemId);
 		end
 		return true;
@@ -114,7 +117,7 @@ do -- Mounts
 		if itemId == 37011 then -- Magic Broom is classified as a mount but can't be learned
 			return false;
 		end
-		local classId, subclassId = select(12, GetItemInfo(itemId));
+		local classId, subclassId = select(12, C_Item.GetItemInfo(itemId));
 		return classId == Enum.ItemClass.Miscellaneous and subclassId == Enum.ItemMiscellaneousSubclass.Mount;
 	end
 
@@ -128,7 +131,7 @@ do -- Toys
 		if not self.IsToy(itemId) then
 			return false;
 		end
-		if addon.Filters.db.profile.HideCollectedToys then
+		if addon.Filters.db.profile.HideCollected.Toys then
 			return not self.IsToyCollected(itemId);
 		end
 		return true;
@@ -149,7 +152,7 @@ do -- Transmog
 		if not self.IsTransmog(itemId) then
 			return false;
 		end
-		if addon.Filters.db.profile.HideCollectedTransmog then
+		if addon.Filters.db.profile.HideCollected.Transmog then
 			return not self.IsTransmogCollected(itemId);
 		end
 		return true;
@@ -165,11 +168,37 @@ do -- Transmog
 	end
 end
 
+do -- Recipes
+	function filters:ValidateRecipesOnly(itemId)
+		if not self.IsRecipes(itemId) then
+			return false;
+		end
+		if addon.Filters.db.profile.HideCollected.Recipes then
+			return not self.IsRecipeCollected(itemId);
+		end
+		return true;
+	end
+
+	function filters.IsRecipes(itemId)
+		-- local classId, subclassId = select(12, C_Item.GetItemInfo(itemId));
+		-- if classId ~= Enum.ItemClass.Miscellaneous or subclassId ~= Enum.ItemMiscellaneousSubclass.CompanionPet then
+		-- 	return false;
+		-- end
+
+		-- local name = C_PetJournal.GetPetInfoByItemID(itemId);
+		-- return name ~= nil;
+	end
+
+	function filters.IsRecipeCollected(itemId)
+		-- return (C_PetJournal.GetNumCollectedInfo((select(13, C_PetJournal.GetPetInfoByItemID(itemId))))) ~= 0;
+	end
+end
+
 do -- Custom
 	function filters:ValidateCustom(itemId)
 		if self.IsPet(itemId) then
 			if addon.Filters.db.profile.Custom.Pets then
-				if addon.Filters.db.profile.HideCollectedPets then
+				if addon.Filters.db.profile.HideCollected.Pets then
 					return not self.IsPetCollected(itemId);
 				end
 				return true;
@@ -179,7 +208,7 @@ do -- Custom
 
 		if self.IsMount(itemId) then
 			if addon.Filters.db.profile.Custom.Mounts then
-				if addon.Filters.db.profile.HideCollectedMounts then
+				if addon.Filters.db.profile.HideCollected.Mounts then
 					return not self.IsMountCollected(itemId);
 				end
 				return true;
@@ -189,7 +218,7 @@ do -- Custom
 
 		if self.IsToy(itemId) then
 			if addon.Filters.db.profile.Custom.Toys then
-				if addon.Filters.db.profile.HideCollectedToys then
+				if addon.Filters.db.profile.HideCollected.Toys then
 					return not self.IsToyCollected(itemId);
 				end
 				return true;
@@ -199,7 +228,7 @@ do -- Custom
 
 		if self.IsTransmog(itemId) then
 			if addon.Filters.db.profile.Custom.Transmog then
-				if addon.Filters.db.profile.HideCollectedTransmog then
+				if addon.Filters.db.profile.HideCollected.Transmog then
 					return not self.IsTransmogCollected(itemId);
 				end
 				return true;
@@ -213,7 +242,7 @@ end
 
 do -- Search
 	function filters:ValidateSearch(itemId)
-		local name = GetItemInfo(itemId);
+		local name = C_Item.GetItemInfo(itemId);
 		if name and strfind(name:lower(), KrowiEVU_SearchBox:GetText():lower(), 1, true) then
 			return true;
 		end

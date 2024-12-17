@@ -116,10 +116,10 @@ function KrowiEVU_FilterButtonMixin:BuildMenu()
 	menu:AddSeparator();
 
 	self:AddTitle(menu, addon.L["Hide collected"]);
-	self:AddCheckBox(menu, addon.L["Pets"], {"HideCollectedPets"});
-	self:AddCheckBox(menu, addon.L["Mounts"], {"HideCollectedMounts"});
-	self:AddCheckBox(menu, addon.L["Toys"], {"HideCollectedToys"});
-	self:AddCheckBox(menu, addon.L["Transmog"], {"HideCollectedTransmog"});
+	self:AddCheckBox(menu, addon.L["Pets"], {"HideCollected", "Pets"});
+	self:AddCheckBox(menu, addon.L["Mounts"], {"HideCollected", "Mounts"});
+	self:AddCheckBox(menu, addon.L["Toys"], {"HideCollected", "Toys"});
+	self:AddCheckBox(menu, addon.L["Transmog"], {"HideCollected", "Transmog"});
 
 	return menu;
 end

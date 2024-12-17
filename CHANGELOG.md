@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 9.0 - 2024-12-17
+### Added
+- Show the hide button option in the options button
+
 ## 8.6 - 2024-10-27
 ### Fixed
 - Removed unwanted item ids printed to the chat window
