@@ -1,9 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 9.0 - 2024-12-17
+## 9.0 - 2024-12-18
 ### Added
 - Show the hide button option in the options button
+- Recipes filters
 
 ## 8.6 - 2024-10-27
 ### Fixed

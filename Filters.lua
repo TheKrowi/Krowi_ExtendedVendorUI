@@ -17,13 +17,15 @@ local defaults = {
 			Pets = false,
 			Mounts = false,
 			Toys = false,
-			Transmog = false
+			Transmog = false,
+			Recipes = false
 		},
 		Custom = {
 			Pets = true,
 			Mounts = true,
 			Toys = true,
 			Transmog = true,
+			Recipes = true,
 			Other = true
 		}
 	}
@@ -51,6 +53,8 @@ function filters:Validate(lootFilter, itemId)
 		return self:ValidateToysOnly(itemId);
     elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG"] then
 		return self:ValidateTransmogOnly(itemId);
+    elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_RECIPES"] then
+		return self:ValidateRecipesOnly(itemId);
     elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"] then
 		return self:ValidateCustom(itemId);
     elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_SEARCH"] then
@@ -67,9 +71,13 @@ function filters:Validate(lootFilter, itemId)
 		if self.IsToy(itemId) and addon.Filters.db.profile.HideCollected.Toys then
 			return not self.IsToyCollected(itemId);
 		end
-		
+
 		if self.IsTransmog(itemId) and addon.Filters.db.profile.HideCollected.Transmog then
 			return not self.IsTransmogCollected(itemId);
+		end
+
+		if self.IsRecipe(itemId) and addon.Filters.db.profile.HideCollected.Recipes then
+			return not self.IsRecipeCollected(itemId);
 		end
 	end
 
@@ -88,7 +96,7 @@ do -- Pets
 	end
 
 	function filters.IsPet(itemId)
-		local classId, subclassId = select(12, C_Item.GetItemInfo(itemId));
+		local classId, subclassId = select(6, C_Item.GetItemInfoInstant(itemId));
 		if classId ~= Enum.ItemClass.Miscellaneous or subclassId ~= Enum.ItemMiscellaneousSubclass.CompanionPet then
 			return false;
 		end
@@ -117,7 +125,7 @@ do -- Mounts
 		if itemId == 37011 then -- Magic Broom is classified as a mount but can't be learned
 			return false;
 		end
-		local classId, subclassId = select(12, C_Item.GetItemInfo(itemId));
+		local classId, subclassId = select(6, C_Item.GetItemInfoInstant(itemId));
 		return classId == Enum.ItemClass.Miscellaneous and subclassId == Enum.ItemMiscellaneousSubclass.Mount;
 	end
 
@@ -170,7 +178,7 @@ end
 
 do -- Recipes
 	function filters:ValidateRecipesOnly(itemId)
-		if not self.IsRecipes(itemId) then
+		if not self.IsRecipe(itemId) then
 			return false;
 		end
 		if addon.Filters.db.profile.HideCollected.Recipes then
@@ -179,18 +187,19 @@ do -- Recipes
 		return true;
 	end
 
-	function filters.IsRecipes(itemId)
-		-- local classId, subclassId = select(12, C_Item.GetItemInfo(itemId));
-		-- if classId ~= Enum.ItemClass.Miscellaneous or subclassId ~= Enum.ItemMiscellaneousSubclass.CompanionPet then
-		-- 	return false;
-		-- end
-
-		-- local name = C_PetJournal.GetPetInfoByItemID(itemId);
-		-- return name ~= nil;
+	function filters.IsRecipe(itemId)
+		local classId = select(6, C_Item.GetItemInfoInstant(itemId));
+		return classId == Enum.ItemClass.Recipe;
 	end
 
 	function filters.IsRecipeCollected(itemId)
-		-- return (C_PetJournal.GetNumCollectedInfo((select(13, C_PetJournal.GetPetInfoByItemID(itemId))))) ~= 0;
+		local tooltipInfo = C_TooltipInfo.GetItemByID(itemId);
+		for _, line in next, tooltipInfo.lines do
+			if line.type == Enum.TooltipDataLineType.RestrictedSpellKnown then
+				return true;
+			end
+		end
+		return false;
 	end
 end
 
@@ -230,6 +239,16 @@ do -- Custom
 			if addon.Filters.db.profile.Custom.Transmog then
 				if addon.Filters.db.profile.HideCollected.Transmog then
 					return not self.IsTransmogCollected(itemId);
+				end
+				return true;
+			end
+			return false;
+		end
+
+		if self.IsRecipe(itemId) then
+			if addon.Filters.db.profile.Custom.Recipes then
+				if addon.Filters.db.profile.HideCollected.Recipes then
+					return not self.IsRecipeCollected(itemId);
 				end
 				return true;
 			end
