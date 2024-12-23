@@ -256,7 +256,9 @@
         "MerchantFrame_CIMIOnClick",
         "C_TransmogCollection",
         "C_AddOns",
-        "C_MerchantFrame"
+        "C_MerchantFrame",
+        "C_TradeSkillUI",
+        "C_TooltipInfo"
     ],
     "fsdeploy.nodes": [
         {
