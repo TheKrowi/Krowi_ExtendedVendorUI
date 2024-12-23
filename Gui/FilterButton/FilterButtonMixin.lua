@@ -124,11 +124,6 @@ function KrowiEVU_FilterButtonMixin:BuildMenu()
 	self:AddCheckBox(menu, addon.L["Transmog"], {"HideCollected", "Transmog"});
 	self:AddCheckBox(menu, addon.L["Recipes"], {"HideCollected", "Recipes"});
 
-	for _, id in pairs(C_TradeSkillUI.GetAllRecipeIDs()) do
-		local recipeInfo = C_TradeSkillUI.GetRecipeInfo(id)
-		print(recipeInfo.recipeID, recipeInfo.name)
-	end
-
 	return menu;
 end
 
