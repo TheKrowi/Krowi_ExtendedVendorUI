@@ -11,6 +11,39 @@ _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_RECIPES"] = 105;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"] = 200;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_SEARCH"] = 201;
 
+filters.ArmorTypes = {
+	[0] = "Generic",
+	[1] = "Cloth",
+	[2] = "Leather",
+	[3] = "Mail",
+	[4] = "Plate",
+	[5] = "Cosmetic",
+	[6] = "Shield",
+};
+
+filters.WeaponTypes = {
+	[0] = "OneHAxe",
+	[1] = "TwoHAxe",
+	[2] = "Bow",
+	[3] = "Gun",
+	[4] = "OneHMace",
+	[5] = "TwoHMace",
+	[6] = "Polearm",
+	[7] = "OneHSword",
+	[8] = "TwoHSword",
+	[9] = "Warglaives",
+	[10] = "Staff",
+	[11] = "Bearclaw",
+	[12] = "Catclaw",
+	[13] = "Fist",
+	[14] = "Generic",
+	[15] = "Dagger",
+	[16] = "Thrown",
+	[18] = "Crossbow",
+	[19] = "Wand",
+	[20] = "Fishingpole",
+};
+
 local defaults = {
 	profile = {
 		HideCollected = {
@@ -26,10 +59,25 @@ local defaults = {
 			Toys = true,
 			Transmog = true,
 			Recipes = true,
-			Other = true
+			Other = true,
+			Armor = { --[[ Automatically generated ]] },
+			Weapon = { --[[ Automatically generated ]] }
+		},
+		OnlyShow = {
+			Armor = { --[[ Automatically generated ]] },
+			Weapon = { --[[ Automatically generated ]] }
 		}
 	}
 };
+
+for index, _ in next, filters.ArmorTypes do
+	defaults.profile.Custom.Armor[index] = true;
+	defaults.profile.OnlyShow.Armor[index] = true;
+end
+for index, _ in next, filters.WeaponTypes do
+	defaults.profile.Custom.Weapon[index] = true;
+	defaults.profile.OnlyShow.Weapon[index] = true;
+end
 
 function filters:RefreshFilters()
     -- for t, _ in next, addon.Tabs do
@@ -130,7 +178,10 @@ do -- Mounts
 	end
 
 	function filters.IsMountCollected(itemId)
-		return (select(11, C_MountJournal.GetMountInfoByID(C_MountJournal.GetMountFromItem(itemId))));
+		local mountId = C_MountJournal.GetMountFromItem(itemId);
+		if mountId then
+			return (select(11, C_MountJournal.GetMountInfoByID(mountId)));
+		end
 	end
 end
 
@@ -160,8 +211,14 @@ do -- Transmog
 		if not self.IsTransmog(itemId) then
 			return false;
 		end
-		if addon.Filters.db.profile.HideCollected.Transmog then
-			return not self.IsTransmogCollected(itemId);
+		if addon.Filters.db.profile.HideCollected.Transmog and self.IsTransmogCollected(itemId) then
+			return false;
+		end
+		local _, _, _, itemEquipLoc, _, classId, subClassId = C_Item.GetItemInfoInstant(itemId);
+		if classId == Enum.ItemClass.Armor and addon.Filters.db.profile.OnlyShow.Armor[subClassId] ~= nil then
+			return addon.Filters.db.profile.OnlyShow.Armor[subClassId];
+		elseif classId == Enum.ItemClass.Weapon and addon.Filters.db.profile.OnlyShow.Weapon[subClassId] ~= nil then
+			return addon.Filters.db.profile.OnlyShow.Weapon[subClassId];
 		end
 		return true;
 	end
@@ -237,8 +294,14 @@ do -- Custom
 
 		if self.IsTransmog(itemId) then
 			if addon.Filters.db.profile.Custom.Transmog then
-				if addon.Filters.db.profile.HideCollected.Transmog then
-					return not self.IsTransmogCollected(itemId);
+				if addon.Filters.db.profile.HideCollected.Transmog and self.IsTransmogCollected(itemId) then
+					return false;
+				end
+				local _, _, _, itemEquipLoc, _, classId, subClassId = C_Item.GetItemInfoInstant(itemId);
+				if classId == Enum.ItemClass.Armor and addon.Filters.db.profile.Custom.Armor[subClassId] ~= nil then
+					return addon.Filters.db.profile.Custom.Armor[subClassId];
+				elseif classId == Enum.ItemClass.Weapon and addon.Filters.db.profile.Custom.Weapon[subClassId] ~= nil then
+					return addon.Filters.db.profile.Custom.Weapon[subClassId];
 				end
 				return true;
 			end

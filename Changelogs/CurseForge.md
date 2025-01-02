@@ -1,9 +1,8 @@
 <p><h3>Added</h3></p>
 <ul>
-<li>Show the hide button option in the options button</li>
-<li>Recipes filters</li>
+<li>More filters for transmogs</li>
 </ul>
-<p><h3>Fixed (9.1)</h3></p>
+<p><h3>Fixed</h3></p>
 <ul>
-<li>Removed unwanted recipe ids printed to the chat window</li>
+<li>Items considered mounts should once again behave</li>
 </ul>

@@ -258,7 +258,9 @@
         "C_AddOns",
         "C_MerchantFrame",
         "C_TradeSkillUI",
-        "C_TooltipInfo"
+        "C_TooltipInfo",
+        "UIDropDownMenu_RefreshAll",
+        "UIDROPDOWNMENU_OPEN_MENU"
     ],
     "fsdeploy.nodes": [
         {
