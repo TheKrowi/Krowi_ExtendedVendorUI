@@ -105,32 +105,36 @@ function KrowiEVU_FilterButtonMixin:BuildMenu()
 	self:AddLootFilterRadioButton(menu, menu, addon.L["Pets"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"]);
 	self:AddLootFilterRadioButton(menu, menu, addon.L["Mounts"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"]);
 	self:AddLootFilterRadioButton(menu, menu, addon.L["Toys"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"]);
-	local transmog = menuItem:New({
-		Text = addon.L["Transmog"],
+	local appearances = menuItem:New({
+		Text = addon.L["Appearances"],
 		Checked = function()
 			return GetMerchantFilter() == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG"];
 		end,
 		Func = function()
 			MerchantFrame_SetFilter(nil, _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG"]);
-			menu:SetSelectedName(addon.L["Transmog"]);
-			self:SetText(addon.L["Transmog"]);
+			menu:SetSelectedName(addon.L["Appearances"]);
+			self:SetText(addon.L["Appearances"]);
 		end,
 		NotCheckable = false,
 		KeepShownOnClick = true
 	});
-	for index, type in next, addon.Filters.ArmorTypes do
-		self:AddCheckBox(transmog, addon.L[type], {"OnlyShow", "Armor", index});
+	self:AddTitle(appearances, C_Item.GetItemClassInfo(4));
+	for index, _ in next, addon.Filters.ArmorTypes do
+		self:AddCheckBox(appearances, (C_Item.GetItemSubClassInfo(4, index)), {"OnlyShow", "Armor", index});
 	end
-	self:CreateSelectDeselectAll(transmog, addon.L["Select All"], addon.Filters.db.profile.OnlyShow, "Armor", true);
-	self:CreateSelectDeselectAll(transmog, addon.L["Deselect All"], addon.Filters.db.profile.OnlyShow, "Armor", false);
-	transmog:AddSeparator();
-	for index, type in next, addon.Filters.WeaponTypes do
-		self:AddCheckBox(transmog, addon.L[type], {"OnlyShow", "Weapon", index});
+	appearances:AddSeparator();
+	self:CreateSelectDeselectAll(appearances, addon.L["Select All"], addon.Filters.db.profile.OnlyShow, "Armor", true);
+	self:CreateSelectDeselectAll(appearances, addon.L["Deselect All"], addon.Filters.db.profile.OnlyShow, "Armor", false);
+	appearances:AddSeparator();
+	self:AddTitle(appearances, C_Item.GetItemClassInfo(2));
+	for index, _ in next, addon.Filters.WeaponTypes do
+		self:AddCheckBox(appearances, (C_Item.GetItemSubClassInfo(2, index)), {"OnlyShow", "Weapon", index});
 	end
-	self:CreateSelectDeselectAll(transmog, addon.L["Select All"], addon.Filters.db.profile.OnlyShow, "Weapon", true);
-	self:CreateSelectDeselectAll(transmog, addon.L["Deselect All"], addon.Filters.db.profile.OnlyShow, "Weapon", false);
-	menu:Add(transmog);
-	-- self:AddLootFilterRadioButton(menu, menu, addon.L["Transmog"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG"]);
+	appearances:AddSeparator();
+	self:CreateSelectDeselectAll(appearances, addon.L["Select All"], addon.Filters.db.profile.OnlyShow, "Weapon", true);
+	self:CreateSelectDeselectAll(appearances, addon.L["Deselect All"], addon.Filters.db.profile.OnlyShow, "Weapon", false);
+	menu:Add(appearances);
+	-- self:AddLootFilterRadioButton(menu, menu, addon.L["Appearances"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG"]);
 	self:AddLootFilterRadioButton(menu, menu, addon.L["Recipes"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_RECIPES"]);
 
 	local custom = menuItem:New({
@@ -149,8 +153,8 @@ function KrowiEVU_FilterButtonMixin:BuildMenu()
 	self:AddCheckBox(custom, addon.L["Pets"], {"Custom", "Pets"});
 	self:AddCheckBox(custom, addon.L["Mounts"], {"Custom", "Mounts"});
 	self:AddCheckBox(custom, addon.L["Toys"], {"Custom", "Toys"});
-	local transmog = menuItem:New({
-		Text = addon.L["Transmog"],
+	local appearances = menuItem:New({
+		Text = addon.L["Appearances"],
 		Checked = function() -- Using function here, we force the GUI to get the value again instead of only once (caused visual bugs)
 			return addon.Filters.db.profile.Custom.Transmog;
 		end,
@@ -162,19 +166,23 @@ function KrowiEVU_FilterButtonMixin:BuildMenu()
 		NotCheckable = false,
 		KeepShownOnClick = true
 	});
-	for index, type in next, addon.Filters.ArmorTypes do
-		self:AddCheckBox(transmog, addon.L[type], {"Custom", "Armor", index});
+	self:AddTitle(appearances, C_Item.GetItemClassInfo(4));
+	for index, _ in next, addon.Filters.ArmorTypes do
+		self:AddCheckBox(appearances, (C_Item.GetItemSubClassInfo(4, index)), {"Custom", "Armor", index});
 	end
-	self:CreateSelectDeselectAll(transmog, addon.L["Select All"], addon.Filters.db.profile.Custom, "Armor", true);
-	self:CreateSelectDeselectAll(transmog, addon.L["Deselect All"], addon.Filters.db.profile.Custom, "Armor", false);
-	transmog:AddSeparator();
-	for index, type in next, addon.Filters.WeaponTypes do
-		self:AddCheckBox(transmog, addon.L[type], {"Custom", "Weapon", index});
+	appearances:AddSeparator();
+	self:CreateSelectDeselectAll(appearances, addon.L["Select All"], addon.Filters.db.profile.Custom, "Armor", true);
+	self:CreateSelectDeselectAll(appearances, addon.L["Deselect All"], addon.Filters.db.profile.Custom, "Armor", false);
+	appearances:AddSeparator();
+	self:AddTitle(appearances, C_Item.GetItemClassInfo(2));
+	for index, _ in next, addon.Filters.WeaponTypes do
+		self:AddCheckBox(appearances, (C_Item.GetItemSubClassInfo(2, index)), {"Custom", "Weapon", index});
 	end
-	self:CreateSelectDeselectAll(transmog, addon.L["Select All"], addon.Filters.db.profile.Custom, "Weapon", true);
-	self:CreateSelectDeselectAll(transmog, addon.L["Deselect All"], addon.Filters.db.profile.Custom, "Weapon", false);
-	custom:Add(transmog);
-	-- self:AddCheckBox(custom, addon.L["Transmog"], {"Custom", "Transmog"});
+	appearances:AddSeparator();
+	self:CreateSelectDeselectAll(appearances, addon.L["Select All"], addon.Filters.db.profile.Custom, "Weapon", true);
+	self:CreateSelectDeselectAll(appearances, addon.L["Deselect All"], addon.Filters.db.profile.Custom, "Weapon", false);
+	custom:Add(appearances);
+	-- self:AddCheckBox(custom, addon.L["Appearances"], {"Custom", "Transmog"});
 	self:AddCheckBox(custom, addon.L["Recipes"], {"Custom", "Recipes"});
 	self:AddCheckBox(custom, addon.L["Other"], {"Custom", "Other"});
 	menu:Add(custom);
@@ -185,7 +193,7 @@ function KrowiEVU_FilterButtonMixin:BuildMenu()
 	self:AddCheckBox(menu, addon.L["Pets"], {"HideCollected", "Pets"});
 	self:AddCheckBox(menu, addon.L["Mounts"], {"HideCollected", "Mounts"});
 	self:AddCheckBox(menu, addon.L["Toys"], {"HideCollected", "Toys"});
-	self:AddCheckBox(menu, addon.L["Transmog"], {"HideCollected", "Transmog"});
+	self:AddCheckBox(menu, addon.L["Appearances"], {"HideCollected", "Transmog"});
 	self:AddCheckBox(menu, addon.L["Recipes"], {"HideCollected", "Recipes"});
 
 	return menu;

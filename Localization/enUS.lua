@@ -45,7 +45,6 @@ L["Show minimap icon Desc"] = "Show / hide the minimap icon."
 L["Show options button"] = true
 L["Show options button Desc"] = "Show / hide the options button in the merchant window."
 L["Toys"] = true
-L["Transmog"] = true
 L["Unchecked"] = true
 L["Wago"] = true
 L["Wago Desc"] = "Open a popup dialog with a link to the {addonName} {wago} page."

@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 10.1 - 2025-01-02
+### Fixed
+- Some text localizations
+
 ## 10.0 - 2025-01-02
 ### Added
 - More filters for transmogs

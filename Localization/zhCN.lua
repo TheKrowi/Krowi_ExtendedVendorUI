@@ -43,7 +43,6 @@ L["Show minimap icon Desc"] = "显示/隐藏小地图按钮"
 L["Show options button"] = "显示设置按钮"
 L["Show options button Desc"] = "显示/隐藏商人界面的设置按钮"
 L["Toys"] = "玩具"
-L["Transmog"] = "外观"
 L["Unchecked"] = "停用"
 L["Wago"] = true
 L["Wago Desc"] = "显示 {addonName} 的 {wago} 插件页面链接"

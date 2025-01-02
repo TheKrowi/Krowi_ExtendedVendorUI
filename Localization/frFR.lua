@@ -38,7 +38,6 @@ L["Rows first"] = "Lignes d'abord"
 L["Show minimap icon"] = "Afficher l'icone sur la mini-map"
 L["Show minimap icon Desc"] = "Afficher ou masquer l'icône sur la mini-map."
 L["Toys"] = "Jouets"
-L["Transmog"] = "Transmogrifications"
 L["Unchecked"] = "Non coché"
 L["Wago"] = true
 L["Wago Desc"] = "Ouvre une fenêtre avec un lien vers la page {addonName} {wago}."
