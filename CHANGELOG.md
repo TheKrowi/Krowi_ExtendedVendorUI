@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 11.0 - 2025-01-11
+### Cata Classic
+- First port from retail
+
 ## 10.1 - 2025-01-02
 ### Fixed
 - Some text localizations

@@ -1,4 +1,4 @@
-## Interface: 110005
+## Interface: 40401
 ## Title: Krowi's |cFF1D92C2Extended Vendor UI|r
 ## X-Prefix: KrowiEVU
 ## X-Acronym: KEVU
@@ -7,9 +7,6 @@
 ## LoadWith: Blizzard_MerchantFrame
 ## SavedVariables: KrowiEVU_Options, KrowiEVU_Filters, KrowiEVU_Debug
 ## Notes: Extends the size of your Merchant Frame.
-## AddonCompartmentFuncOnEnter: KrowiEVU_OnAddonCompartmentEnter
-## AddonCompartmentFuncOnLeave: KrowiEVU_OnAddonCompartmentLeave
-## AddonCompartmentFunc: KrowiEVU_OnAddonCompartmentClick
 ## IconTexture: interface/icons/inv_tailoring_70_silkweaveimbuedbag
 ## X-Discord-Invite-Link: https://discord.gg/mdBFQJYeQZ
 ## X-Discord-Server-Name: Krowi's Addons
