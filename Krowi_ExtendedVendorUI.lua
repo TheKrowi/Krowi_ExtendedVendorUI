@@ -1,11 +1,4 @@
--- [[ Namespaces ]] --
 local addonName, addon = ...;
-
--- [[ Version data ]] --
-local version = (GetBuildInfo());
-local major = string.match(version, "(%d+)%.(%d+)%.(%d+)(%w?)");
-addon.IsWrathClassic = major == "3";
-addon.IsDragonflightRetail = major == "10";
 
 -- [[ Ace ]] --
 addon.L = LibStub(addon.Libs.AceLocale):GetLocale(addonName);
