@@ -113,11 +113,13 @@ hooksecurefunc("MerchantFrame_UpdateBuybackInfo", function()
 	KrowiEVU_SearchBox:SetPoint("TOPRIGHT", KrowiEVU_FilterButton, "BOTTOMRIGHT", 0, 2);
 end);
 
-hooksecurefunc("MerchantFrame_UpdateRepairButtons", function()
-	if not CanMerchantRepair() then
-		MerchantSellAllJunkButton:SetPoint("BOTTOMRIGHT", MerchantFrame, "BOTTOMLEFT", 162, 33);
-	end
-end);
+if addon.Util.IsMainline then
+	hooksecurefunc("MerchantFrame_UpdateRepairButtons", function()
+		if not CanMerchantRepair() then
+			MerchantSellAllJunkButton:SetPoint("BOTTOMRIGHT", MerchantFrame, "BOTTOMLEFT", 162, 33);
+		end
+	end);
+end
 
 addon.CachedItemIndices = {};
 

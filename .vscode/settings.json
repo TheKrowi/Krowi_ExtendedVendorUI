@@ -278,6 +278,13 @@
             "exclude":"**/{.git,.github,.vscode,Changelogs,Descriptions}/**",
             "deleteTargetOnDeploy": true
         },
+        {
+            "source":"E:\\World of Warcraft Addon Development\\Krowi_ExtendedVendorUI",
+            "target":"F:\\World of Warcraft\\_classic_era_\\Interface\\AddOns\\Krowi_ExtendedVendorUI",
+            "include":"**/*.{lua,toc,blp,tga,xml,md}",
+            "exclude":"**/{.git,.github,.vscode,Changelogs,Descriptions}/**",
+            "deleteTargetOnDeploy": true
+        },
     ],
     "fsdeploy.deployWorkspaceOnSave": true,
     "Lua.diagnostics.disable": [
