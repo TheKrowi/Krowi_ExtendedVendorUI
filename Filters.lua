@@ -155,6 +155,9 @@ do -- Pets
 	end
 
 	function filters.IsPet(itemId)
+		if itemId == 22200 or itemId == 22235 then -- Silver Shafted Arrow and Truesilver Shafted Arrow is classified as a pet but works differntly by adding a pet to another player, not yourself
+			return false;
+		end
 		local classId, subclassId = select(6, C_Item.GetItemInfoInstant(itemId));
 		if classId ~= Enum.ItemClass.Miscellaneous or subclassId ~= Enum.ItemMiscellaneousSubclass.CompanionPet then
 			return false;

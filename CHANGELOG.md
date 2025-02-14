@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 11.1 - 2025-02-14
+### Cata Classic
+- Silver Shafted Arrow and Truesilver Shafted Arrow are no longer considered pets
+
 ## 11.0 - 2025-01-18
 ### Cata Classic
 - First port from retail

@@ -2,7 +2,7 @@
 ## Title: Krowi's |cFF1D92C2Extended Vendor UI|r
 ## X-Prefix: KrowiEVU
 ## X-Acronym: KEVU
-## Version: 11.0
+## Version: 11.1
 ## Author: Krowi-Frostmane EU
 ## LoadWith: Blizzard_MerchantFrame
 ## SavedVariables: KrowiEVU_Options, KrowiEVU_Filters, KrowiEVU_Debug
@@ -10,7 +10,7 @@
 ## AddonCompartmentFuncOnEnter: KrowiEVU_OnAddonCompartmentEnter
 ## AddonCompartmentFuncOnLeave: KrowiEVU_OnAddonCompartmentLeave
 ## AddonCompartmentFunc: KrowiEVU_OnAddonCompartmentClick
-## IconTexture: interface/icons/inv_tailoring_70_silkweaveimbuedbag
+## IconTexture: interface/icons/inv_misc_bag_24_netherweave_imbued
 ## X-Discord-Invite-Link: https://discord.gg/mdBFQJYeQZ
 ## X-Discord-Server-Name: Krowi's Addons
 ## X-CurseForge: https://www.curseforge.com/wow/addons/krowi-extended-vendor-ui
