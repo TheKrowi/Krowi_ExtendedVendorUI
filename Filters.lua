@@ -8,6 +8,7 @@ _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"] = 102;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"] = 103;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG"] = 104;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_RECIPES"] = 105;
+_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG_SETS"] = 106;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"] = 200;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_SEARCH"] = 201;
 
@@ -51,6 +52,7 @@ local defaults = {
 			Mounts = false,
 			Toys = false,
 			Transmog = false,
+			TransmogSets = false,
 			Recipes = false
 		},
 		Custom = {
@@ -58,6 +60,7 @@ local defaults = {
 			Mounts = true,
 			Toys = true,
 			Transmog = true,
+			TransmogSets = true,
 			Recipes = true,
 			Other = true,
 			Armor = { --[[ Automatically generated ]] },
@@ -112,6 +115,8 @@ function filters:Validate(lootFilter, itemId)
 		return self:ValidateToysOnly(itemId);
     elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG"] then
 		return self:ValidateTransmogOnly(itemId);
+    elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG_SETS"] then
+		return self:ValidateTransmogSetOnly(itemId);
     elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_RECIPES"] then
 		return self:ValidateRecipesOnly(itemId);
     elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"] then
@@ -133,6 +138,10 @@ function filters:Validate(lootFilter, itemId)
 
 		if self.IsTransmog(itemId) and addon.Filters.db.profile.HideCollected.Transmog then
 			return not self.IsTransmogCollected(itemId);
+		end
+
+		if self.IsTransmogSet(itemId) and addon.Filters.db.profile.HideCollected.TransmogSets then
+			return not self.IsTransmogSetCollected(itemId);
 		end
 
 		if self.IsRecipe(itemId) and addon.Filters.db.profile.HideCollected.Recipes then
@@ -244,6 +253,37 @@ do -- Transmog
 
 	function filters.IsTransmogCollected(itemId)
 		return C_TransmogCollection.PlayerHasTransmog(itemId);
+	end
+end
+
+do -- Transmog Set
+	function filters:ValidateTransmogSetOnly(itemId)
+		if not self.IsTransmogSet(itemId) then
+			return false;
+		end
+		if addon.Filters.db.profile.HideCollected.TransmogSets then
+			return not self.IsTransmogSetCollected(itemId);
+		end
+		return true;
+	end
+
+	function filters.IsTransmogSet(itemId)
+		local setId = C_Item.GetItemLearnTransmogSet(itemId);
+		return setId ~= nil;
+	end
+
+	function filters.IsTransmogSetCollected(itemId)
+		local setId = C_Item.GetItemLearnTransmogSet(itemId);
+		local setItems = C_Transmog.GetAllSetAppearancesByID(setId);
+		if not setItems then
+			return false;
+		end
+		for _, setItem in next, setItems do
+			if not filters.IsTransmogCollected(setItem.itemID) then
+				return false;
+			end
+		end
+		return true;
 	end
 end
 

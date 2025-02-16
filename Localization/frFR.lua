@@ -8,7 +8,7 @@ addon.Plugins:LoadLocalization(L);
 -- [[ https://legacy.curseforge.com/wow/addons/krowi-extended-vendor-ui/localization ]] --
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2024-12-17 22-35-09 ]] --
+-- [[ Exported at 2025-02-16 20-50-47 ]] --
 L["Are you sure you want to hide the options button?"] = "Êtes-vous sûr de vouloir cacher le bouton des options ?"
 L["Author"] = "Auteur"
 L["Build"] = "Version"

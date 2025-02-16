@@ -261,7 +261,8 @@
         "C_TooltipInfo",
         "UIDropDownMenu_RefreshAll",
         "UIDROPDOWNMENU_OPEN_MENU",
-        "WARDROBE"
+        "WARDROBE",
+        "ITEMS"
     ],
     "fsdeploy.nodes": [
         {
