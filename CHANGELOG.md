@@ -1,9 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 12.0 - 2025-02-16
+## 12.0 - 2025-03-01
 ### Added
 - Transmog sets likes ensembles and arsenals can now also filtered
+- Addon category
 
 ## 11.1 - 2025-02-14
 ### Cata Classic
