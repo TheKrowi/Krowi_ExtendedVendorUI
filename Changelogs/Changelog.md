@@ -1,5 +1,3 @@
 ### Added
-- More filters for transmogs
-
-### Fixed
-- Items considered mounts should once again behave
+- Transmog sets likes ensembles and arsenals can now also filtered
+- Addon category
