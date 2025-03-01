@@ -364,6 +364,16 @@ do -- Custom
 			return false;
 		end
 
+		if self.IsTransmogSet(itemId) then
+			if addon.Filters.db.profile.Custom.TransmogSets then
+				if addon.Filters.db.profile.HideCollected.TransmogSets then
+					return not self.IsTransmogSetCollected(itemId);
+				end
+				return true;
+			end
+			return false;
+		end
+
 		if self.IsRecipe(itemId) then
 			if addon.Filters.db.profile.Custom.Recipes then
 				if addon.Filters.db.profile.HideCollected.Recipes then
