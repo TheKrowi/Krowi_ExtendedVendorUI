@@ -115,7 +115,7 @@ function filters:Validate(lootFilter, itemId)
 		return self:ValidateToysOnly(itemId);
     elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG"] then
 		return self:ValidateTransmogOnly(itemId);
-    elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG_SETS"] then
+    elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG_SETS"] and addon.Util.IsMainline then
 		return self:ValidateTransmogSetOnly(itemId);
     elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_RECIPES"] then
 		return self:ValidateRecipesOnly(itemId);
@@ -140,8 +140,10 @@ function filters:Validate(lootFilter, itemId)
 			return not self.IsTransmogCollected(itemId);
 		end
 
-		if self.IsTransmogSet(itemId) and addon.Filters.db.profile.HideCollected.TransmogSets then
-			return not self.IsTransmogSetCollected(itemId);
+		if addon.Util.IsMainline then
+			if self.IsTransmogSet(itemId) and addon.Filters.db.profile.HideCollected.TransmogSets then
+				return not self.IsTransmogSetCollected(itemId);
+			end
 		end
 
 		if self.IsRecipe(itemId) and addon.Filters.db.profile.HideCollected.Recipes then
