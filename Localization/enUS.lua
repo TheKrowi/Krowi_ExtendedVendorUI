@@ -53,3 +53,4 @@ L["Wago"] = true
 L["Wago Desc"] = "Open a popup dialog with a link to the {addonName} {wago} page."
 L["WoWInterface"] = true
 L["WoWInterface Desc"] = "Open a popup dialog with a link to the {addonName} {woWInterface} page."
+L["Illusions"] = "Illusions (experimental)"
