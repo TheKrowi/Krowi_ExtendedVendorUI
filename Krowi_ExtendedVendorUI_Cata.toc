@@ -2,7 +2,7 @@
 ## Title: Krowi's |cFF1D92C2Extended Vendor UI|r
 ## X-Prefix: KrowiEVU
 ## X-Acronym: KEVU
-## Version: 12.0
+## Version: 13.0
 ## Author: Krowi-Frostmane EU
 ## LoadWith: Blizzard_MerchantFrame
 ## SavedVariables: KrowiEVU_Options, KrowiEVU_Filters, KrowiEVU_Debug
@@ -13,7 +13,7 @@
 ## X-CurseForge: https://www.curseforge.com/wow/addons/krowi-extended-vendor-ui
 ## X-Curse-Project-ID: 872787
 ## X-Wago: https://addons.wago.io/addons/krowi-extended-vendor-ui
-## X-Wago-Project-ID: mNwQwWKo
+## X-Wago-ID: mNwQwWKo
 ## X-WoWInterface: https://www.wowinterface.com/downloads/info26611-KrowisExtendedVendorUI
 ## X-WoWInterface-Project-ID: 26611
 
