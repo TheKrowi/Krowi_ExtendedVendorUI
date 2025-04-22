@@ -8,7 +8,7 @@ addon.Plugins:LoadLocalization(L);
 -- [[ https://legacy.curseforge.com/wow/addons/krowi-extended-vendor-ui/localization ]] --
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2025-02-16 20-50-47 ]] --
+-- [[ Exported at 2025-04-22 19-33-55 ]] --
 L["Are you sure you want to hide the options button?"] = "Êtes-vous sûr de vouloir cacher le bouton des options ?"
 L["Author"] = "Auteur"
 L["Build"] = "Version"
@@ -20,6 +20,7 @@ L["CurseForge Desc"] = "Ouvre une fenêtre avec un lien vers la page {addonName}
 L["Custom"] = "Personnalisé"
 L["Default filters"] = "Filtres par défaut"
 L["Default value"] = "Valeur par défaut"
+L["Deselect All"] = "Tout désélectionner"
 L["Discord"] = true
 L["Discord Desc"] = "Ouvre une fenêtre avec un lien vers le serveur Discord {serverName}. Sur ce serveur vous pourrez poster des commentaires, des rapports, des remarques, des idées et toute autre chose."
 L["Filters"] = "Filtres"
@@ -35,6 +36,7 @@ L["Pets"] = "Mascottes"
 L["Right click"] = "Clic droit"
 L["Rows"] = "Lignes"
 L["Rows first"] = "Lignes d'abord"
+L["Select All"] = "Tout sélectionner"
 L["Show minimap icon"] = "Afficher l'icone sur la mini-map"
 L["Show minimap icon Desc"] = "Afficher ou masquer l'icône sur la mini-map."
 L["Toys"] = "Jouets"
