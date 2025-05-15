@@ -262,7 +262,8 @@
         "UIDropDownMenu_RefreshAll",
         "UIDROPDOWNMENU_OPEN_MENU",
         "WARDROBE",
-        "ITEMS"
+        "ITEMS",
+        "MerchantToken4"
     ],
     "fsdeploy.nodes": [
         {

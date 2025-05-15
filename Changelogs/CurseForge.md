@@ -2,3 +2,11 @@
 <ul>
 <li>Illusions can now also be filtered</li>
 </ul>
+<p><h3>Added (13.1)</h3></p>
+<ul>
+<li>Added Russian translation</li>
+</ul>
+<p><h3>Fixed (13.1)</h3></p>
+<ul>
+<li>The 3 new extra tokens should now also align to the right of the window</li>
+</ul>

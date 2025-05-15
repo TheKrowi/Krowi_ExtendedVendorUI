@@ -8,7 +8,7 @@ addon.Plugins:LoadLocalization(L);
 -- [[ https://legacy.curseforge.com/wow/addons/krowi-extended-vendor-ui/localization ]] --
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2025-04-22 19-33-37 ]] --
+-- [[ Exported at 2025-05-15 18-40-46 ]] --
 L["Are you sure you want to hide the options button?"] = "Bist du sicher, dass du die Schaltfläche \"Optionen\" ausblenden möchtest? Die Schaltfläche \"Optionen\" kann wieder eingeblendet werden über {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options} "
 L["Arsenals"] = "Arsenal"
 L["Author"] = "Autor "
@@ -30,6 +30,7 @@ L["Hide"] = "Ausblenden"
 L["Hide collected"] = "Gesammelt ausblenden"
 L["Icon Left click"] = "für schnelle Layout-Optionen."
 L["Icon Right click"] = "für die Optionen. "
+L["Illusions"] = "Illusionen (experimentell)"
 L["Left click"] = "Links-Klick"
 L["Mounts"] = "Reittiere"
 L["Only show"] = "Nur zeigen"
