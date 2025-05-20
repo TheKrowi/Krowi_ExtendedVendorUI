@@ -10,3 +10,11 @@
 <ul>
 <li>The 3 new extra tokens should now also align to the right of the window</li>
 </ul>
+<p><h3>Cata Classic (13.2)</h3></p>
+<ul>
+<li>Disabled recipe filtering</li>
+</ul>
+<p><h3>WoW Classic (13.2)</h3></p>
+<ul>
+<li>Disabled recipe filtering</li>
+</ul>
