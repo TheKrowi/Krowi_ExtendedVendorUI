@@ -339,7 +339,7 @@ else
 	end
 end
 
-do -- Recipes
+if addon.Util.IsMainline then -- Recipes
 	function filters:ValidateRecipesOnly(itemId)
 		if not self.IsRecipe(itemId) then
 			return false;
@@ -362,6 +362,14 @@ do -- Recipes
 				return true;
 			end
 		end
+		return false;
+	end
+else
+	function filters.IsRecipe(itemId)
+		return false;
+	end
+
+	function filters.IsRecipeCollected(itemId)
 		return false;
 	end
 end
