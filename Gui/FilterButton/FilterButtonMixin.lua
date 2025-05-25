@@ -155,7 +155,9 @@ function KrowiEVU_FilterButtonMixin:BuildMenu()
 		NotCheckable = false,
 		KeepShownOnClick = true
 	});
-	self:AddCheckBox(custom, addon.L["Pets"], {"Custom", "Pets"});
+	if addon.Util.IsMainline then
+		self:AddCheckBox(custom, addon.L["Pets"], {"Custom", "Pets"});
+	end
 	self:AddCheckBox(custom, addon.L["Mounts"], {"Custom", "Mounts"});
 	self:AddCheckBox(custom, addon.L["Toys"], {"Custom", "Toys"});
 	appearances = menuItem:New({
@@ -198,7 +200,9 @@ function KrowiEVU_FilterButtonMixin:BuildMenu()
 	menu:AddSeparator();
 
 	self:AddTitle(menu, addon.L["Hide collected"]);
-	self:AddCheckBox(menu, addon.L["Pets"], {"HideCollected", "Pets"});
+	if addon.Util.IsMainline then
+		self:AddCheckBox(menu, addon.L["Pets"], {"HideCollected", "Pets"});
+	end
 	self:AddCheckBox(menu, addon.L["Mounts"], {"HideCollected", "Mounts"});
 	self:AddCheckBox(menu, addon.L["Toys"], {"HideCollected", "Toys"});
 	self:AddCheckBox(menu, addon.L["Appearances"], {"HideCollected", "Transmog"});

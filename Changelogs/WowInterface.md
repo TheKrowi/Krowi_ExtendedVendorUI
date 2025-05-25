@@ -22,3 +22,13 @@
 [LIST]
 [*]Disabled recipe filtering
 [/LIST]
+
+[B]Cata Classic (13.3)[/B]
+[LIST]
+[*]Disabled pet filtering
+[/LIST]
+
+[B]WoW Classic (13.3)[/B]
+[LIST]
+[*]Disabled pet filtering
+[/LIST]

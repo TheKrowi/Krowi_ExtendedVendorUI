@@ -12,3 +12,9 @@
 
 ### WoW Classic (13.2)
 - Disabled recipe filtering
+
+### Cata Classic (13.3)
+- Disabled pet filtering
+
+### WoW Classic (13.3)
+- Disabled pet filtering

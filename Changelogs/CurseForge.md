@@ -18,3 +18,11 @@
 <ul>
 <li>Disabled recipe filtering</li>
 </ul>
+<p><h3>Cata Classic (13.3)</h3></p>
+<ul>
+<li>Disabled pet filtering</li>
+</ul>
+<p><h3>WoW Classic (13.3)</h3></p>
+<ul>
+<li>Disabled pet filtering</li>
+</ul>
