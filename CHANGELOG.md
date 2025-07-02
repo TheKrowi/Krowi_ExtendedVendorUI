@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 14.0 - 2025-07-02
+### Mists Classic
+- Added support
+- Removed pet filtering option
+
+### Cata Classic
+- Removed support
+
 ## 13.3 - 2025-05-25
 ### Cata Classic
 - Disabled pet filtering

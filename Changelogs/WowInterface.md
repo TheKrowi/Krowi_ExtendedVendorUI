@@ -1,34 +1,10 @@
-[B]Added[/B]
+[B]Mists Classic[/B]
 [LIST]
-[*]Illusions can now also be filtered
+[*]Added support
+[*]Removed pet filtering option
 [/LIST]
 
-[B]Added (13.1)[/B]
+[B]Cata Classic[/B]
 [LIST]
-[*]Added Russian translation
-[/LIST]
-
-[B]Fixed (13.1)[/B]
-[LIST]
-[*]The 3 new extra tokens should now also align to the right of the window
-[/LIST]
-
-[B]Cata Classic (13.2)[/B]
-[LIST]
-[*]Disabled recipe filtering
-[/LIST]
-
-[B]WoW Classic (13.2)[/B]
-[LIST]
-[*]Disabled recipe filtering
-[/LIST]
-
-[B]Cata Classic (13.3)[/B]
-[LIST]
-[*]Disabled pet filtering
-[/LIST]
-
-[B]WoW Classic (13.3)[/B]
-[LIST]
-[*]Disabled pet filtering
+[*]Removed support
 [/LIST]

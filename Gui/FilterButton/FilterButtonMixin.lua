@@ -104,7 +104,9 @@ function KrowiEVU_FilterButtonMixin:BuildMenu()
 	menu:AddSeparator();
 
 	self:AddTitle(menu, addon.L["Only show"]);
-	self:AddLootFilterRadioButton(menu, menu, addon.L["Pets"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"]);
+	if addon.Util.IsMainline then
+		self:AddLootFilterRadioButton(menu, menu, addon.L["Pets"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"]);
+	end
 	self:AddLootFilterRadioButton(menu, menu, addon.L["Mounts"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"]);
 	self:AddLootFilterRadioButton(menu, menu, addon.L["Toys"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"]);
 	local appearances = menuItem:New({
