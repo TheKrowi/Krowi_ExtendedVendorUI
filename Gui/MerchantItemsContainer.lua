@@ -107,11 +107,9 @@ function merchantItemsContainer:DrawItemSlot(index, row, column, offsetX, offset
     itemSlot:ClearAllPoints();
     itemSlot:SetPoint("TOPLEFT", MerchantFrame, "TOPLEFT", calculatedOffsetX, calculatedOffsetY);
     itemSlot:Show();
-    -- print("DrawItemSlot", index, row, column, offsetX, offsetY, calculatedOffsetX, calculatedOffsetY);
 end
 
 function merchantItemsContainer:DrawItemSlots(numRows, numColumns, offsetX, offsetY)
-    print("Krowi")
     if addon.Options.db.profile.Direction == addon.L["Columns first"] then
         for row = 1, numRows, 1 do
             for column = 1, numColumns, 1 do

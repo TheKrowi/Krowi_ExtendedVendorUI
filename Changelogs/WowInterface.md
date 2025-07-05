@@ -18,3 +18,8 @@
 [LIST]
 [*]Disabled recipe filtering
 [/LIST]
+
+[B]Fixed (14.2)[/B]
+[LIST]
+[*]Removed unwanted print statements to the chat window
+[/LIST]

@@ -263,7 +263,8 @@
         "UIDROPDOWNMENU_OPEN_MENU",
         "WARDROBE",
         "ITEMS",
-        "MerchantToken4"
+        "MerchantToken4",
+        "ElvUI"
     ],
     "fsdeploy.nodes": [
         {

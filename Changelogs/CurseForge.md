@@ -15,3 +15,7 @@
 <ul>
 <li>Disabled recipe filtering</li>
 </ul>
+<p><h3>Fixed (14.2)</h3></p>
+<ul>
+<li>Removed unwanted print statements to the chat window</li>
+</ul>

@@ -10,3 +10,6 @@
 
 ### WoW Classic (14.1)
 - Disabled recipe filtering
+
+### Fixed (14.2)
+- Removed unwanted print statements to the chat window
