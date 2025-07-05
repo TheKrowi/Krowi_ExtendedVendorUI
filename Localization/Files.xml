@@ -10,5 +10,7 @@
     <Script file="frFR.Plugins.lua" />
     <Script file="itIT.lua" />
     <Script file="itIT.Plugins.lua" />
+    <Script file="ruRU.lua" />
+    <Script file="ruRU.Plugins.lua" />
     <Script file="GlobalStrings.lua" />
 </Ui>

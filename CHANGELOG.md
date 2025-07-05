@@ -1,6 +1,42 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 14.1 - 2025-07-05
+### Mists Classic
+- Resolved an ElvUI compatibility issue
+
+### WoW Classic
+- Disabled recipe filtering
+
+## 14.0 - 2025-07-02
+### Mists Classic
+- Added support
+- Removed pet filtering option
+
+### Cata Classic
+- Removed support
+
+## 13.3 - 2025-05-25
+### Cata Classic
+- Disabled pet filtering
+
+### WoW Classic
+- Disabled pet filtering
+
+## 13.2 - 2025-05-20
+### Cata Classic
+- Disabled recipe filtering
+
+### WoW Classic
+- Disabled recipe filtering
+
+## 13.1 - 2025-05-15
+### Added
+- Added Russian translation
+
+### Fixed
+- The 3 new extra tokens should now also align to the right of the window
+
 ## 13.0 - 2025-04-22
 ### Added
 - Illusions can now also be filtered

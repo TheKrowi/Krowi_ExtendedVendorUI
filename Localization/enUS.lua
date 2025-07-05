@@ -7,7 +7,7 @@ addon.Plugins:LoadLocalization(L);
 -- [[ https://legacy.curseforge.com/wow/addons/krowi-extended-vendor-ui/localization ]] --
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2025-04-22 19-33-29 ]] --
+-- [[ Exported at 2025-05-15 18-40-46 ]] --
 L["Are you sure you want to hide the options button?"] = [=[Are you sure you want to hide the options button?
 The options button can be shown again via {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options}]=]
 L["Arsenals"] = true
