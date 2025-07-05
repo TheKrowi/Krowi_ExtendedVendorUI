@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 14.1 - 2025-07-05
+### Mists Classic
+- Resolved an ElvUI compatibility issue
+
+### WoW Classic
+- Disabled recipe filtering
+
 ## 14.0 - 2025-07-02
 ### Mists Classic
 - Added support

@@ -7,3 +7,11 @@
 <ul>
 <li>Removed support</li>
 </ul>
+<p><h3>Mists Classic (14.1)</h3></p>
+<ul>
+<li>Resolved an ElvUI compatibility issue</li>
+</ul>
+<p><h3>WoW Classic (14.1)</h3></p>
+<ul>
+<li>Disabled recipe filtering</li>
+</ul>
