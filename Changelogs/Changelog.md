@@ -13,3 +13,6 @@
 
 ### Fixed (14.2)
 - Removed unwanted print statements to the chat window
+
+### Fixed (14.3)
+- Links in the pop up window should once again be full length

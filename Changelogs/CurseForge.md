@@ -19,3 +19,7 @@
 <ul>
 <li>Removed unwanted print statements to the chat window</li>
 </ul>
+<p><h3>Fixed (14.3)</h3></p>
+<ul>
+<li>Links in the pop up window should once again be full length</li>
+</ul>

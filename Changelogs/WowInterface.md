@@ -23,3 +23,8 @@
 [LIST]
 [*]Removed unwanted print statements to the chat window
 [/LIST]
+
+[B]Fixed (14.3)[/B]
+[LIST]
+[*]Links in the pop up window should once again be full length
+[/LIST]

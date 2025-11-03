@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 14.3 - 2025-11-03
+### Fixed
+- Links in the pop up window should once again be full length
+
 ## 14.2 - 2025-07-05
 ### Fixed
 - Removed unwanted print statements to the chat window
