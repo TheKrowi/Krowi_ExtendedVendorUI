@@ -264,7 +264,12 @@
         "WARDROBE",
         "ITEMS",
         "MerchantToken4",
-        "ElvUI"
+        "ElvUI",
+        "GetCurrentRegionName",
+        "WOW_PROJECT_ID",
+        "WOW_PROJECT_MAINLINE",
+        "C_Spell",
+        "securecallfunction"
     ],
     "fsdeploy.nodes": [
         {
@@ -299,6 +304,8 @@
         "unbalanced-assignments",
         "ambiguity-1",
         "missing-return",
-        "empty-block"
+        "empty-block",
+        "inject-field",
+        "duplicate-set-field"
     ],
 }

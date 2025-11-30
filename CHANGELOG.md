@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 14.4 - 2025-11-24
+### Added
+- Credits
+
 ## 14.3 - 2025-11-03
 ### Fixed
 - Links in the pop up window should once again be full length
