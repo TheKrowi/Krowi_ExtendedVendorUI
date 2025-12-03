@@ -1,18 +1,2 @@
-### Mists Classic
-- Added support
-- Removed pet filtering option
-
-### Cata Classic
-- Removed support
-
-### Mists Classic (14.1)
-- Resolved an ElvUI compatibility issue
-
-### WoW Classic (14.1)
-- Disabled recipe filtering
-
-### Fixed (14.2)
-- Removed unwanted print statements to the chat window
-
-### Fixed (14.3)
-- Links in the pop up window should once again be full length
+### Added
+- Filter Housing items with an option to select when housing items are considered collected based on quantity (1-10)

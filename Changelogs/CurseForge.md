@@ -1,25 +1,4 @@
-<p><h3>Mists Classic</h3></p>
+<p><h3>Added</h3></p>
 <ul>
-<li>Added support</li>
-<li>Removed pet filtering option</li>
-</ul>
-<p><h3>Cata Classic</h3></p>
-<ul>
-<li>Removed support</li>
-</ul>
-<p><h3>Mists Classic (14.1)</h3></p>
-<ul>
-<li>Resolved an ElvUI compatibility issue</li>
-</ul>
-<p><h3>WoW Classic (14.1)</h3></p>
-<ul>
-<li>Disabled recipe filtering</li>
-</ul>
-<p><h3>Fixed (14.2)</h3></p>
-<ul>
-<li>Removed unwanted print statements to the chat window</li>
-</ul>
-<p><h3>Fixed (14.3)</h3></p>
-<ul>
-<li>Links in the pop up window should once again be full length</li>
+<li>Filter Housing items with an option to select when housing items are considered collected based on quantity (1-10)</li>
 </ul>
