@@ -10,6 +10,7 @@ _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG"] = 104;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_RECIPES"] = 105;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG_SETS"] = 106;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_ILLUSIONS"] = 107;
+_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_HOUSING"] = 108;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"] = 200;
 _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_SEARCH"] = 201;
 
@@ -55,7 +56,8 @@ local defaults = {
 			Transmog = false,
 			TransmogSets = false,
 			Illusions = false,
-			Recipes = false
+			Recipes = false,
+			Housing = false,
 		},
 		Custom = {
 			Pets = true,
@@ -65,14 +67,16 @@ local defaults = {
 			TransmogSets = true,
 			Illusions = true,
 			Recipes = true,
+			Housing = true,
 			Other = true,
 			Armor = { --[[ Automatically generated ]] },
-			Weapon = { --[[ Automatically generated ]] }
+			Weapon = { --[[ Automatically generated ]] },
 		},
 		OnlyShow = {
 			Armor = { --[[ Automatically generated ]] },
-			Weapon = { --[[ Automatically generated ]] }
-		}
+			Weapon = { --[[ Automatically generated ]] },
+		},
+		HousingQuantity = 1,
 	}
 };
 
@@ -124,6 +128,8 @@ function filters:Validate(lootFilter, itemId)
 		return self:ValidateIllusionOnly(itemId);
     elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_RECIPES"] then
 		return self:ValidateRecipesOnly(itemId);
+    elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_HOUSING"] then
+		return self:ValidateHousingOnly(itemId);
     elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"] then
 		return self:ValidateCustom(itemId);
     elseif lootFilter == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_SEARCH"] then
@@ -155,6 +161,10 @@ function filters:Validate(lootFilter, itemId)
 
 		if self.IsRecipe(itemId) and addon.Filters.db.profile.HideCollected.Recipes then
 			return not self.IsRecipeCollected(itemId);
+		end
+
+		if self.IsHousing(itemId) and addon.Filters.db.profile.HideCollected.Housing then
+			return not self.IsHousingCollected(itemId);
 		end
 	end
 
@@ -382,6 +392,39 @@ else
 	end
 end
 
+if addon.Util.IsMainline then -- Housing
+	function filters:ValidateHousingOnly(itemId)
+		if not self.IsHousing(itemId) then
+			return false;
+		end
+		if addon.Filters.db.profile.HideCollected.Housing then
+			return not self.IsHousingCollected(itemId);
+		end
+		return true;
+	end
+
+	function filters.IsHousing(itemId)
+		local classId = select(6, C_Item.GetItemInfoInstant(itemId));
+		return classId == Enum.ItemClass.Housing;
+	end
+
+	function filters.IsHousingCollected(itemId)
+		local entryInfo = C_HousingCatalog.GetCatalogEntryInfoByItem(C_Item.GetItemInfoInstant(itemId));
+		if entryInfo then
+			return entryInfo.quantity >= addon.Filters.db.profile.HousingQuantity;
+		end
+		return false;
+	end
+else
+	function filters.IsHousing(itemId)
+		return false;
+	end
+
+	function filters.IsHousingCollected(itemId)
+		return false;
+	end
+end
+
 do -- Custom
 	function filters:ValidateCustom(itemId)
 		if self.IsPet(itemId) then
@@ -454,6 +497,16 @@ do -- Custom
 			if addon.Filters.db.profile.Custom.Recipes then
 				if addon.Filters.db.profile.HideCollected.Recipes then
 					return not self.IsRecipeCollected(itemId);
+				end
+				return true;
+			end
+			return false;
+		end
+
+		if self.IsHousing(itemId) then
+			if addon.Filters.db.profile.Custom.Housing then
+				if addon.Filters.db.profile.HideCollected.Housing then
+					return not self.IsHousingCollected(itemId);
 				end
 				return true;
 			end

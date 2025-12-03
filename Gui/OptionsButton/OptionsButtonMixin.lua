@@ -75,6 +75,15 @@ function KrowiEVU_OptionsButtonMixin:BuildMenu()
 		self:AddRadioButton(menu, columns, i, addon.Options.db.profile, {"NumColumns"}, UpdateView);
 	end
 	menu:Add(columns);
+
+	menu:AddSeparator();
+
+	local housingQuantity = menuItem:New({Text = addon.L["Housing Quantity"]});
+	for i = 1, 10, 1 do
+		self:AddRadioButton(menu, housingQuantity, i, addon.Filters.db.profile, {"HousingQuantity"}, UpdateView);
+	end
+	menu:Add(housingQuantity);
+
 	if addon.Options.db.profile.ShowHideOption then
 		menu:AddFull({
 			Text = addon.L["Hide"],
@@ -96,6 +105,8 @@ function KrowiEVU_OptionsButtonMixin:BuildMenu()
 			end
 		});
 	end
+
+
 	return menu;
 end
 

@@ -269,7 +269,8 @@
         "WOW_PROJECT_ID",
         "WOW_PROJECT_MAINLINE",
         "C_Spell",
-        "securecallfunction"
+        "securecallfunction",
+        "C_HousingCatalog"
     ],
     "fsdeploy.nodes": [
         {

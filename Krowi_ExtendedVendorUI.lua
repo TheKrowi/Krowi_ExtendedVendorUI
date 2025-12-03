@@ -29,6 +29,10 @@ function loadHelper:OnEvent(event, arg1, arg2)
             addon.Api.Load();
 
             KrowiEVU_OptionsButton:ShowHide();
+
+            if addon.Util.IsMainline then
+                C_HousingCatalog.CreateCatalogSearcher(); -- Pre-load the housing catalog searcher to prevent lag when first used
+            end
         end
     end
 end
