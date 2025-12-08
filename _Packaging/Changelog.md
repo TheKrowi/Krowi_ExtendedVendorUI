@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 15.2 - 2025-12-08
+### Fixed
+- Missing reference
+
 ## 15.1 - 2025-12-08
 ### Changed
 - Packaging

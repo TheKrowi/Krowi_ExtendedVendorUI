@@ -11,7 +11,7 @@
     <Include file="AceConfig-3.0\AceConfig-3.0.xml" />
 
     <Include file="Krowi_Util\Krowi_Util-1.0.xml" />
-    <Include file="Krowi_PopopDialog\Krowi_PopopDialog-1.0.xml" />
+    <Include file="Krowi_PopupDialog\Krowi_PopupDialog-1.0.xml" />
     <Include file="Krowi_Menu\Krowi_Menu-1.0.xml" />
     
     <Script file="Krowi_Util\Options\InjectOptions.lua" />
