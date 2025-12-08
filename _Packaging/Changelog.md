@@ -1,6 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 15.1 - 2025-12-08
+### Changed
+- Packaging
+
+## 15.0 - 2025-12-03
+### Added
+- Filter Housing items with an option to select when housing items are considered collected based on quantity (1-10)
+
+## 14.4 - 2025-11-24
+### Added
+- Credits
+
+## 14.3 - 2025-11-03
+### Fixed
+- Links in the pop up window should once again be full length
+
+## 14.2 - 2025-07-05
+### Fixed
+- Removed unwanted print statements to the chat window
+
 ## 14.1 - 2025-07-05
 ### Mists Classic
 - Resolved an ElvUI compatibility issue
