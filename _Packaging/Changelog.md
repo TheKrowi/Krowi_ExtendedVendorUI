@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 15.1 - 2025-12-08
+### Changed
+- Packaging
+
 ## 15.0 - 2025-12-03
 ### Added
 - Filter Housing items with an option to select when housing items are considered collected based on quantity (1-10)
