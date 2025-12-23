@@ -8,7 +8,7 @@ addon.Plugins:LoadLocalization(L);
 -- [[ https://legacy.curseforge.com/wow/addons/krowi-extended-vendor-ui/localization ]] --
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2025-05-15 18-40-48 ]] --
+-- [[ Exported at 2025-12-23 18-21-28 ]] --
 L["Are you sure you want to hide the options button?"] = "是否确定隐藏按钮？再次显示按钮请到 {gameMenu} > {addOns} > 商人 > {general} > {options}"
 L["Author"] = "作者"
 L["Build"] = "版本"
@@ -47,6 +47,3 @@ L["Show options button Desc"] = "显示/隐藏商人界面的设置按钮"
 L["Toys"] = "玩具"
 L["Unchecked"] = "停用"
 L["Wago"] = true
-L["Wago Desc"] = "显示 {addonName} 的 {wago} 插件页面链接"
-L["WoWInterface"] = true
-L["WoWInterface Desc"] = "显示 {addonName} 的 {woWInterface} 插件页面链接"

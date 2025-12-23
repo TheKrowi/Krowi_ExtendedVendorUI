@@ -2,12 +2,29 @@ local _, addon = ...;
 
 KrowiEVU_FilterButtonMixin = {};
 
-function KrowiEVU_FilterButtonMixin:ShowHide()
-    if addon.Options.db.profile.ShowOptionsButton then
-        self:Show();
-        return;
-    end
-    self:Hide();
+-- Lookup table for loot filter text labels
+local lootFilterTextMap = {};
+
+local function InitializeLootFilterTextMap()
+	lootFilterTextMap[LE_LOOT_FILTER_ALL] = ALL;
+	lootFilterTextMap[LE_LOOT_FILTER_BOE] = ITEM_BIND_ON_EQUIP;
+	lootFilterTextMap[LE_LOOT_FILTER_CLASS] = ALL_SPECS;
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"]] = addon.L["Pets"];
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"]] = addon.L["Mounts"];
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"]] = addon.L["Toys"];
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG"]] = addon.L["Appearances"];
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG_SETS"]] = addon.L["Appearance Sets"];
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_ILLUSIONS"]] = addon.L["Illusions"];
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_RECIPES"]] = addon.L["Recipes"];
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_HOUSING"]] = addon.L["Housing"];
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"]] = addon.L["Custom"];
+end
+
+local function GetLootFilterText(lootFilter)
+	if not next(lootFilterTextMap) then
+		InitializeLootFilterTextMap();
+	end
+	return lootFilterTextMap[lootFilter];
 end
 
 function KrowiEVU_FilterButtonMixin:AddTitle(menu, text)
@@ -17,7 +34,8 @@ function KrowiEVU_FilterButtonMixin:AddTitle(menu, text)
 	});
 end
 
-function KrowiEVU_FilterButtonMixin:AddLootFilterRadioButton(parentMenu, _menu, text, lootFilter)
+function KrowiEVU_FilterButtonMixin:AddLootFilterRadioButton(parentMenu, _menu, lootFilter, text)
+	text = text or GetLootFilterText(lootFilter);
     _menu:AddFull({
 		Text = text,
 		Checked = function()
@@ -91,24 +109,24 @@ function KrowiEVU_FilterButtonMixin:BuildMenu()
 		local sex = UnitSex("player");
 		for i = 1, numSpecs do
 			local _, name = GetSpecializationInfo(i, nil, nil, nil, sex);
-			self:AddLootFilterRadioButton(menu, class, name, LE_LOOT_FILTER_SPEC1 + i - 1, className, name);
+			self:AddLootFilterRadioButton(menu, class, LE_LOOT_FILTER_SPEC1 + i - 1, name);
 		end
-		self:AddLootFilterRadioButton(menu, class, ALL_SPECS, LE_LOOT_FILTER_CLASS, ALL_SPECS, className);
+		self:AddLootFilterRadioButton(menu, class, LE_LOOT_FILTER_CLASS);
 		menu:Add(class);
 
-		self:AddLootFilterRadioButton(menu, menu, ITEM_BIND_ON_EQUIP, LE_LOOT_FILTER_BOE, ITEM_BIND_ON_EQUIP, ITEM_BIND_ON_EQUIP);
+		self:AddLootFilterRadioButton(menu, menu, LE_LOOT_FILTER_BOE);
 	end
 
-	self:AddLootFilterRadioButton(menu, menu, ALL, LE_LOOT_FILTER_ALL, ALL, ALL);
+	self:AddLootFilterRadioButton(menu, menu, LE_LOOT_FILTER_ALL);
 
 	menu:AddSeparator();
 
 	self:AddTitle(menu, addon.L["Only show"]);
 	if addon.Util.IsMainline then
-		self:AddLootFilterRadioButton(menu, menu, addon.L["Pets"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"]);
+		self:AddLootFilterRadioButton(menu, menu, _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"]);
 	end
-	self:AddLootFilterRadioButton(menu, menu, addon.L["Mounts"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"]);
-	self:AddLootFilterRadioButton(menu, menu, addon.L["Toys"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"]);
+	self:AddLootFilterRadioButton(menu, menu, _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"]);
+	self:AddLootFilterRadioButton(menu, menu, _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"]);
 	local appearances = menuItem:New({
 		Text = addon.L["Appearances"],
 		Checked = function()
@@ -139,10 +157,10 @@ function KrowiEVU_FilterButtonMixin:BuildMenu()
 	self:CreateSelectDeselectAll(appearances, addon.L["Deselect All"], addon.Filters.db.profile.OnlyShow, "Weapon", false);
 	menu:Add(appearances);
 	if addon.Util.IsMainline then
-		self:AddLootFilterRadioButton(menu, menu, addon.L["Appearance Sets"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG_SETS"]);
-		self:AddLootFilterRadioButton(menu, menu, addon.L["Illusions"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_ILLUSIONS"]);
-		self:AddLootFilterRadioButton(menu, menu, addon.L["Recipes"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_RECIPES"]);
-		self:AddLootFilterRadioButton(menu, menu, addon.L["Housing"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_HOUSING"]);
+		self:AddLootFilterRadioButton(menu, menu, _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG_SETS"]);
+		self:AddLootFilterRadioButton(menu, menu, _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_ILLUSIONS"]);
+		self:AddLootFilterRadioButton(menu, menu, _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_RECIPES"]);
+		self:AddLootFilterRadioButton(menu, menu, _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_HOUSING"]);
 	end
 
 	local custom = menuItem:New({
@@ -225,3 +243,19 @@ function KrowiEVU_FilterButtonMixin:MyOnMouseDown()
 	self:BuildMenu();
     menu:Toggle(self, 96, 15);
 end
+
+hooksecurefunc("MerchantFrame_SetFilter", function(self, filter)
+	if not filter then
+		return;
+	end
+	KrowiEVU_Filters = KrowiEVU_Filters or {};
+	KrowiEVU_Filters.LastFilter = filter;
+end);
+
+hooksecurefunc("ResetSetMerchantFilter", function(self)
+	print(addon.Options.db.profile.RememberFilter, KrowiEVU_Filters.LastFilter)
+	if addon.Options.db.profile.RememberFilter and KrowiEVU_Filters.LastFilter then
+		MerchantFrame_SetFilter(nil, KrowiEVU_Filters.LastFilter);
+	end
+	KrowiEVU_FilterButton:SetText(GetLootFilterText(GetMerchantFilter()));
+end);

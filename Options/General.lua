@@ -92,12 +92,6 @@ local info = {
                     desc = addon.L["Wago Desc"]:KEVU_InjectAddonName():K_ReplaceVars(addon.L["Wago"]),
                     func = function() LibStub("Krowi_PopopDialog-1.0").ShowExternalLink(addon.Metadata.Wago); end
                 },
-                WoWInterface = {
-                    order = OrderPP(), type = "execute", width = AdjustedWidth(),
-                    name = addon.L["WoWInterface"],
-                    desc = addon.L["WoWInterface Desc"]:KEVU_InjectAddonName():K_ReplaceVars(addon.L["WoWInterface"]),
-                    func = function() LibStub("Krowi_PopopDialog-1.0").ShowExternalLink(addon.Metadata.WoWInterface); end
-                }
             }
         }
     }

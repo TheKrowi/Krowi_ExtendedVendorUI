@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 16.0 - 2025-12-23
+### Added
+- The Merchant Window now remembers your last selected filter between vendor visits; Can be toggled in the options
+
 ## 15.2 - 2025-12-08
 ### Fixed
 - Missing reference

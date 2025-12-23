@@ -10,6 +10,7 @@ addon.Options.Defaults = {
             hide = true -- not ShowMinimapIcon
         },
         ShowOptionsButton = true,
-        ShowHideOption = true
+        ShowHideOption = true,
+        RememberFilter = false,
     }
 };
