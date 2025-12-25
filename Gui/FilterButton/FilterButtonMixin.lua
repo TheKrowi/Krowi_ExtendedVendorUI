@@ -244,6 +244,10 @@ function KrowiEVU_FilterButtonMixin:MyOnMouseDown()
     menu:Toggle(self, 96, 15);
 end
 
+if not addon.Util.IsMainline then
+	return;
+end
+
 hooksecurefunc("MerchantFrame_SetFilter", function(self, filter)
 	if not filter then
 		return;
