@@ -253,7 +253,6 @@ hooksecurefunc("MerchantFrame_SetFilter", function(self, filter)
 end);
 
 hooksecurefunc("ResetSetMerchantFilter", function(self)
-	print(addon.Options.db.profile.RememberFilter, KrowiEVU_Filters.LastFilter)
 	if addon.Options.db.profile.RememberFilter and KrowiEVU_Filters.LastFilter then
 		MerchantFrame_SetFilter(nil, KrowiEVU_Filters.LastFilter);
 	end
