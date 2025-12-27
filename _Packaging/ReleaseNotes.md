@@ -9,3 +9,6 @@
 
 ### WoW Classic (16.2)
 - Removed The Merchant Window now remembers your last selected filter between vendor visits; Can be toggled in the options
+
+### Fixed (16.3)
+- Pop up dialogs should work again

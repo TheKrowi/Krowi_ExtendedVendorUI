@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 16.3 - 2025-12-27
+### Fixed
+- Pop up dialogs should work again
+
 ## 16.2 - 2025-12-25
 ### Mists Classic
 - Removed The Merchant Window now remembers your last selected filter between vendor visits; Can be toggled in the options
