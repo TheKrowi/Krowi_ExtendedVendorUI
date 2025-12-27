@@ -8,7 +8,7 @@ addon.Plugins:LoadLocalization(L);
 -- [[ https://legacy.curseforge.com/wow/addons/krowi-extended-vendor-ui/localization ]] --
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2025-05-15 18-40-48 ]] --
+-- [[ Exported at 2025-12-23 18-21-27 ]] --
 L["Are you sure you want to hide the options button?"] = "Вы уверены, что хотите скрыть кнопку настроек? Кнопку настроек можно заново вкоючить через {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options}"
 L["Arsenals"] = "Арсеналы"
 L["Author"] = "Автор"
@@ -53,6 +53,3 @@ L["Show options button Desc"] = "Показ / скрыть мнопку наст
 L["Toys"] = "Игрушки"
 L["Unchecked"] = "Невыделено"
 L["Wago"] = true
-L["Wago Desc"] = "Открыть всплывающее окно с ссылкой на страницу {addonName} {wago}"
-L["WoWInterface"] = true
-L["WoWInterface Desc"] = "Открыть всплывающее окно с ссылкой на страницу {addonName} {woWInterface}"

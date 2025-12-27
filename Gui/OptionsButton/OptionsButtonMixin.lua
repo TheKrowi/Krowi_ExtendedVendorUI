@@ -78,6 +78,22 @@ function KrowiEVU_OptionsButtonMixin:BuildMenu()
 
 	menu:AddSeparator();
 
+    menu:AddFull({
+        Text = addon.L["RememberFilter"],
+        Checked = function()
+            return addon.Options.db.profile.RememberFilter;
+        end,
+        Func = function()
+            addon.Options.db.profile.RememberFilter = not addon.Options.db.profile.RememberFilter;
+            UIDropDownMenu_RefreshAll(UIDROPDOWNMENU_OPEN_MENU);
+        end,
+        IsNotRadio = true,
+        NotCheckable = false,
+        KeepShownOnClick = true
+    });
+
+	menu:AddSeparator();
+
 	local housingQuantity = menuItem:New({Text = addon.L["Housing Quantity"]});
 	for i = 1, 10, 1 do
 		self:AddRadioButton(menu, housingQuantity, i, addon.Filters.db.profile, {"HousingQuantity"}, UpdateView);
@@ -85,6 +101,7 @@ function KrowiEVU_OptionsButtonMixin:BuildMenu()
 	menu:Add(housingQuantity);
 
 	if addon.Options.db.profile.ShowHideOption then
+		menu:AddSeparator();
 		menu:AddFull({
 			Text = addon.L["Hide"],
 			Func = function()
@@ -105,7 +122,6 @@ function KrowiEVU_OptionsButtonMixin:BuildMenu()
 			end
 		});
 	end
-
 
 	return menu;
 end

@@ -1,8 +1,14 @@
 ### Added
-- Filter Housing items with an option to select when housing items are considered collected based on quantity (1-10)
+- The Merchant Window now remembers your last selected filter between vendor visits; Can be toggled in the options
 
-### Changed (15.1)
-- Packaging
+### Fixed (16.1)
+- Removed rogue print
 
-### Fixed (15.2)
-- Missing reference
+### Mists Classic (16.2)
+- Removed The Merchant Window now remembers your last selected filter between vendor visits; Can be toggled in the options
+
+### WoW Classic (16.2)
+- Removed The Merchant Window now remembers your last selected filter between vendor visits; Can be toggled in the options
+
+### Fixed (16.3)
+- Pop up dialogs should work again

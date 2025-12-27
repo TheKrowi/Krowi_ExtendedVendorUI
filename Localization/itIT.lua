@@ -8,7 +8,7 @@ addon.Plugins:LoadLocalization(L);
 -- [[ https://legacy.curseforge.com/wow/addons/krowi-extended-vendor-ui/localization ]] --
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2025-05-15 18-40-47 ]] --
+-- [[ Exported at 2025-12-23 18-21-27 ]] --
 L["Are you sure you want to hide the options button?"] = [=[Vuoi davvero nascondere il pulsante opzioni?
 Il pulsante può essere mostrato di nuovo da {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options}]=]
 L["Author"] = "Autore"
@@ -35,6 +35,3 @@ L["Show options button"] = "Mostra il pulsante opzioni"
 L["Show options button Desc"] = "Mostra / nascondi il pulsante opzioni nella finestra del mercante."
 L["Unchecked"] = "Non selezionato"
 L["Wago"] = "Wago "
-L["Wago Desc"] = "Apri un popup con un link alla pagina di {addonName} su {wago}."
-L["WoWInterface"] = "WoWInterface "
-L["WoWInterface Desc"] = "Apri un popup con un link alla pagina di {addonName} su {woWInterface}."

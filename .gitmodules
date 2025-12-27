@@ -4,9 +4,6 @@
 [submodule "Libs/Krowi_Util"]
 	path = Libs/Krowi_Util
 	url = https://github.com/TheKrowi/Krowi_Util.git
-[submodule "Libs/Krowi_PopopDialog"]
-	path = Libs/Krowi_PopopDialog
-	url = https://github.com/TheKrowi/Krowi_PopopDialog.git
 [submodule "Libs/Krowi_PopupDialog"]
 	path = Libs/Krowi_PopupDialog
 	url = https://github.com/TheKrowi/Krowi_PopupDialog.git
