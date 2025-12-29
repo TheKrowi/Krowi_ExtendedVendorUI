@@ -83,7 +83,7 @@ hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
 		KrowiEVU_FilterButton:ClearAllPoints();
 		KrowiEVU_FilterButton:SetPoint("TOPRIGHT", -10, -31);
 		KrowiEVU_SearchBox:ClearAllPoints();
-		KrowiEVU_SearchBox:SetPoint("RIGHT", KrowiEVU_FilterButton, "LEFT", -10, 0);
+		KrowiEVU_SearchBox:SetPoint("RIGHT", KrowiEVU_FilterButton, "LEFT", -10, 1);
 	else
 		KrowiEVU_BottomExtensionLeftBorder:Hide();
 		KrowiEVU_BottomExtensionMidBorder:Hide();

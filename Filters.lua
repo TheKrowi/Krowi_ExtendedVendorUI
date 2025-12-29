@@ -492,7 +492,7 @@ do -- Custom
 			end
 			return false;
 		end
-		
+
 		if self.IsRecipe(itemId) then
 			if addon.Filters.db.profile.Custom.Recipes then
 				if addon.Filters.db.profile.HideCollected.Recipes then

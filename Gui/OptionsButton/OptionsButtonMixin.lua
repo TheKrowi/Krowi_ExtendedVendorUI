@@ -4,33 +4,36 @@ local merchantItemsContainer = addon.Gui.MerchantItemsContainer;
 
 KrowiEVU_OptionsButtonMixin = {};
 
+local menuBuilder;
+
+local function UpdateView()
+	merchantItemsContainer:LoadMaxNumItemSlots();
+	MerchantFrame_Update();
+end
+
+function KrowiEVU_OptionsButtonMixin:OnLoad()
+	local lib = LibStub("Krowi_MenuBuilder-1.0");
+
+	menuBuilder = lib:New({
+		uniqueTag = "KEVU_OPTIONS",
+		callbacks = {
+			OnRadioSelect = function(filters, keys, value)
+				addon.Util.WriteNestedKeys(filters, keys, value);
+				UpdateView();
+			end,
+			OnCheckboxSelect = function(filters, keys)
+				addon.Util.WriteNestedKeys(filters, keys, not menuBuilder:KeyIsTrue(filters, keys));
+			end,
+		}
+	});
+end
+
 function KrowiEVU_OptionsButtonMixin:ShowHide()
     if addon.Options.db.profile.ShowOptionsButton then
         self:Show();
         return;
     end
     self:Hide();
-end
-
-function KrowiEVU_OptionsButtonMixin:AddRadioButton(parentMenu, _menu, text, options, keys, func)
-    _menu:AddFull({
-		Text = text,
-		Checked = function() -- Same
-			return addon.Util.ReadNestedKeys(options, keys) == text; -- e.g.: return filters.SortBy.Criteria == addon.L["Default"]
-		end,
-		Func = function()
-			addon.Util.WriteNestedKeys(options, keys, text); -- e.g.: filters.SortBy.Criteria = text;
-			parentMenu:SetSelectedName(text);
-			func();
-		end,
-		NotCheckable = false,
-		KeepShownOnClick = true
-	});
-end
-
-local function UpdateView()
-	merchantItemsContainer:LoadMaxNumItemSlots();
-	MerchantFrame_Update();
 end
 
 local media = "Interface\\AddOns\\Krowi_MerchantFrameExtended\\Media\\";
@@ -53,81 +56,69 @@ local function HideOptionsButtonCallback(self)
 	self:ShowHide();
 end
 
-local menu = LibStub("Krowi_Menu-1.0");
-local menuItem = LibStub("Krowi_MenuItem-1.0");
-function KrowiEVU_OptionsButtonMixin:BuildMenu()
-	-- Reset menu
-	menu:Clear();
+local function CreateMenu(self, menuObj)
+	local profile = addon.Options.db.profile;
 
-	local direction = menuItem:New({Text = addon.L["Direction"]});
-	self:AddRadioButton(menu, direction, addon.L["Rows first"], addon.Options.db.profile, {"Direction"}, UpdateView);
-	self:AddRadioButton(menu, direction, addon.L["Columns first"], addon.Options.db.profile, {"Direction"}, UpdateView);
-	menu:Add(direction);
+	-- Direction submenu
+	local direction = menuBuilder:CreateSubmenuButton(menuObj, addon.L["Direction"]);
+	menuBuilder:CreateRadio(direction, addon.L["Rows first"], profile, {"Direction"});
+	menuBuilder:CreateRadio(direction, addon.L["Columns first"], profile, {"Direction"});
+	menuBuilder:AddChildMenu(menuObj, direction);
 
-	local rows = menuItem:New({Text = addon.L["Rows"]});
-	for i = 1, 10, 1 do
-		self:AddRadioButton(menu, rows, i, addon.Options.db.profile, {"NumRows"}, UpdateView);
+	-- Rows submenu
+	local rows = menuBuilder:CreateSubmenuButton(menuObj, addon.L["Rows"]);
+	for i = 1, 10 do
+		menuBuilder:CreateRadio(rows, tostring(i), profile, {"NumRows"}, i);
 	end
-	menu:Add(rows);
+	menuBuilder:AddChildMenu(menuObj, rows);
 
-	local columns = menuItem:New({Text = addon.L["Columns"]});
-	for i = 2, 6, 1 do
-		self:AddRadioButton(menu, columns, i, addon.Options.db.profile, {"NumColumns"}, UpdateView);
+	-- Columns submenu
+	local columns = menuBuilder:CreateSubmenuButton(menuObj, addon.L["Columns"]);
+	for i = 2, 6 do
+		menuBuilder:CreateRadio(columns, tostring(i), profile, {"NumColumns"}, i);
 	end
-	menu:Add(columns);
+	menuBuilder:AddChildMenu(menuObj, columns);
 
-	menu:AddSeparator();
+	menuBuilder:CreateDivider(menuObj);
 
-    menu:AddFull({
-        Text = addon.L["RememberFilter"],
-        Checked = function()
-            return addon.Options.db.profile.RememberFilter;
-        end,
-        Func = function()
-            addon.Options.db.profile.RememberFilter = not addon.Options.db.profile.RememberFilter;
-            UIDropDownMenu_RefreshAll(UIDROPDOWNMENU_OPEN_MENU);
-        end,
-        IsNotRadio = true,
-        NotCheckable = false,
-        KeepShownOnClick = true
-    });
+	-- Remember Filter checkbox
+	menuBuilder:CreateCheckbox(menuObj, addon.L["RememberFilter"], profile, {"RememberFilter"});
 
-	menu:AddSeparator();
+	menuBuilder:CreateDivider(menuObj);
 
-	local housingQuantity = menuItem:New({Text = addon.L["Housing Quantity"]});
-	for i = 1, 10, 1 do
-		self:AddRadioButton(menu, housingQuantity, i, addon.Filters.db.profile, {"HousingQuantity"}, UpdateView);
+	-- Housing Quantity submenu
+	local housingQuantity = menuBuilder:CreateSubmenuButton(menuObj, addon.L["Housing Quantity"]);
+	for i = 1, 10 do
+		menuBuilder:CreateRadio(housingQuantity, tostring(i), addon.Filters.db.profile, {"HousingQuantity"}, i);
 	end
-	menu:Add(housingQuantity);
+	menuBuilder:AddChildMenu(menuObj, housingQuantity);
 
-	if addon.Options.db.profile.ShowHideOption then
-		menu:AddSeparator();
-		menu:AddFull({
-			Text = addon.L["Hide"],
-			Func = function()
-				if not StaticPopup_IsCustomGenericConfirmationShown("KrowiEVU_ConfirmHideOptionsButton") then
-					StaticPopup_ShowCustomGenericConfirmation(
-						{
-							text = addon.L["Are you sure you want to hide the options button?"]:K_ReplaceVarsWithMenu{
-								general = addon.L["General"],
-								options = addon.L["Options"]
-							},
-							callback = function()
-								HideOptionsButtonCallback(self);
-							end,
-							referenceKey = "KrowiEVU_ConfirmHideOptionsButton"
-						}
-					);
-				end
+	-- Hide button
+	if profile.ShowHideOption then
+		menuBuilder:CreateDivider(menuObj);
+		menuBuilder:CreateButtonAndAdd(menuObj, addon.L["Hide"], function()
+			if not StaticPopup_IsCustomGenericConfirmationShown("KrowiEVU_ConfirmHideOptionsButton") then
+				StaticPopup_ShowCustomGenericConfirmation(
+					{
+						text = addon.L["Are you sure you want to hide the options button?"]:K_ReplaceVarsWithMenu{
+							general = addon.L["General"],
+							options = addon.L["Options"]
+						},
+						callback = function()
+							HideOptionsButtonCallback(self);
+						end,
+						referenceKey = "KrowiEVU_ConfirmHideOptionsButton"
+					}
+				);
 			end
-		});
+		end);
 	end
-
-	return menu;
 end
 
 function KrowiEVU_OptionsButtonMixin:MyOnMouseDown()
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-	self:BuildMenu();
-    menu:Toggle(self, 96, 15);
+	menuBuilder:ShowPopup(function()
+		local menuObj = menuBuilder:GetMenu();
+		CreateMenu(self, menuObj);
+	end);
 end
