@@ -8,39 +8,37 @@ KrowiEVU_FilterButtonMixin = {};
 local lootFilterTextMap = {};
 
 local function InitializeLootFilterTextMap()
-	lootFilterTextMap[LE_LOOT_FILTER_ALL] = ALL;
-	lootFilterTextMap[LE_LOOT_FILTER_BOE] = ITEM_BIND_ON_EQUIP;
-	lootFilterTextMap[LE_LOOT_FILTER_CLASS] = ALL_SPECS;
-	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"]] = addon.L["Pets"];
-	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"]] = addon.L["Mounts"];
-	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"]] = addon.L["Toys"];
-	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG"]] = addon.L["Appearances"];
-	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG_SETS"]] = addon.L["Appearance Sets"];
-	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_ILLUSIONS"]] = addon.L["Illusions"];
-	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_RECIPES"]] = addon.L["Recipes"];
-	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_HOUSING"]] = addon.L["Housing"];
-	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"]] = addon.L["Custom"];
+	lootFilterTextMap[LE_LOOT_FILTER_ALL] = ALL
+	lootFilterTextMap[LE_LOOT_FILTER_BOE] = ITEM_BIND_ON_EQUIP
+	lootFilterTextMap[LE_LOOT_FILTER_CLASS] = ALL_SPECS
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"]] = addon.L["Pets"]
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"]] = addon.L["Mounts"]
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"]] = addon.L["Toys"]
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG"]] = addon.L["Appearances"]
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG_SETS"]] = addon.L["Appearance Sets"]
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_ILLUSIONS"]] = addon.L["Illusions"]
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_RECIPES"]] = addon.L["Recipes"]
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_HOUSING"]] = addon.L["Housing"]
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"]] = addon.L["Custom"]
 end
 
 local function GetLootFilterText(lootFilter)
 	if not next(lootFilterTextMap) then
-		InitializeLootFilterTextMap();
+		InitializeLootFilterTextMap()
 	end
-	return lootFilterTextMap[lootFilter];
+	return lootFilterTextMap[lootFilter]
 end
 
--- ####################################################################
--- Mixin Implementation (Cross-Version)
--- ####################################################################
+-- Mixin Implementation
 
 function KrowiEVU_FilterButtonMixin:OnLoad()
 	-- Call parent mixin OnLoad if Modern
 	if isModern then
-		WowStyle1DropdownMixin.OnLoad(self);
+		WowStyle1DropdownMixin.OnLoad(self)
 	end
-	
-	self:SetFrameLevel(self:GetParent():GetFrameLevel() + 7);
-	
+
+	self:SetFrameLevel(self:GetParent():GetFrameLevel() + 7)
+
 	local config = {
 		uniqueTag = "KEVU_FILTERS",
 		callbacks = addon.MenuBuilder.BindCallbacks(self, {
@@ -49,70 +47,67 @@ function KrowiEVU_FilterButtonMixin:OnLoad()
 			OnRadioSelect = "OnRadioSelect",
 			OnAllSelect = "OnAllSelect",
 		}),
-        translations = addon.L
-	};
-	
+		translations = addon.L
+	}
+
 	-- Initialize MenuBuilder
-	local menuBuilder = addon.MenuBuilder:New(config);
-	self.menuBuilder = menuBuilder;
-	
+	local menuBuilder = addon.MenuBuilder:New(config)
+	self.menuBuilder = menuBuilder
+
 	-- Set CreateMenu function directly on the instance
 	menuBuilder.CreateMenu = function(mb)
-		self:CreateMenu(mb:GetMenu());
-	end;
-	
+		self:CreateMenu(mb:GetMenu())
+	end
+
 	-- Modern needs SetupMenuForModern
 	if isModern then
-		menuBuilder:SetupMenuForModern(self);
-		self:OverrideText(GetLootFilterText(GetMerchantFilter()));
+		menuBuilder:SetupMenuForModern(self)
+		self:OverrideText(GetLootFilterText(GetMerchantFilter()))
 	end
 end
 
 function KrowiEVU_FilterButtonMixin:OnMouseDown()
 	if isModern then
-		WowStyle1DropdownMixin.OnMouseDown(self);
+		WowStyle1DropdownMixin.OnMouseDown(self)
 	else
-		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-		UIMenuButtonStretchMixin.OnMouseDown(self);
-		self.menuBuilder:Show(self, 96, 15);
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+		UIMenuButtonStretchMixin.OnMouseDown(self)
+		-- Show menu with horizontal and vertical offset
+		self.menuBuilder:Show(self, 96, 15)
 	end
 end
 
--- ####################################################################
 -- Callbacks
--- ####################################################################
 
 function KrowiEVU_FilterButtonMixin:OnCheckboxSelect(filters, keys)
-	addon.Util.WriteNestedKeys(filters, keys, not addon.Util.ReadNestedKeys(filters, keys));
-	MerchantFrame_SetFilter(nil, GetMerchantFilter());
+	addon.Util.WriteNestedKeys(filters, keys, not addon.Util.ReadNestedKeys(filters, keys))
+	MerchantFrame_SetFilter(nil, GetMerchantFilter())
 end
 
 function KrowiEVU_FilterButtonMixin:KeyEqualsText(filters, keys, value)
-	return GetMerchantFilter() == value;
-end;
+	return GetMerchantFilter() == value
+end
 
 function KrowiEVU_FilterButtonMixin:OnRadioSelect(filters, keys, value)
-	MerchantFrame_SetFilter(nil, value);
+	MerchantFrame_SetFilter(nil, value)
 	if isModern then
-		self:OverrideText(GetLootFilterText(value));
+		self:OverrideText(GetLootFilterText(value))
 	else
-		self:SetText(GetLootFilterText(value));
+		self:SetText(GetLootFilterText(value))
 	end
 end
 
 function KrowiEVU_FilterButtonMixin:OnAllSelect(filters, keys, value)
 	for index, _ in next, addon.Filters[keys .. "Types"] do
-		addon.Util.WriteNestedKeys(filters, {keys, index}, value);
+		addon.Util.WriteNestedKeys(filters, {keys, index}, value)
 	end
-	MerchantFrame_SetFilter(nil, GetMerchantFilter());
+	MerchantFrame_SetFilter(nil, GetMerchantFilter())
 end
 
--- ####################################################################
--- Wrappers
--- ####################################################################
+-- Menu Helpers
 
 function KrowiEVU_FilterButtonMixin:CreateRadio(menu, text, filter)
-	self.menuBuilder:CreateRadio(menu, text, _, _, filter);
+	self.menuBuilder:CreateRadio(menu, text, _, _, filter)
 end
 
 function KrowiEVU_FilterButtonMixin:CreateSubmenuRadio(menu, text, filter)
@@ -121,163 +116,159 @@ function KrowiEVU_FilterButtonMixin:CreateSubmenuRadio(menu, text, filter)
 		text,
 		function() return self.menuBuilder:KeyEqualsText(_, _, filter) end,
 		function() self.menuBuilder:OnRadioSelect(_, _, filter) end
-	);
+	)
 end
 
 function KrowiEVU_FilterButtonMixin:CreateCheckbox(menu, text, keys)
-	self.menuBuilder:CreateCheckbox(menu, text, addon.Filters.db.profile, keys);
+	self.menuBuilder:CreateCheckbox(menu, text, addon.Filters.db.profile, keys)
 end
 
 function KrowiEVU_FilterButtonMixin:CreateSelectDeselectAllButtons(menu, filters, filterType)
-	self.menuBuilder:CreateSelectDeselectAllButtons(menu, filters, filterType);
+	self.menuBuilder:CreateSelectDeselectAllButtons(menu, filters, filterType)
 end
 
--- ####################################################################
--- Create Menu
--- ####################################################################
+-- Menu Creation
 
 function KrowiEVU_FilterButtonMixin:CreateMenu(menu)
-	local mb = self.menuBuilder;
-	
-	mb:CreateTitle(menu, addon.L["Default filters"]);
-	
+	local mb = self.menuBuilder
+
+	mb:CreateTitle(menu, addon.L["Default filters"])
+
 	-- Class/Spec filters (Mainline only)
 	if isModern then
-		local className = UnitClass("player");
-		local classButton = mb:CreateSubmenuButton(menu, className);
-		local sex = UnitSex("player");
-		local numSpecs = GetNumSpecializations();
-		
+		local className = UnitClass("player")
+		local classButton = mb:CreateSubmenuButton(menu, className)
+		local sex = UnitSex("player")
+		local numSpecs = GetNumSpecializations()
+
 		for i = 1, numSpecs do
-			local _, name = GetSpecializationInfo(i, nil, nil, nil, sex);
-			local filter = LE_LOOT_FILTER_SPEC1 + i - 1;
-			self:CreateRadio(classButton, name, filter);
+			local _, name = GetSpecializationInfo(i, nil, nil, nil, sex)
+			local filter = LE_LOOT_FILTER_SPEC1 + i - 1
+			self:CreateRadio(classButton, name, filter)
 		end
-		self:CreateRadio(classButton, ALL_SPECS, LE_LOOT_FILTER_CLASS);
-		mb:AddChildMenu(menu, classButton);
-		
-		self:CreateRadio(menu, ITEM_BIND_ON_EQUIP, LE_LOOT_FILTER_BOE);
+		self:CreateRadio(classButton, ALL_SPECS, LE_LOOT_FILTER_CLASS)
+		mb:AddChildMenu(menu, classButton)
+
+		self:CreateRadio(menu, ITEM_BIND_ON_EQUIP, LE_LOOT_FILTER_BOE)
 	end
-	
-	self:CreateRadio(menu, ALL, LE_LOOT_FILTER_ALL);
-	
-	mb:CreateDivider(menu);
-	
+
+	self:CreateRadio(menu, ALL, LE_LOOT_FILTER_ALL)
+
+	mb:CreateDivider(menu)
+
 	-- Only show section
-	mb:CreateTitle(menu, addon.L["Only show"]);
-	
+	mb:CreateTitle(menu, addon.L["Only show"])
+
 	if isModern then
-		self:CreateRadio(menu, addon.L["Pets"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"]);
+		self:CreateRadio(menu, addon.L["Pets"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"])
 	end
-	self:CreateRadio(menu, addon.L["Mounts"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"]);
-	self:CreateRadio(menu, addon.L["Toys"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"]);
-	
+	self:CreateRadio(menu, addon.L["Mounts"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"])
+	self:CreateRadio(menu, addon.L["Toys"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"])
+
 	-- Appearances submenu with armor/weapon filters
-	local appearances = self:CreateSubmenuRadio(menu, addon.L["Appearances"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG"]);
-	mb:CreateTitle(appearances, C_Item.GetItemClassInfo(4)); -- Armor
+	local appearances = self:CreateSubmenuRadio(menu, addon.L["Appearances"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG"])
+	mb:CreateTitle(appearances, C_Item.GetItemClassInfo(4)) -- Armor
 	for index, _ in next, addon.Filters.ArmorTypes do
-		local text = C_Item.GetItemSubClassInfo(4, index);
-		self:CreateCheckbox(appearances, text, {"OnlyShow", "Armor", index});
+		local text = C_Item.GetItemSubClassInfo(4, index)
+		self:CreateCheckbox(appearances, text, {"OnlyShow", "Armor", index})
 	end
-	mb:CreateDivider(appearances);
-	self:CreateSelectDeselectAllButtons(appearances, addon.Filters.db.profile.OnlyShow, "Armor");
-	mb:CreateDivider(appearances);
-	mb:CreateTitle(appearances, C_Item.GetItemClassInfo(2)); -- Weapons
+	mb:CreateDivider(appearances)
+	self:CreateSelectDeselectAllButtons(appearances, addon.Filters.db.profile.OnlyShow, "Armor")
+	mb:CreateDivider(appearances)
+	mb:CreateTitle(appearances, C_Item.GetItemClassInfo(2)) -- Weapons
 	for index, _ in next, addon.Filters.WeaponTypes do
-		local text = C_Item.GetItemSubClassInfo(2, index);
-		self:CreateCheckbox(appearances, text, {"OnlyShow", "Weapon", index});
+		local text = C_Item.GetItemSubClassInfo(2, index)
+		self:CreateCheckbox(appearances, text, {"OnlyShow", "Weapon", index})
 	end
-	mb:CreateDivider(appearances);
-	self:CreateSelectDeselectAllButtons(appearances, addon.Filters.db.profile.OnlyShow, "Weapon");
-	mb:AddChildMenu(menu, appearances);
-	
+	mb:CreateDivider(appearances)
+	self:CreateSelectDeselectAllButtons(appearances, addon.Filters.db.profile.OnlyShow, "Weapon")
+	mb:AddChildMenu(menu, appearances)
+
 	if isModern then
-		self:CreateRadio(menu, addon.L["Appearance Sets"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG_SETS"]);
-		self:CreateRadio(menu, addon.L["Illusions"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_ILLUSIONS"]);
-		self:CreateRadio(menu, addon.L["Recipes"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_RECIPES"]);
-		self:CreateRadio(menu, addon.L["Housing"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_HOUSING"]);
+		self:CreateRadio(menu, addon.L["Appearance Sets"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG_SETS"])
+		self:CreateRadio(menu, addon.L["Illusions"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_ILLUSIONS"])
+		self:CreateRadio(menu, addon.L["Recipes"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_RECIPES"])
+		self:CreateRadio(menu, addon.L["Housing"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_HOUSING"])
 	end
-	
+
 	-- Custom filter section
-	local custom = self:CreateSubmenuRadio(menu, addon.L["Custom"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"]);
+	local custom = self:CreateSubmenuRadio(menu, addon.L["Custom"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"])
 	if isModern then
-		self:CreateCheckbox(custom, addon.L["Pets"], {"Custom", "Pets"});
+		self:CreateCheckbox(custom, addon.L["Pets"], {"Custom", "Pets"})
 	end
-	self:CreateCheckbox(custom, addon.L["Mounts"], {"Custom", "Mounts"});
-	self:CreateCheckbox(custom, addon.L["Toys"], {"Custom", "Toys"});
-	
+	self:CreateCheckbox(custom, addon.L["Mounts"], {"Custom", "Mounts"})
+	self:CreateCheckbox(custom, addon.L["Toys"], {"Custom", "Toys"})
+
 	-- Custom Appearances submenu
-	local customAppearances = mb:CreateSubmenuButton(custom, addon.L["Appearances"]);
-	mb:CreateTitle(customAppearances, C_Item.GetItemClassInfo(4)); -- Armor
+	local customAppearances = mb:CreateSubmenuButton(custom, addon.L["Appearances"])
+	mb:CreateTitle(customAppearances, C_Item.GetItemClassInfo(4)) -- Armor
 	for index, _ in next, addon.Filters.ArmorTypes do
-		local text = C_Item.GetItemSubClassInfo(4, index);
-		self:CreateCheckbox(customAppearances, text, {"Custom", "Armor", index});
+		local text = C_Item.GetItemSubClassInfo(4, index)
+		self:CreateCheckbox(customAppearances, text, {"Custom", "Armor", index})
 	end
-	mb:CreateDivider(customAppearances);
-	self:CreateSelectDeselectAllButtons(customAppearances, addon.Filters.db.profile.Custom, "Armor");
-	mb:CreateDivider(customAppearances);
-	mb:CreateTitle(customAppearances, C_Item.GetItemClassInfo(2)); -- Weapons
+	mb:CreateDivider(customAppearances)
+	self:CreateSelectDeselectAllButtons(customAppearances, addon.Filters.db.profile.Custom, "Armor")
+	mb:CreateDivider(customAppearances)
+	mb:CreateTitle(customAppearances, C_Item.GetItemClassInfo(2)) -- Weapons
 	for index, _ in next, addon.Filters.WeaponTypes do
-		local text = C_Item.GetItemSubClassInfo(2, index);
-		self:CreateCheckbox(customAppearances, text, {"Custom", "Weapon", index});
+		local text = C_Item.GetItemSubClassInfo(2, index)
+		self:CreateCheckbox(customAppearances, text, {"Custom", "Weapon", index})
 	end
-	mb:CreateDivider(customAppearances);
-	self:CreateSelectDeselectAllButtons(customAppearances, addon.Filters.db.profile.Custom, "Weapon");
-	mb:AddChildMenu(custom, customAppearances);
-	
+	mb:CreateDivider(customAppearances)
+	self:CreateSelectDeselectAllButtons(customAppearances, addon.Filters.db.profile.Custom, "Weapon")
+	mb:AddChildMenu(custom, customAppearances)
+
 	if isModern then
-		self:CreateCheckbox(custom, addon.L["Appearance Sets"], {"Custom", "TransmogSets"});
-		self:CreateCheckbox(custom, addon.L["Illusions"], {"Custom", "Illusions"});
-		self:CreateCheckbox(custom, addon.L["Recipes"], {"Custom", "Recipes"});
-		self:CreateCheckbox(custom, addon.L["Housing"], {"Custom", "Housing"});
+		self:CreateCheckbox(custom, addon.L["Appearance Sets"], {"Custom", "TransmogSets"})
+		self:CreateCheckbox(custom, addon.L["Illusions"], {"Custom", "Illusions"})
+		self:CreateCheckbox(custom, addon.L["Recipes"], {"Custom", "Recipes"})
+		self:CreateCheckbox(custom, addon.L["Housing"], {"Custom", "Housing"})
 	end
-	self:CreateCheckbox(custom, addon.L["Other"], {"Custom", "Other"});
-	mb:AddChildMenu(menu, custom);
-	
-	mb:CreateDivider(menu);
-	
+	self:CreateCheckbox(custom, addon.L["Other"], {"Custom", "Other"})
+	mb:AddChildMenu(menu, custom)
+
+	mb:CreateDivider(menu)
+
 	-- Hide collected section
-	mb:CreateTitle(menu, addon.L["Hide collected"]);
+	mb:CreateTitle(menu, addon.L["Hide collected"])
 	if isModern then
-		self:CreateCheckbox(menu, addon.L["Pets"], {"HideCollected", "Pets"});
+		self:CreateCheckbox(menu, addon.L["Pets"], {"HideCollected", "Pets"})
 	end
-	self:CreateCheckbox(menu, addon.L["Mounts"], {"HideCollected", "Mounts"});
-	self:CreateCheckbox(menu, addon.L["Toys"], {"HideCollected", "Toys"});
-	self:CreateCheckbox(menu, addon.L["Appearances"], {"HideCollected", "Transmog"});
+	self:CreateCheckbox(menu, addon.L["Mounts"], {"HideCollected", "Mounts"})
+	self:CreateCheckbox(menu, addon.L["Toys"], {"HideCollected", "Toys"})
+	self:CreateCheckbox(menu, addon.L["Appearances"], {"HideCollected", "Transmog"})
 	if isModern then
-		self:CreateCheckbox(menu, addon.L["Appearance Sets"], {"HideCollected", "TransmogSets"});
-		self:CreateCheckbox(menu, addon.L["Illusions"], {"HideCollected", "Illusions"});
-		self:CreateCheckbox(menu, addon.L["Recipes"], {"HideCollected", "Recipes"});
-		self:CreateCheckbox(menu, addon.L["Housing"], {"HideCollected", "Housing"});
+		self:CreateCheckbox(menu, addon.L["Appearance Sets"], {"HideCollected", "TransmogSets"})
+		self:CreateCheckbox(menu, addon.L["Illusions"], {"HideCollected", "Illusions"})
+		self:CreateCheckbox(menu, addon.L["Recipes"], {"HideCollected", "Recipes"})
+		self:CreateCheckbox(menu, addon.L["Housing"], {"HideCollected", "Housing"})
 	end
 end
 
--- ####################################################################
--- Hooks (Modern Only)
--- ####################################################################
+-- Hooks
 
 hooksecurefunc("MerchantFrame_SetFilter", function(self, filter)
 	if not filter then
-		return;
+		return
 	end
-	KrowiEVU_Filters = KrowiEVU_Filters or {};
-	KrowiEVU_Filters.LastFilter = filter;
-end);
+	KrowiEVU_Filters = KrowiEVU_Filters or {}
+	KrowiEVU_Filters.LastFilter = filter
+end)
 
 if isModern then
 	hooksecurefunc("ResetSetMerchantFilter", function(self)
 		if addon.Options.db.profile.RememberFilter and KrowiEVU_Filters.LastFilter then
-			MerchantFrame_SetFilter(nil, KrowiEVU_Filters.LastFilter);
+			MerchantFrame_SetFilter(nil, KrowiEVU_Filters.LastFilter)
 		end
-		KrowiEVU_FilterButton:OverrideText(GetLootFilterText(GetMerchantFilter()));
-	end);
+		KrowiEVU_FilterButton:OverrideText(GetLootFilterText(GetMerchantFilter()))
+	end)
 else
 	MerchantFrame:HookScript("OnShow", function(self)
 		if addon.Options.db.profile.RememberFilter and KrowiEVU_Filters and KrowiEVU_Filters.LastFilter then
-			MerchantFrame_SetFilter(nil, KrowiEVU_Filters.LastFilter);
-			else
-			MerchantFrame_SetFilter(nil, LE_LOOT_FILTER_ALL);
+			MerchantFrame_SetFilter(nil, KrowiEVU_Filters.LastFilter)
+		else
+			MerchantFrame_SetFilter(nil, LE_LOOT_FILTER_ALL)
 		end
-		KrowiEVU_FilterButton:SetText(GetLootFilterText(GetMerchantFilter()));
-	end);
+		KrowiEVU_FilterButton:SetText(GetLootFilterText(GetMerchantFilter()))
+	end)
 end

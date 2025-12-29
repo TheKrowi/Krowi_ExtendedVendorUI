@@ -58,7 +58,7 @@ end
 
 local function CreateMenu(self, menuObj)
 	local profile = addon.Options.db.profile;
-	
+
 	-- Direction submenu
 	local direction = menuBuilder:CreateSubmenuButton(menuObj, addon.L["Direction"]);
 	menuBuilder:CreateRadio(direction, addon.L["Rows first"], profile, {"Direction"});
