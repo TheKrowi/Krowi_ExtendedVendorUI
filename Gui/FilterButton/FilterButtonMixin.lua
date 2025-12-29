@@ -256,19 +256,28 @@ end
 -- Hooks (Modern Only)
 -- ####################################################################
 
-if isModern then
-	hooksecurefunc("MerchantFrame_SetFilter", function(self, filter)
-		if not filter then
-			return;
-		end
-		KrowiEVU_Filters = KrowiEVU_Filters or {};
-		KrowiEVU_Filters.LastFilter = filter;
-	end);
+hooksecurefunc("MerchantFrame_SetFilter", function(self, filter)
+	if not filter then
+		return;
+	end
+	KrowiEVU_Filters = KrowiEVU_Filters or {};
+	KrowiEVU_Filters.LastFilter = filter;
+end);
 
+if isModern then
 	hooksecurefunc("ResetSetMerchantFilter", function(self)
 		if addon.Options.db.profile.RememberFilter and KrowiEVU_Filters.LastFilter then
 			MerchantFrame_SetFilter(nil, KrowiEVU_Filters.LastFilter);
 		end
 		KrowiEVU_FilterButton:OverrideText(GetLootFilterText(GetMerchantFilter()));
+	end);
+else
+	MerchantFrame:HookScript("OnShow", function(self)
+		if addon.Options.db.profile.RememberFilter and KrowiEVU_Filters and KrowiEVU_Filters.LastFilter then
+			MerchantFrame_SetFilter(nil, KrowiEVU_Filters.LastFilter);
+			else
+			MerchantFrame_SetFilter(nil, LE_LOOT_FILTER_ALL);
+		end
+		KrowiEVU_FilterButton:SetText(GetLootFilterText(GetMerchantFilter()));
 	end);
 end
