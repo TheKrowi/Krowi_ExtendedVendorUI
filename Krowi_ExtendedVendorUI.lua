@@ -24,11 +24,13 @@ function loadHelper:OnEvent(event, arg1, arg2)
 
             addon.Gui.MerchantItemsContainer:LoadMaxNumItemSlots();
 
+            addon.Gui.FilterButton:Load();
+
             addon.Icon:Load();
 
             addon.Api.Load();
 
-            KrowiEVU_OptionsButton:ShowHide();
+            -- KrowiEVU_OptionsButton:ShowHide();
 
             if addon.Util.IsMainline then
                 C_HousingCatalog.CreateCatalogSearcher(); -- Pre-load the housing catalog searcher to prevent lag when first used

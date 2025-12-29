@@ -31,4 +31,4 @@ Icon.lua
 
 Filters.lua
 
-Gui\Files.xml
+Gui\FilesClassic.xml

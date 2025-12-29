@@ -45,4 +45,4 @@ Icon.lua
 
 Filters.lua
 
-Gui\Files.xml
+Gui\FilesModern.xml
