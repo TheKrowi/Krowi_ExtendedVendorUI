@@ -274,7 +274,12 @@
         "WowStyle1DropdownMixin",
         "SEARCH",
         "SearchBoxTemplate_ClearText",
-        "QUEST_ICON"
+        "QUEST_ICON",
+        "KrowiEVU_TokenBanner",
+        "MerchantMoneyFrame",
+        "MerchantMoneyBg",
+        "MAX_MERCHANT_CURRENCIES",
+        "GetItemCount"
     ],
     "fsdeploy.nodes": [
         {

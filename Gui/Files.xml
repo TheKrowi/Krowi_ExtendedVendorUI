@@ -5,5 +5,5 @@
     <Include file="OptionsButton/OptionsButton.xml"/>
     <Include file="FilterButton/FilterButton.xml"/>
     <Include file="SearchBox/SearchBox.xml"/>
-    <!-- <Script file="OptionsMenu.lua"/> -->
+    <Script file="TokenBanner.lua"/>
 </Ui>
