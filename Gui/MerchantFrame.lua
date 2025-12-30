@@ -76,22 +76,21 @@ hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
 	if addon.Util.IsMainline then
 		MerchantFrame.FilterDropdown:Hide();
 	end
+	KrowiEVU_FilterButton:Show();
+	KrowiEVU_SearchBox:Show();
+	KrowiEVU_OptionsButton:ShowHide();
 	if numExtraColumns > 0 then
 		KrowiEVU_BottomExtensionLeftBorder:Show();
 		KrowiEVU_BottomExtensionMidBorder:Show();
-		-- Re-arange Filter Button and Search Box if extra columns are shown
-		KrowiEVU_FilterButton:ClearAllPoints();
-		KrowiEVU_FilterButton:SetPoint("TOPRIGHT", -10, -31);
-		KrowiEVU_SearchBox:ClearAllPoints();
-		KrowiEVU_SearchBox:SetPoint("RIGHT", KrowiEVU_FilterButton, "LEFT", -10, 1);
+		addon.Gui.OptionsButton:ResetPointOffset();
+		addon.Gui.SearchBox:ResetPointOffset();
+		KrowiEVU_SearchBox:SetWidth(144);
 	else
 		KrowiEVU_BottomExtensionLeftBorder:Hide();
 		KrowiEVU_BottomExtensionMidBorder:Hide();
-		-- Re-arange Filter Button and Search Box if no extra columns are shown
-		KrowiEVU_FilterButton:ClearAllPoints();
-		KrowiEVU_FilterButton:SetPoint("TOPRIGHT", -10, -21);
-		KrowiEVU_SearchBox:ClearAllPoints();
-		KrowiEVU_SearchBox:SetPoint("TOPRIGHT", KrowiEVU_FilterButton, "BOTTOMRIGHT", 0, 2);
+		addon.Gui.OptionsButton:SetPointOffset(-7);
+		addon.Gui.SearchBox:SetPointOffset(-2);
+		KrowiEVU_SearchBox:SetWidth(90);
 	end
 	KrowiEVU_BottomExtensionRightBorder:Show();
 	if not addon.Util.IsMainline then
@@ -104,17 +103,17 @@ hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
 end);
 
 hooksecurefunc("MerchantFrame_UpdateBuybackInfo", function()
+	local numExtraColumns = addon.Options.db.profile.NumColumns - merchantItemsContainer.DefaultMerchantInfoNumColumns;
 	MerchantFrame:SetSize(originalWidth, originalHeight);
 	if addon.Util.IsMainline then
 		MerchantFrame.FilterDropdown:Hide();
 	end
+	KrowiEVU_OptionsButton:Hide();
+	KrowiEVU_SearchBox:Hide();
+	KrowiEVU_FilterButton:Hide();
 	KrowiEVU_BottomExtensionLeftBorder:Hide();
 	KrowiEVU_BottomExtensionMidBorder:Hide();
 	KrowiEVU_BottomExtensionRightBorder:Hide();
-	KrowiEVU_FilterButton:ClearAllPoints();
-	KrowiEVU_FilterButton:SetPoint("TOPRIGHT", -10, -21);
-	KrowiEVU_SearchBox:ClearAllPoints();
-	KrowiEVU_SearchBox:SetPoint("TOPRIGHT", KrowiEVU_FilterButton, "BOTTOMRIGHT", 0, 2);
 end);
 
 if addon.Util.IsMainline then

@@ -26,6 +26,14 @@ function KrowiEVU_OptionsButtonMixin:OnLoad()
 			end,
 		}
 	});
+
+	menuBuilder.CreateMenu = function(mb)
+		self:CreateMenu(mb:GetMenu())
+	end
+
+	if addon.Util.IsMainline then
+		menuBuilder:SetupMenuForModern(self)
+	end
 end
 
 function KrowiEVU_OptionsButtonMixin:ShowHide()
@@ -56,7 +64,7 @@ local function HideOptionsButtonCallback(self)
 	self:ShowHide();
 end
 
-local function CreateMenu(self, menuObj)
+function KrowiEVU_OptionsButtonMixin:CreateMenu(menuObj)
 	local profile = addon.Options.db.profile;
 
 	-- Direction submenu
@@ -83,6 +91,8 @@ local function CreateMenu(self, menuObj)
 
 	-- Remember Filter checkbox
 	menuBuilder:CreateCheckbox(menuObj, addon.L["RememberFilter"], profile, {"RememberFilter"});
+	menuBuilder:CreateCheckbox(menuObj, addon.L["RememberSearch"], profile, {"RememberSearch"});
+	menuBuilder:CreateCheckbox(menuObj, addon.L["RememberSearchBetweenVendors"], profile, {"RememberSearchBetweenVendors"});
 
 	menuBuilder:CreateDivider(menuObj);
 
@@ -115,10 +125,14 @@ local function CreateMenu(self, menuObj)
 	end
 end
 
-function KrowiEVU_OptionsButtonMixin:MyOnMouseDown()
-	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-	menuBuilder:ShowPopup(function()
-		local menuObj = menuBuilder:GetMenu();
-		CreateMenu(self, menuObj);
-	end);
+function KrowiEVU_OptionsButtonMixin:ShowPopup()
+	menuBuilder:ShowPopup();
+end
+
+if not addon.Util.IsMainline then
+	function KrowiEVU_OptionsButtonMixin:OnMouseDown()
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+		UIMenuButtonStretchMixin.OnMouseDown(self);
+		menuBuilder:ShowPopup();
+	end
 end

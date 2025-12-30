@@ -3,16 +3,14 @@ addon.Gui.FilterButton = {};
 local filterButton = addon.Gui.FilterButton;
 
 local function CreateModern()
-    local button = CreateFrame("DropdownButton", "KrowiEVU_FilterButton", MerchantFrame, "KrowiEVU_FilterButton_Template");
+    local button = CreateFrame("DropdownButton", "KrowiEVU_FilterButton", MerchantFrame, "KrowiEVU_FilterButton_Modern_Template");
     button:SetPoint("TOPRIGHT", MerchantFrame, "TOPRIGHT", -9, -32);
-    MerchantFrame.FilterButton = button;
     return button;
 end
 
 local function CreateClassic()
-    local button = CreateFrame("DropDownToggleButton", "KrowiEVU_FilterButton", MerchantFrame, "KrowiEVU_FilterButton_Template");
-    button:SetPoint("TOPRIGHT", MerchantFrame, "TOPRIGHT", -10, -31);
-    MerchantFrame.FilterButton = button;
+    local button = CreateFrame("DropDownToggleButton", "KrowiEVU_FilterButton", MerchantFrame, "KrowiEVU_FilterButton_Classic_Template");
+    button:SetPoint("TOPRIGHT", MerchantFrame, "TOPRIGHT", -12, -31);
     return button;
 end
 

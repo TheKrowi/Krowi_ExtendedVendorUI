@@ -1,16 +1,17 @@
-local _, addon = ...;
+local _, addon = ...
 
-local isModern = addon.Util.IsMainline;
+local isModern = addon.Util.IsMainline
 
-KrowiEVU_FilterButtonMixin = {};
+KrowiEVU_FilterButtonMixin = {}
 
 -- Lookup table for loot filter text labels
-local lootFilterTextMap = {};
+local lootFilterTextMap = {}
 
 local function InitializeLootFilterTextMap()
-	lootFilterTextMap[LE_LOOT_FILTER_ALL] = ALL
-	lootFilterTextMap[LE_LOOT_FILTER_BOE] = ITEM_BIND_ON_EQUIP
-	lootFilterTextMap[LE_LOOT_FILTER_CLASS] = ALL_SPECS
+	lootFilterTextMap[LE_LOOT_FILTER_ALL] = addon.L["All"]
+	lootFilterTextMap[LE_LOOT_FILTER_BOE] = addon.L["Bind on Equip"]
+	lootFilterTextMap[LE_LOOT_FILTER_CLASS] = addon.L["All Specs"]
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_SEARCH"]] = addon.L["Search"]
 	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"]] = addon.L["Pets"]
 	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"]] = addon.L["Mounts"]
 	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"]] = addon.L["Toys"]
@@ -77,6 +78,15 @@ function KrowiEVU_FilterButtonMixin:OnMouseDown()
 	end
 end
 
+function KrowiEVU_FilterButtonMixin:SetFilter(value)
+	MerchantFrame_SetFilter(nil, value)
+	if isModern then
+		self:OverrideText(GetLootFilterText(value))
+	else
+		self:SetText(GetLootFilterText(value))
+	end
+end
+
 -- Callbacks
 
 function KrowiEVU_FilterButtonMixin:OnCheckboxSelect(filters, keys)
@@ -89,12 +99,7 @@ function KrowiEVU_FilterButtonMixin:KeyEqualsText(filters, keys, value)
 end
 
 function KrowiEVU_FilterButtonMixin:OnRadioSelect(filters, keys, value)
-	MerchantFrame_SetFilter(nil, value)
-	if isModern then
-		self:OverrideText(GetLootFilterText(value))
-	else
-		self:SetText(GetLootFilterText(value))
-	end
+	self:SetFilter(value)
 end
 
 function KrowiEVU_FilterButtonMixin:OnAllSelect(filters, keys, value)
@@ -146,13 +151,17 @@ function KrowiEVU_FilterButtonMixin:CreateMenu(menu)
 			local filter = LE_LOOT_FILTER_SPEC1 + i - 1
 			self:CreateRadio(classButton, name, filter)
 		end
-		self:CreateRadio(classButton, ALL_SPECS, LE_LOOT_FILTER_CLASS)
+		self:CreateRadio(classButton, addon.L["All Specs"], LE_LOOT_FILTER_CLASS)
 		mb:AddChildMenu(menu, classButton)
 
-		self:CreateRadio(menu, ITEM_BIND_ON_EQUIP, LE_LOOT_FILTER_BOE)
+		self:CreateRadio(menu, addon.L["Bind on Equip"], LE_LOOT_FILTER_BOE)
 	end
 
-	self:CreateRadio(menu, ALL, LE_LOOT_FILTER_ALL)
+	self:CreateRadio(menu, addon.L["All"], LE_LOOT_FILTER_ALL)
+
+	mb:CreateDivider(menu)
+
+	self:CreateRadio(menu, addon.L["Search"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_SEARCH"])
 
 	mb:CreateDivider(menu)
 

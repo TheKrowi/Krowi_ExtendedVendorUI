@@ -43,8 +43,7 @@ local function OptionsButtonShowOptionsButtonSet(_, value)
 end
 
 local function OptionsButtonOpenOptionsFunc()
-    local menu = KrowiEVU_OptionsButton:BuildMenu();
-    menu:Open();
+    KrowiEVU_OptionsButton:ShowPopup();
 end
 
 local info = {
