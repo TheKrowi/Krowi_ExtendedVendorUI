@@ -54,3 +54,5 @@ L["Show options button Desc"] = "Show / hide the options button in the merchant 
 L["Toys"] = true
 L["Unchecked"] = true
 L["Wago"] = true
+L["RememberSearch"] = "Remember search"
+L["RememberSearchBetweenVendors"] = "Remember search between vendors"

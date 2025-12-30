@@ -12,5 +12,7 @@ addon.Options.Defaults = {
         ShowOptionsButton = true,
         ShowHideOption = true,
         RememberFilter = false,
+        RememberSearch = false,
+        RememberSearchBetweenVendors = false,
     }
 };

@@ -7,8 +7,7 @@ function icon.SetMoreTooltipContent(tooltip)
 end
 
 function icon.OnLeftClick()
-    local menu = addon.Gui.OptionsMenu:BuildMenu();
-    menu:Open();
+    KrowiEVU_OptionsButton:ShowPopup();
 end
 
 function icon.OnRightClick()

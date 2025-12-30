@@ -3,7 +3,7 @@
     <Script file="MerchantItemsContainer.lua"/>
     <Script file="MerchantFrame.lua"/>
     <Include file="OptionsButton/OptionsButton.xml"/>
-    <Include file="FilterButton/FilterButtonClassic.xml"/>
+    <Include file="FilterButton/FilterButton.xml"/>
     <Include file="SearchBox/SearchBox.xml"/>
     <!-- <Script file="OptionsMenu.lua"/> -->
 </Ui>

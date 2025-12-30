@@ -271,7 +271,9 @@
         "C_Spell",
         "securecallfunction",
         "C_HousingCatalog",
-        "WowStyle1DropdownMixin"
+        "WowStyle1DropdownMixin",
+        "SEARCH",
+        "SearchBoxTemplate_ClearText"
     ],
     "fsdeploy.nodes": [
         {
