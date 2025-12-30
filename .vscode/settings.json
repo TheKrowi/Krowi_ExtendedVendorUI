@@ -273,7 +273,8 @@
         "C_HousingCatalog",
         "WowStyle1DropdownMixin",
         "SEARCH",
-        "SearchBoxTemplate_ClearText"
+        "SearchBoxTemplate_ClearText",
+        "QUEST_ICON"
     ],
     "fsdeploy.nodes": [
         {

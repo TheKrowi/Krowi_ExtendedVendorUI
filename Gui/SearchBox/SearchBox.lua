@@ -32,3 +32,8 @@ function searchBox:ResetPointOffset()
     KrowiEVU_SearchBox:ClearAllPoints();
     KrowiEVU_SearchBox:SetPoint("RIGHT", KrowiEVU_FilterButton, "LEFT", offsetX or 0, offsetY or 0);
 end
+
+function searchBox:SetPointOffsetXY(x, y)
+    offsetX, offsetY = x or offsetX, y or offsetY;
+    self:ResetPointOffset();
+end

@@ -3,12 +3,12 @@ local L = LibStub(addon.Libs.AceLocale):NewLocale(addonName, "ruRU");
 if not L then return end
 addon.L = L;
 
-addon.Plugins:LoadLocalization(L);
+KrowiEVU.PluginsApi:LoadPluginLocalization(L);
 
 -- [[ https://legacy.curseforge.com/wow/addons/krowi-extended-vendor-ui/localization ]] --
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2025-12-23 18-21-27 ]] --
+-- [[ Exported at 2025-12-30 18-32-35 ]] --
 L["Are you sure you want to hide the options button?"] = "Вы уверены, что хотите скрыть кнопку настроек? Кнопку настроек можно заново вкоючить через {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options}"
 L["Arsenals"] = "Арсеналы"
 L["Author"] = "Автор"
@@ -40,6 +40,7 @@ L["Other"] = "Другое"
 L["Pets"] = "Питомцы"
 L["Plugins"] = "Плагины"
 L["Recipes"] = "Рецепты"
+L["RememberFilter"] = "Запомнить фильтр"
 L["Right click"] = "Щелчек ПКМ"
 L["Rows"] = "Ряды"
 L["Rows first"] = "Сначала Ряды"

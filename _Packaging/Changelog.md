@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0 - 2025-12-31
+### Added
+- Full ElvUI support
+
 ## 18.0 - 2025-12-30
 ### Added
 - Remember search option: Keep search text when reopening the same vendor

@@ -17,10 +17,10 @@ loadHelper:RegisterEvent("ADDON_LOADED");
 function loadHelper:OnEvent(event, arg1, arg2)
     if event == "ADDON_LOADED" then
         if arg1 == addonName then -- This always needs to load
-            addon.Plugins:InjectOptions();
+            KrowiEVU.PluginsApi:InjectPluginOptions();
             addon.Options:Load(true);
 
-            addon.Plugins:Load();
+            KrowiEVU.PluginsApi:LoadPlugins();
 
             addon.Gui.MerchantItemsContainer:LoadMaxNumItemSlots();
 

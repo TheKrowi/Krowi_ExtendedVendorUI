@@ -2,7 +2,7 @@
 ## Title: Krowi's |cFF1D92C2Extended Vendor UI|r
 ## X-Prefix: KrowiEVU
 ## X-Acronym: KEVU
-## Version: 18.0
+## Version: 19.0
 ## Author: Krowi-Frostmane EU
 ## LoadWith: Blizzard_MerchantFrame
 ## SavedVariables: KrowiEVU_Options, KrowiEVU_Filters, KrowiEVU_Debug
@@ -31,7 +31,7 @@
 
 Libs\Files.xml
 
-API.lua
+Api\Files.xml
 
 Plugins\Files.xml
 

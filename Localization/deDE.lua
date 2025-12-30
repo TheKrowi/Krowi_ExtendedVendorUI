@@ -3,12 +3,12 @@ local L = LibStub(addon.Libs.AceLocale):NewLocale(addonName, "deDE");
 if not L then return end
 addon.L = L;
 
-addon.Plugins:LoadLocalization(L);
+KrowiEVU.PluginsApi:LoadPluginLocalization(L);
 
 -- [[ https://legacy.curseforge.com/wow/addons/krowi-extended-vendor-ui/localization ]] --
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2025-12-23 18-21-26 ]] --
+-- [[ Exported at 2025-12-30 18-32-31 ]] --
 L["Are you sure you want to hide the options button?"] = "Bist du sicher, dass du die Schaltfläche \"Optionen\" ausblenden möchtest? Die Schaltfläche \"Optionen\" kann wieder eingeblendet werden über {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options} "
 L["Arsenals"] = "Arsenal"
 L["Author"] = "Autor "
@@ -40,6 +40,7 @@ L["Other"] = "Andere"
 L["Pets"] = "Haustiere"
 L["Plugins"] = true
 L["Recipes"] = "Rezepte"
+L["RememberFilter"] = "Gemerkter Filter"
 L["Right click"] = "Rechts-Klick "
 L["Rows"] = "Reihen"
 L["Rows first"] = "Reihen zuerst"
