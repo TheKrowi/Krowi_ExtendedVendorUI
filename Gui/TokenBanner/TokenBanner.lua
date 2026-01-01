@@ -1,4 +1,9 @@
 local _, addon = ...;
+
+-- if not addon.Util.IsMainline then
+--     return;
+-- end
+
 addon.Gui.TokenBanner = {};
 local tokenBanner = addon.Gui.TokenBanner;
 
@@ -20,27 +25,29 @@ local function GetPoolToken(index)
     return token
 end
 
+local tokenLines
 local function DrawToken(index)
     local token = GetPoolToken(index);
     if index == 1 then
-        token:SetPoint("RIGHT", KrowiEVU_TokenBanner, "RIGHT", -10, -2);
+        tokenLines = 1
+        token:SetPoint("TOPRIGHT", KrowiEVU_TokenBanner, "TOPRIGHT", -10, addon.Util.IsMainline and -5 or -4);
     else
-        token:SetPoint("RIGHT", _G["KrowiEVU_TokenBannerToken" .. (index - 1)], "LEFT", -10, 0);
+        token:SetPoint("TOPRIGHT", _G["KrowiEVU_TokenBannerToken" .. (index - 1)], "TOPLEFT", -10, 0);
     end
 
     token:Draw()
+
+    if token:GetLeft() < KrowiEVU_TokenBanner:GetLeft() + 10 then
+        local offset = 5 + (token:GetHeight() + 3) * tokenLines
+        token:SetPoint("TOPRIGHT", KrowiEVU_TokenBanner, "TOPRIGHT", -10, addon.Util.IsMainline and -offset or -offset + 1);
+        tokenLines = tokenLines + 1;
+    end
 end
 
 function tokenBanner:Load()
-    local inset = CreateFrame("Frame", "KrowiEVU_TokenBannerInset", MerchantFrame, "InsetFrameTemplate");
-    inset:SetPoint("BOTTOMLEFT", MerchantFrame, "BOTTOMLEFT", 4, 4);
-    inset:SetPoint("BOTTOMRIGHT", MerchantFrame, "BOTTOMRIGHT", -5, 5);
-    inset:SetHeight(23);
-    inset:SetFrameStrata("HIGH");
-
-    local banner = CreateFrame("Frame", "KrowiEVU_TokenBanner", inset, "ThinGoldEdgeTemplate");
-    banner:SetPoint("TOPLEFT", inset, "TOPLEFT", 3, -2);
-    banner:SetPoint("BOTTOMRIGHT", inset, "BOTTOMRIGHT", -3, 2);
+    local banner = CreateFrame("Frame", "KrowiEVU_TokenBanner", MerchantMoneyInset, "KrowiEVU_ThinGoldEdge_Template"); -- ThinGoldEdgeTemplate
+    banner:SetPoint("TOPLEFT", MerchantMoneyInset, "TOPLEFT", 3, -2);
+    banner:SetPoint("BOTTOMRIGHT", MerchantMoneyInset, "BOTTOMRIGHT", -3, 2);
 
     for i = 1, preLoadTokenNum do
         DrawToken(i);
@@ -48,17 +55,15 @@ function tokenBanner:Load()
     HideAllTokens()
 end
 
--- MerchantFrame_UpdateCurrencies is called before MerchantFrame_Update so we need to do the handling here
-hooksecurefunc("MerchantFrame_Update", function()
-    addon.Util.DelayFunction("KrowiEVU_TokenBannerUpdate", 0.5, function()
-        tokenBanner:Update()
-    end);
-end);
+local function UpdateBannerHeight()
+    local height = 5 + (GetPoolToken(1):GetHeight() + 3) * tokenLines + 5
+    MerchantMoneyInset:SetHeight(height)
+end
 
 local function HideBlizzardTokenFrame()
-    if MerchantMoneyInset then
-        MerchantMoneyInset:Hide();
-    end
+    -- if MerchantMoneyInset then
+    --     MerchantMoneyInset:Hide();
+    -- end
     if MerchantExtraCurrencyInset then
         MerchantExtraCurrencyInset:Hide();
     end
@@ -81,6 +86,20 @@ local function HideBlizzardTokenFrame()
         end
     end
 end
+
+-- MerchantFrame_UpdateCurrencies is called before MerchantFrame_Update so we need to do the handling here
+hooksecurefunc("MerchantFrame_Update", function()
+    if not KrowiEVU_TokenBanner then
+        return;
+    end
+
+    HideBlizzardTokenFrame()
+
+    addon.Util.DelayFunction("KrowiEVU_TokenBannerUpdate", 0.5, function()
+        tokenBanner:Update()
+        addon.Gui.MerchantFrame.SetMerchantFrameSize()
+    end);
+end);
 
 local function HideRemainingTokens(startIndex)
     local numTokens = #tokenPool;
@@ -183,12 +202,6 @@ local function DrawItemToken(texture, value, link)
 end
 
 function tokenBanner:Update()
-    if not KrowiEVU_TokenBanner then
-        return;
-    end
-
-    HideBlizzardTokenFrame()
-
     local goldCount, currencyCounts, itemCounts = CalculateCounts()
 
     tokenIndex = 0;
@@ -204,4 +217,46 @@ function tokenBanner:Update()
     end
 
     HideRemainingTokens(tokenIndex + 1)
+
+    UpdateBannerHeight()
+end
+
+function tokenBanner:CreateOptionsMenu(menuObj, menuBuilder)
+    local profile = addon.Options.db.profile.TokenBanner;
+
+    local tokenBannerMenu = menuBuilder:CreateSubmenuButton(menuObj, addon.L["Token Banner"]);
+
+	menuBuilder:CreateTitle(tokenBannerMenu, addon.L["Money Options"]);
+
+    local moneyLabel = menuBuilder:CreateSubmenuButton(tokenBannerMenu, addon.L["Money Label"]);
+    menuBuilder:CreateRadio(moneyLabel, addon.L["None"], profile, {"MoneyLabel"}, "None");
+    menuBuilder:CreateRadio(moneyLabel, addon.L["Text"], profile, {"MoneyLabel"}, "Text");
+    menuBuilder:CreateRadio(moneyLabel, addon.L["Icon"], profile, {"MoneyLabel"}, "Icon");
+    menuBuilder:AddChildMenu(tokenBannerMenu, moneyLabel);
+
+    local moneyAbbreviate = menuBuilder:CreateSubmenuButton(tokenBannerMenu, addon.L["Money Abbreviate"]);
+    menuBuilder:CreateRadio(moneyAbbreviate, addon.L["None"], profile, {"MoneyAbbreviate"}, "None");
+    menuBuilder:CreateRadio(moneyAbbreviate, addon.L["1k"], profile, {"MoneyAbbreviate"}, "1k");
+    menuBuilder:CreateRadio(moneyAbbreviate, addon.L["1m"], profile, {"MoneyAbbreviate"}, "1m");
+    menuBuilder:AddChildMenu(tokenBannerMenu, moneyAbbreviate);
+
+    local thousandsSeparator = menuBuilder:CreateSubmenuButton(tokenBannerMenu, addon.L["Thousands Separator"]);
+    menuBuilder:CreateRadio(thousandsSeparator, addon.L["Space"], profile, {"ThousandsSeparator"}, "Space");
+    menuBuilder:CreateRadio(thousandsSeparator, addon.L["Period"], profile, {"ThousandsSeparator"}, "Period");
+    menuBuilder:CreateRadio(thousandsSeparator, addon.L["Comma"], profile, {"ThousandsSeparator"}, "Comma");
+    menuBuilder:AddChildMenu(tokenBannerMenu, thousandsSeparator);
+
+    menuBuilder:CreateCheckbox(tokenBannerMenu, addon.L["Money Gold Only"], profile, {"MoneyGoldOnly"});
+    menuBuilder:CreateCheckbox(tokenBannerMenu, addon.L["Money Colored"], profile, {"MoneyColored"});
+
+    menuBuilder:CreateDivider(tokenBannerMenu);
+	menuBuilder:CreateTitle(tokenBannerMenu, addon.L["Currency Options"]);
+
+	local currencyAbbreviate = menuBuilder:CreateSubmenuButton(tokenBannerMenu, addon.L["Currency Abbreviate"]);
+	menuBuilder:CreateRadio(currencyAbbreviate, addon.L["None"], profile, {"CurrencyAbbreviate"}, "None");
+	menuBuilder:CreateRadio(currencyAbbreviate, addon.L["1k"], profile, {"CurrencyAbbreviate"}, "1k");
+	menuBuilder:CreateRadio(currencyAbbreviate, addon.L["1m"], profile, {"CurrencyAbbreviate"}, "1m");
+	menuBuilder:AddChildMenu(tokenBannerMenu, currencyAbbreviate);
+
+    menuBuilder:AddChildMenu(menuObj, tokenBannerMenu);
 end

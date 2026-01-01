@@ -1,94 +1,24 @@
 local _, addon = ...;
 
 local TEXTURE_SIZE = 14
+local currency = LibStub("Krowi_Currency-1.0");
 
 KrowiEVU_TokenMixin = {};
 
-local function AbbreviateValue(value, abbreviateK, abbreviateM)
-	if abbreviateK and value >= 1000 then
-		return math.floor(value / 1000), "k";
-	elseif abbreviateM and value >= 1000000 then
-		return math.floor(value / 1000000), "m";
-	end
-	return value, "";
-end
-
-local function GetSeparators()
+local function GetOptionsForLib()
 	local options = addon.Options.db.profile.TokenBanner;
-	if (options.ThousandsSeparator == addon.L["Space"]) then
-		return " ", ".";
-	elseif (options.ThousandsSeparator == addon.L["Period"]) then
-		return ".", ",";
-	elseif (options.ThousandsSeparator == addon.L["Comma"]) then
-		return ",", ".";
-	end
-	return "", "";
-end
-
-local function BreakMoney(value)
-	return math.floor(value / 10000), math.floor((value % 10000) / 100), value % 100;
-end
-
-local function NumToString(amount, thousands_separator, decimal_separator)
-	if type(amount) ~= "number" then
-		return "0";
-	end
-
-	if amount > 99999999999999 then
-		return tostring(amount);
-	end
-
-	local sign, int, frac = tostring(amount):match('([-]?)(%d+)([.]?%d*)');
-	int = int:reverse():gsub("(%d%d%d)", "%1|");
-	int = int:reverse():gsub("^|", "");
-	int = int:gsub("%.", decimal_separator);
-	int = int:gsub("|", thousands_separator);
-
-	return sign .. int .. frac;
-end
-
-local function FormatMoney(value)
-	local options = addon.Options.db.profile.TokenBanner;
-	local thousandsSeparator, decimalSeparator = GetSeparators();
-
-	local gold, silver, copper, abbr = BreakMoney(value);
-
-	local moneyAbbreviateK = options.MoneyAbbreviate == addon.L["1k"];
-	local moneyAbbreviateM = options.MoneyAbbreviate == addon.L["1m"];
-	gold, abbr = AbbreviateValue(gold, moneyAbbreviateK, moneyAbbreviateM);
-	gold = NumToString(gold, thousandsSeparator, decimalSeparator);
-
-	local goldLabel, silverLabel, copperLabel = "", "", "";
-	if options.MoneyLabel == addon.L["Text"] then
-		goldLabel = addon.L["Gold Label"];
-		silverLabel = addon.L["Silver Label"];
-		copperLabel = addon.L["Copper Label"];
-	elseif options.MoneyLabel == addon.L["Icon"] then
-		local icon_pre = "|TInterface\\MoneyFrame\\";
-		local icon_post = ":" .. TEXTURE_SIZE .. ":" .. TEXTURE_SIZE .. ":2:0|t";
-		goldLabel = icon_pre .. "UI-GoldIcon" .. icon_post;
-		silverLabel = icon_pre .. "UI-SilverIcon" .. icon_post;
-		copperLabel = icon_pre .. "UI-CopperIcon" .. icon_post;
-	end
-
-	local colors = options.MoneyColored and {
-		coin_gold = "ffd100",
-		coin_silver = "e6e6e6",
-		coin_copper = "c8602c",
-	} or {
-        coin_gold = "ffffff",
-        coin_silver = "ffffff",
-        coin_copper = "ffffff",
-    };
-
-	local outstr = "|cff" .. colors.coin_gold .. gold .. abbr .. goldLabel .. "|r";
-
-	if not options.MoneyGoldOnly then
-		outstr = outstr .. " " .. "|cff" .. colors.coin_silver .. silver .. silverLabel .. "|r";
-		outstr = outstr .. " " .. "|cff" .. colors.coin_copper .. copper .. copperLabel .. "|r";
-	end
-
-	return outstr;
+	return {
+		MoneyLabel = options.MoneyLabel,
+		MoneyAbbreviate = options.MoneyAbbreviate,
+		ThousandsSeparator = options.ThousandsSeparator,
+		MoneyGoldOnly = options.MoneyGoldOnly,
+		MoneyColored = options.MoneyColored,
+		CurrencyAbbreviate = options.CurrencyAbbreviate,
+		GoldLabel = addon.L["Gold Label"],
+		SilverLabel = addon.L["Silver Label"],
+		CopperLabel = addon.L["Copper Label"],
+		TextureSize = TEXTURE_SIZE
+	};
 end
 
 function KrowiEVU_TokenMixin:OnEnter()
@@ -107,22 +37,6 @@ end
 function KrowiEVU_TokenMixin:OnLeave()
     GameTooltip:Hide();
 end
-
--- local function GetMoneySingleValueAndTexture(value)
---     local gold, silver, copper = BreakMoney(value);
---     local texture
---     if gold > 0 then
---         value = gold;
---         texture = "Interface\\MoneyFrame\\UI-GoldIcon";
---     elseif silver > 0 then
---         value = silver;
---         texture = "Interface\\MoneyFrame\\UI-SilverIcon";
---     else
---         value = copper;
---         texture = "Interface\\MoneyFrame\\UI-CopperIcon";
---     end
---     return value, texture;
--- end
 
 function KrowiEVU_TokenMixin:Draw()
     if not self.Need then
@@ -147,8 +61,8 @@ function KrowiEVU_TokenMixin:SetGold(value)
     self.IsCurrency = false
     self.IsItem = false
 
-    self.Need, self.IconTexture = FormatMoney(value) -- GetMoneySingleValueAndTexture(value)
-    self.Have = FormatMoney(GetMoney()) -- GetMoneySingleValueAndTexture(GetMoney())
+    self.Need, self.IconTexture = currency:FormatMoney(value, GetOptionsForLib())
+    self.Have = currency:FormatMoney(GetMoney(), GetOptionsForLib())
 end
 
 function KrowiEVU_TokenMixin:SetCurrency(texture, value, link)
@@ -156,7 +70,8 @@ function KrowiEVU_TokenMixin:SetCurrency(texture, value, link)
     self.IsCurrency = true
     self.IsItem = false
 
-    self.Need, self.IconTexture = value, texture or "Interface\\Icons\\Inv_Misc_QuestionMark"
+	local options = GetOptionsForLib();
+    self.Need, self.IconTexture = currency:FormatCurrency(value, options), texture or "Interface\\Icons\\Inv_Misc_QuestionMark"
     self.Link = link;
 
     local currencyInfo = C_CurrencyInfo.GetCurrencyInfoFromLink(link);
@@ -164,7 +79,7 @@ function KrowiEVU_TokenMixin:SetCurrency(texture, value, link)
         return
     end
 
-    self.Have = currencyInfo.quantity;
+    self.Have = currency:FormatCurrency(currencyInfo.quantity, options);
 end
 
 function KrowiEVU_TokenMixin:SetItem(texture, value, link)
@@ -172,7 +87,8 @@ function KrowiEVU_TokenMixin:SetItem(texture, value, link)
     self.IsCurrency = false
     self.IsItem = true
 
-    self.Need, self.IconTexture = value, texture or "Interface\\Icons\\Inv_Misc_QuestionMark"
+	local options = GetOptionsForLib();
+    self.Need, self.IconTexture = currency:FormatCurrency(value, options), texture or "Interface\\Icons\\Inv_Misc_QuestionMark"
     self.Link = link;
 
     local itemId = tonumber(link:match("item:(%d+)"));
@@ -180,9 +96,9 @@ function KrowiEVU_TokenMixin:SetItem(texture, value, link)
         return
     end
 
-    self.Have = C_Item.GetItemCount(link, true, false, true, true);
+    self.Have = currency:FormatCurrency(C_Item.GetItemCount(link, true, false, true, true), options);
 end
 
 function KrowiEVU_TokenMixin:OnShow()
-    print("Token shown", self.Have, self.Need);
+    -- print("Token shown", self.Have, self.Need);
 end

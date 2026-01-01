@@ -27,7 +27,9 @@ function loadHelper:OnEvent(event, arg1, arg2)
             addon.Gui.FilterButton:Load();
             addon.Gui.SearchBox:Load();
             addon.Gui.OptionsButton:Load();
-            addon.Gui.TokenBanner:Load();
+            -- if addon.Util.IsMainline then
+                addon.Gui.TokenBanner:Load();
+            -- end
 
             addon.Icon:Load();
 

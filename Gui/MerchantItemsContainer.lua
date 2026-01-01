@@ -137,7 +137,7 @@ end
 function merchantItemsContainer:DrawMerchantBuyBackItem(show)
     if show then
         MerchantBuyBackItem:ClearAllPoints();
-        MerchantBuyBackItem:SetPoint("BOTTOMLEFT", MerchantFrameBottomLeftBorder, "BOTTOMLEFT", addon.Util.IsMainline and 205 or 175, 7);
+        MerchantBuyBackItem:SetPoint("LEFT", KrowiEVU_MerchantBuybackInset, 7, 0)
 	    MerchantBuyBackItem:Show();
     else
         MerchantBuyBackItem:Hide();

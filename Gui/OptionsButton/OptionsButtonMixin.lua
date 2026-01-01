@@ -23,6 +23,7 @@ function KrowiEVU_OptionsButtonMixin:OnLoad()
 			end,
 			OnCheckboxSelect = function(filters, keys)
 				addon.Util.WriteNestedKeys(filters, keys, not menuBuilder:KeyIsTrue(filters, keys));
+				UpdateView();
 			end,
 		}
 	});
@@ -75,16 +76,72 @@ function KrowiEVU_OptionsButtonMixin:CreateMenu(menuObj)
 
 	-- Rows submenu
 	local rows = menuBuilder:CreateSubmenuButton(menuObj, addon.L["Rows"]);
-	for i = 1, 10 do
-		menuBuilder:CreateRadio(rows, tostring(i), profile, {"NumRows"}, i);
+	local rowPresets = {1, 2, 5, 10};
+	for _, row in ipairs(rowPresets) do
+		menuBuilder:CreateRadio(rows, tostring(row), profile, {"NumRows"}, row);
 	end
+	local currentRows = profile.NumRows or 1;
+	local isCustomRows = true;
+	for _, row in ipairs(rowPresets) do
+		if currentRows == row then
+			isCustomRows = false;
+			break;
+		end
+	end
+	if isCustomRows then
+		menuBuilder:CreateRadio(rows, string.format("%s (%d)", addon.L["Custom"], currentRows), profile, {"NumRows"}, currentRows);
+	end
+	menuBuilder:CreateDivider(rows);
+	menuBuilder:CreateButtonAndAdd(rows, addon.L["Set custom"], function()
+		local lib = LibStub("Krowi_PopupDialog-1.0");
+		lib.ShowNumericInput({
+			text = addon.L["Enter number of rows (1-99):"],
+			acceptText = addon.L["Accept"],
+			cancelText = addon.L["Cancel"],
+			min = 1,
+			max = 99,
+			default = profile.NumRows or 1,
+			callback = function(value)
+				profile.NumRows = value;
+				UpdateView();
+			end
+		});
+	end);
 	menuBuilder:AddChildMenu(menuObj, rows);
 
 	-- Columns submenu
 	local columns = menuBuilder:CreateSubmenuButton(menuObj, addon.L["Columns"]);
-	for i = 2, 6 do
-		menuBuilder:CreateRadio(columns, tostring(i), profile, {"NumColumns"}, i);
+	local columnPresets = {1, 2, 5, 10};
+	for _, column in ipairs(columnPresets) do
+		menuBuilder:CreateRadio(columns, tostring(column), profile, {"NumColumns"}, column);
 	end
+	local currentColumns = profile.NumColumns or 2;
+	local isCustomColumns = true;
+	for _, column in ipairs(columnPresets) do
+		if currentColumns == column then
+			isCustomColumns = false;
+			break;
+		end
+	end
+	if isCustomColumns then
+		menuBuilder:CreateRadio(columns, string.format("%s (%d)", addon.L["Custom"], currentColumns), profile, {"NumColumns"}, currentColumns);
+	end
+	menuBuilder:CreateDivider(columns);
+	menuBuilder:CreateButtonAndAdd(columns, addon.L["Set custom"], function()
+		local lib = LibStub("Krowi_PopupDialog-1.0");
+		lib.ShowNumericInput({
+			text = addon.L["Enter number of columns (2-99):"],
+			acceptText = addon.L["Accept"],
+			cancelText = addon.L["Cancel"],
+			min = 2,
+			max = 99,
+			default = profile.NumColumns or 2,
+			callback = function(value)
+				profile.NumColumns = value;
+				UpdateView();
+			end
+		});
+	end);
 	menuBuilder:AddChildMenu(menuObj, columns);
 
 	menuBuilder:CreateDivider(menuObj);
@@ -98,10 +155,43 @@ function KrowiEVU_OptionsButtonMixin:CreateMenu(menuObj)
 
 	-- Housing Quantity submenu
 	local housingQuantity = menuBuilder:CreateSubmenuButton(menuObj, addon.L["Housing Quantity"]);
-	for i = 1, 10 do
-		menuBuilder:CreateRadio(housingQuantity, tostring(i), addon.Filters.db.profile, {"HousingQuantity"}, i);
+	local quantities = {1, 2, 5, 10};
+	for _, quantity in ipairs(quantities) do
+		menuBuilder:CreateRadio(housingQuantity, tostring(quantity), addon.Filters.db.profile, {"HousingQuantity"}, quantity);
 	end
+	local currentValue = addon.Filters.db.profile.HousingQuantity or 1;
+	local isCustomValue = true;
+	for _, quantity in ipairs(quantities) do
+		if currentValue == quantity then
+			isCustomValue = false;
+			break;
+		end
+	end
+	if isCustomValue then
+		menuBuilder:CreateRadio(housingQuantity, string.format("%s (%d)", addon.L["Custom"], currentValue), addon.Filters.db.profile, {"HousingQuantity"}, currentValue);
+	end
+
+	menuBuilder:CreateDivider(housingQuantity);
+	menuBuilder:CreateButtonAndAdd(housingQuantity, addon.L["Set custom"], function()
+		local lib = LibStub("Krowi_PopupDialog-1.0");
+		lib.ShowNumericInput({
+			text = addon.L["Enter housing quantity (1-999):"],
+			acceptText = addon.L["Accept"],
+			cancelText = addon.L["Cancel"],
+			min = 1,
+			max = 999,
+			default = addon.Filters.db.profile.HousingQuantity or 1,
+			callback = function(value)
+				addon.Filters.db.profile.HousingQuantity = value;
+				UpdateView();
+			end
+		});
+	end);
 	menuBuilder:AddChildMenu(menuObj, housingQuantity);
+
+	-- Add the TokenBanner options here
+	menuBuilder:CreateDivider(menuObj);
+	addon.Gui.TokenBanner:CreateOptionsMenu(menuObj, menuBuilder);
 
 	-- Hide button
 	if profile.ShowHideOption then

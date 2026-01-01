@@ -281,7 +281,16 @@
         "MAX_MERCHANT_CURRENCIES",
         "GetItemCount",
         "C_CurrencyInfo",
-        "SystemFont_Shadow_Huge1"
+        "SystemFont_Shadow_Huge1",
+        "KrowiEVU_MerchantBuybackInset",
+        "KrowiEVU_MerchantButtonsInset",
+        "KrowiEVU_MerchantEmptyInset",
+        "MerchantFrameBtnCornerLeft",
+        "MerchantFrameBtnCornerRight",
+        "BuybackBG",
+        "MerchantBuyBackItemNameFrame",
+        "KrowiEVU_TokenBannerToken1",
+        "MerchantBuyBackItemSlotTexture"
     ],
     "fsdeploy.nodes": [
         {
