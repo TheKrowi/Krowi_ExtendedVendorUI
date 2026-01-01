@@ -1,0 +1,24 @@
+<Ui>
+    <Script file="TokenMixin.lua"/>
+    <Script file="TokenBanner.lua"/>
+    <Script file="TokenBannerMixin.lua"/>
+
+    <Button name="KrowiEVU_Token_Template" mixin="KrowiEVU_TokenMixin" hidden="true" virtual="true">
+        <Size x="50" y="12"/>
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString parentKey="Text" inherits="GameFontHighlight" justifyH="RIGHT">
+                    <Anchors>
+                        <Anchor point="TOPLEFT"/>
+                        <Anchor point="BOTTOMRIGHT"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnShow method="OnShow"/>
+            <OnEnter method="OnEnter"/>
+            <OnLeave method="OnLeave"/>
+        </Scripts>
+    </Button>
+</Ui>

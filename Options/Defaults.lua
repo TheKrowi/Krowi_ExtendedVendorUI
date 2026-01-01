@@ -14,5 +14,12 @@ addon.Options.Defaults = {
         RememberFilter = false,
         RememberSearch = false,
         RememberSearchBetweenVendors = false,
+        TokenBanner = {
+            MoneyLabel = addon.L["Icon"],
+            MoneyAbbreviate = addon.L["None"],
+            ThousandsSeparator = addon.L["Space"],
+            MoneyGoldOnly = false,
+            MoneyColored = true,
+        }
     }
 };

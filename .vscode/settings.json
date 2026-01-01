@@ -279,7 +279,9 @@
         "MerchantMoneyFrame",
         "MerchantMoneyBg",
         "MAX_MERCHANT_CURRENCIES",
-        "GetItemCount"
+        "GetItemCount",
+        "C_CurrencyInfo",
+        "SystemFont_Shadow_Huge1"
     ],
     "fsdeploy.nodes": [
         {
