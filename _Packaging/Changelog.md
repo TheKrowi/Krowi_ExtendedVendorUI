@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## 19.0 - 2026-01-02
 ### Added
 - Full ElvUI support
 - **Token Banner**: New UI component displaying player currencies and money
@@ -35,7 +35,7 @@ All notable changes to this project will be documented in this file.
 - Filter button positioning adjustments based on column count
 
 ## 17.0 - 2025-12-29
-### Change
+### Changed
 - Menu generation and handling (dev note: for classic user this should be an invisible change; for mainline users this should reflect in modern looking drop down menus)
 
 ## 16.3 - 2025-12-27

@@ -1,15 +1,14 @@
 ### Added
-- Remember search option: Keep search text when reopening the same vendor
-- Remember search between vendors option: Keep search text across different vendors
-- Options button positioned next to search box for quick access
+- Full ElvUI support
+- **Token Banner**: New UI component displaying player currencies and money
+  - Customizable display options for money formatting (labels, abbreviation, separators, colors)
+  - Customizable display options for currency formatting
+  - Options menu integration for easy configuration
+- Numeric input dialog functionality to Krowi_PopupDialog library
+- Custom input option for Rows, Columns, and Housing Quantity settings with preset values
+- Visual indication for custom values in menus showing "Custom (x)" format
 
 ### Changed
-- Search functionality with "Search" filter option to search for items by name
-- Improved UI element positioning and sizing logic for search box and options button
-- Updated filter button to use localized strings instead of global strings
-- Enhanced search box behavior with proper filter restoration
-
-### Fixed
-- Search box now properly clears when switching between non-search filters
-- Options button and search box visibility when switching between merchant info and buyback modes
-- Filter button positioning adjustments based on column count
+- Rows menu now uses presets (1, 2, 5, 10) with custom input dialog for values 1-99
+- Columns menu now uses presets (1, 2, 5, 10) with custom input dialog for values 1-99
+- Housing Quantity menu now uses presets (1, 2, 5, 10) with custom input dialog for values 1-999
