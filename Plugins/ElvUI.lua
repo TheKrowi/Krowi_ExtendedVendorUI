@@ -153,7 +153,7 @@ function elv:Load()
     if not doSkin.Merchant then
         return;
     end
-    
+
     hooksecurefunc(addon.Gui.MerchantItemsContainer, "LoadMaxNumItemSlots", function()
         SkinMerchantItemButtons();
         SkinMerchantItemButtons = function() end -- No need to run again
@@ -174,4 +174,20 @@ function elv:Load()
             skins:HandleButton(KrowiEVU_OptionsButton)
         end);
     end
+
+    hooksecurefunc("MerchantFrame_Update", function()
+        addon.Gui.MerchantFrame.UpdateRepairButtons()
+    end);
+
+    KrowiEVU_MerchantButtonsInset:StripTextures()
+    KrowiEVU_MerchantButtonsInset:CreateBackdrop('Transparent')
+	KrowiEVU_MerchantButtonsInset.backdrop:Point('TOPLEFT', 2, -2)
+	KrowiEVU_MerchantButtonsInset.backdrop:Point('BOTTOMRIGHT', -2, 2)
+    KrowiEVU_MerchantBuybackInset:StripTextures()
+    KrowiEVU_MerchantEmptyInset:StripTextures()
+
+    hooksecurefunc(addon.Gui.TokenBanner, "Load", function()
+        KrowiEVU_TokenBanner:StripTextures()
+        KrowiEVU_TokenBanner:CreateBackdrop('Transparent')
+    end);
 end

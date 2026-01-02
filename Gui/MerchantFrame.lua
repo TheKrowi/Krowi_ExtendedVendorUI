@@ -1,15 +1,11 @@
--- [[ Namespaces ]] --
 local _, addon = ...;
 local merchantItemsContainer = addon.Gui.MerchantItemsContainer;
 local originalWidth, originalHeight = MerchantFrame:GetSize();
 originalHeight = originalHeight + 12
 originalWidth = originalWidth + 12
 
--- do -- [[ Set some permanent MerchantFrame changes ]]
-
--- 	-- MerchantFrameLootFilter:SetPoint("TOPRIGHT", MerchantFrame, -150, -28);
-
--- end
+addon.Gui.MerchantFrame = {}
+local merchantFrame = addon.Gui.MerchantFrame
 
 do
 	MerchantMoneyInset:ClearAllPoints()
@@ -29,7 +25,7 @@ do
 	emptyInset:SetPoint("BOTTOMLEFT", buybackInset, "BOTTOMRIGHT", 4, 0)
 	emptyInset:SetPoint("RIGHT", MerchantMoneyInset)
 
-	hooksecurefunc("MerchantFrame_UpdateRepairButtons", function ()
+	local function UpdateRepairButtons()
 		MerchantRepairItemButton:ClearAllPoints()
 		MerchantRepairItemButton:SetPoint("RIGHT", MerchantRepairAllButton, "LEFT", -8, 0)
 		MerchantRepairAllButton:ClearAllPoints()
@@ -42,7 +38,9 @@ do
 		else
 			MerchantRepairText:Hide()
 		end
-	end)
+	end
+	merchantFrame.UpdateRepairButtons = UpdateRepairButtons -- Makes placing them correctly possible via plugins like ElvUI
+	hooksecurefunc("MerchantFrame_UpdateRepairButtons", UpdateRepairButtons)
 
 	MerchantFrameInset:ClearPoint("BOTTOMRIGHT")
 	MerchantFrameInset:SetPoint("RIGHT", MerchantFrame, "RIGHT", -6, 0)
@@ -57,7 +55,7 @@ do
 
 	BuybackBG:SetPoint("TOPLEFT", MerchantFrameInset)
 	BuybackBG:SetPoint("BOTTOMRIGHT", MerchantFrameInset)
-	
+
 	if not addon.Util.IsMainline then
 		MerchantFrameBtnCornerLeft:Hide()
 		MerchantFrameBtnCornerRight:Hide()
@@ -67,20 +65,21 @@ do
 	end
 end
 
-addon.Gui.MerchantFrame = {}
-local merchantFrame = addon.Gui.MerchantFrame
-
 function merchantFrame.SetMerchantFrameSize()
-	local numExtraColumns = addon.Options.db.profile.NumColumns - merchantItemsContainer.DefaultMerchantInfoNumColumns;
-	local numExtraRows = addon.Options.db.profile.NumRows - merchantItemsContainer.DefaultMerchantInfoNumRows;
-	local itemWidth = merchantItemsContainer.OffsetX + merchantItemsContainer.ItemWidth;
-	local itemHeight = merchantItemsContainer.OffsetMerchantInfoY + merchantItemsContainer.ItemHeight;
-	local width = originalWidth + numExtraColumns * itemWidth;
-	local height = originalHeight + numExtraRows * itemHeight + MerchantMoneyInset:GetHeight() - 23;
-	if not MerchantPageText:IsShown() then
-		height = height - 36;
+	if  MerchantFrame.selectedTab == 1 then
+		local numExtraColumns = addon.Options.db.profile.NumColumns - merchantItemsContainer.DefaultMerchantInfoNumColumns;
+		local numExtraRows = addon.Options.db.profile.NumRows - merchantItemsContainer.DefaultMerchantInfoNumRows;
+		local itemWidth = merchantItemsContainer.OffsetX + merchantItemsContainer.ItemWidth;
+		local itemHeight = merchantItemsContainer.OffsetMerchantInfoY + merchantItemsContainer.ItemHeight;
+		local width = originalWidth + numExtraColumns * itemWidth;
+		local height = originalHeight + numExtraRows * itemHeight + MerchantMoneyInset:GetHeight() - 23;
+		if not MerchantPageText:IsShown() then
+			height = height - 36;
+		end
+		MerchantFrame:SetSize(width, height);
+	else
+		MerchantFrame:SetSize(originalWidth, originalHeight);
 	end
-	MerchantFrame:SetSize(width, height);
 end
 
 hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
@@ -117,8 +116,7 @@ hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
 end);
 
 hooksecurefunc("MerchantFrame_UpdateBuybackInfo", function()
-	local numExtraColumns = addon.Options.db.profile.NumColumns - merchantItemsContainer.DefaultMerchantInfoNumColumns;
-	MerchantFrame:SetSize(originalWidth, originalHeight);
+	merchantFrame.SetMerchantFrameSize()
 	if addon.Util.IsMainline then
 		MerchantFrame.FilterDropdown:Hide();
 	end

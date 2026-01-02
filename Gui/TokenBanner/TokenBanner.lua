@@ -1,9 +1,5 @@
 local _, addon = ...;
 
--- if not addon.Util.IsMainline then
---     return;
--- end
-
 addon.Gui.TokenBanner = {};
 local tokenBanner = addon.Gui.TokenBanner;
 

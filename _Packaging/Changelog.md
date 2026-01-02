@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.1 - 2026-01-02
+### Added
+- ElvUI skinning support for Token Banner and merchant insets
+
+### Fixed
+- Merchant frame size now properly resets when viewing buyback tab
+
 ## 19.0 - 2026-01-02
 ### Added
 - Full ElvUI support

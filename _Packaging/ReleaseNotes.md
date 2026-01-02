@@ -12,3 +12,9 @@
 - Rows menu now uses presets (1, 2, 5, 10) with custom input dialog for values 1-99
 - Columns menu now uses presets (1, 2, 5, 10) with custom input dialog for values 1-99
 - Housing Quantity menu now uses presets (1, 2, 5, 10) with custom input dialog for values 1-999
+
+### Added (19.1)
+- ElvUI skinning support for Token Banner and merchant insets
+
+### Fixed (19.1)
+- Merchant frame size now properly resets when viewing buyback tab
