@@ -1,13 +1,13 @@
-local _, addon = ...;
-local L = addon.Localization.GetDefaultLocale();
-addon.L = L;
+local _, addon = ...
+local L = addon.Localization.GetDefaultLocale()
+addon.L = L
 
-addon.Plugins:LoadLocalization(L);
+KrowiEVU.PluginsApi:LoadPluginLocalization(L)
 
 -- [[ https://legacy.curseforge.com/wow/addons/krowi-extended-vendor-ui/localization ]] --
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2025-12-23 18-21-25 ]] --
+-- [[ Exported at 2025-12-30 18-32-30 ]] --
 L["Are you sure you want to hide the options button?"] = [=[Are you sure you want to hide the options button?
 The options button can be shown again via {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options}]=]
 L["Arsenals"] = true
@@ -41,6 +41,8 @@ L["Pets"] = true
 L["Plugins"] = true
 L["Recipes"] = true
 L["RememberFilter"] = "Remember filter"
+L["RememberSearch"] = "Remember search"
+L["RememberSearchBetweenVendors"] = "Remember search between vendors"
 L["Right click"] = true
 L["Rows"] = true
 L["Rows first"] = true
@@ -54,5 +56,3 @@ L["Show options button Desc"] = "Show / hide the options button in the merchant 
 L["Toys"] = true
 L["Unchecked"] = true
 L["Wago"] = true
-L["RememberSearch"] = "Remember search"
-L["RememberSearchBetweenVendors"] = "Remember search between vendors"

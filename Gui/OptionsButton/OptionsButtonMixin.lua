@@ -1,31 +1,32 @@
 -- [[ Namespaces ]] --
-local _, addon = ...;
-local merchantItemsContainer = addon.Gui.MerchantItemsContainer;
+local _, addon = ...
+local merchantItemsContainer = addon.Gui.MerchantItemsContainer
 
-KrowiEVU_OptionsButtonMixin = {};
+KrowiEVU_OptionsButtonMixin = {}
 
-local menuBuilder;
+local menuBuilder
 
 local function UpdateView()
-	merchantItemsContainer:LoadMaxNumItemSlots();
-	MerchantFrame_Update();
+	merchantItemsContainer:LoadMaxNumItemSlots()
+	MerchantFrame_Update()
 end
 
 function KrowiEVU_OptionsButtonMixin:OnLoad()
-	local lib = LibStub("Krowi_MenuBuilder-1.0");
+	local lib = LibStub('Krowi_MenuBuilder-1.0')
 
 	menuBuilder = lib:New({
-		uniqueTag = "KEVU_OPTIONS",
+		uniqueTag = 'KEVU_OPTIONS',
 		callbacks = {
 			OnRadioSelect = function(filters, keys, value)
-				addon.Util.WriteNestedKeys(filters, keys, value);
-				UpdateView();
+				addon.Util.WriteNestedKeys(filters, keys, value)
+				UpdateView()
 			end,
 			OnCheckboxSelect = function(filters, keys)
-				addon.Util.WriteNestedKeys(filters, keys, not menuBuilder:KeyIsTrue(filters, keys));
+				addon.Util.WriteNestedKeys(filters, keys, not menuBuilder:KeyIsTrue(filters, keys))
+				UpdateView()
 			end,
 		}
-	});
+	})
 
 	menuBuilder.CreateMenu = function(mb)
 		self:CreateMenu(mb:GetMenu())
@@ -38,101 +39,192 @@ end
 
 function KrowiEVU_OptionsButtonMixin:ShowHide()
     if addon.Options.db.profile.ShowOptionsButton then
-        self:Show();
-        return;
+        self:Show()
+        return
     end
-    self:Hide();
+    self:Hide()
 end
 
-local media = "Interface\\AddOns\\Krowi_MerchantFrameExtended\\Media\\";
+local media = 'Interface\\AddOns\\Krowi_MerchantFrameExtended\\Media\\'
 local function ReplaceVarsWithMenu(str, vars)
     if not vars then
-        vars = type(str) == "table" and str or {str};
-        str = vars[1];
+        vars = type(str) == 'table' and str or {str}
+        str = vars[1]
     end
-    vars["arrow"] = "|T" .. media .. "ui-backarrow:0|t";
-    vars["gameMenu"] = addon.L["Game Menu"];
-    vars["interface"] = addon.L["Interface"];
-    vars["addOns"] = addon.L["AddOns"];
-    vars["addonName"] = addon.Metadata.Title;
-    return addon.Util.Strings.ReplaceVars(str, vars);
+    vars['arrow'] = '|T' .. media .. 'ui-backarrow:0|t'
+    vars['gameMenu'] = addon.L['Game Menu']
+    vars['interface'] = addon.L['Interface']
+    vars['addOns'] = addon.L['AddOns']
+    vars['addonName'] = addon.Metadata.Title
+    return addon.Util.Strings.ReplaceVars(str, vars)
 end
-string.K_ReplaceVarsWithMenu = ReplaceVarsWithMenu;
+string.K_ReplaceVarsWithMenu = ReplaceVarsWithMenu
 
 local function HideOptionsButtonCallback(self)
-	addon.Options.db.profile.ShowOptionsButton = false;
-	self:ShowHide();
+	addon.Options.db.profile.ShowOptionsButton = false
+	self:ShowHide()
 end
 
 function KrowiEVU_OptionsButtonMixin:CreateMenu(menuObj)
-	local profile = addon.Options.db.profile;
+	local profile = addon.Options.db.profile
 
 	-- Direction submenu
-	local direction = menuBuilder:CreateSubmenuButton(menuObj, addon.L["Direction"]);
-	menuBuilder:CreateRadio(direction, addon.L["Rows first"], profile, {"Direction"});
-	menuBuilder:CreateRadio(direction, addon.L["Columns first"], profile, {"Direction"});
-	menuBuilder:AddChildMenu(menuObj, direction);
+	local direction = menuBuilder:CreateSubmenuButton(menuObj, addon.L['Direction'])
+	menuBuilder:CreateRadio(direction, addon.L['Rows first'], profile, {'Direction'}, 'Rows')
+	menuBuilder:CreateRadio(direction, addon.L['Columns first'], profile, {'Direction'}, 'Columns')
+	menuBuilder:AddChildMenu(menuObj, direction)
 
 	-- Rows submenu
-	local rows = menuBuilder:CreateSubmenuButton(menuObj, addon.L["Rows"]);
-	for i = 1, 10 do
-		menuBuilder:CreateRadio(rows, tostring(i), profile, {"NumRows"}, i);
+	local rows = menuBuilder:CreateSubmenuButton(menuObj, addon.L['Rows'])
+	local rowPresets = {1, 2, 5, 10}
+	for _, row in ipairs(rowPresets) do
+		menuBuilder:CreateRadio(rows, tostring(row), profile, {'NumRows'}, row)
 	end
-	menuBuilder:AddChildMenu(menuObj, rows);
+	local currentRows = profile.NumRows or 1
+	local isCustomRows = true
+	for _, row in ipairs(rowPresets) do
+		if currentRows == row then
+			isCustomRows = false
+			break
+		end
+	end
+	if isCustomRows then
+		menuBuilder:CreateRadio(rows, string.format('%s (%d)', addon.L['Custom'], currentRows), profile, {'NumRows'}, currentRows)
+	end
+	menuBuilder:CreateDivider(rows)
+	menuBuilder:CreateButtonAndAdd(rows, addon.L['Set custom'], function()
+		local lib = LibStub('Krowi_PopupDialog-1.0')
+		lib.ShowNumericInput({
+			text = addon.L['Enter number of rows (1-99):'],
+			acceptText = addon.L['Accept'],
+			cancelText = addon.L['Cancel'],
+			min = 1,
+			max = 99,
+			default = profile.NumRows or 1,
+			callback = function(value)
+				profile.NumRows = value
+				UpdateView()
+			end
+		})
+	end)
+	menuBuilder:AddChildMenu(menuObj, rows)
 
 	-- Columns submenu
-	local columns = menuBuilder:CreateSubmenuButton(menuObj, addon.L["Columns"]);
-	for i = 2, 6 do
-		menuBuilder:CreateRadio(columns, tostring(i), profile, {"NumColumns"}, i);
+	local columns = menuBuilder:CreateSubmenuButton(menuObj, addon.L['Columns'])
+	local columnPresets = {2, 5, 10}
+	for _, column in ipairs(columnPresets) do
+		menuBuilder:CreateRadio(columns, tostring(column), profile, {'NumColumns'}, column)
 	end
-	menuBuilder:AddChildMenu(menuObj, columns);
+	local currentColumns = profile.NumColumns or 2
+	local isCustomColumns = true
+	for _, column in ipairs(columnPresets) do
+		if currentColumns == column then
+			isCustomColumns = false
+			break
+		end
+	end
+	if isCustomColumns then
+		menuBuilder:CreateRadio(columns, string.format('%s (%d)', addon.L['Custom'], currentColumns), profile, {'NumColumns'}, currentColumns)
+	end
+	menuBuilder:CreateDivider(columns)
+	menuBuilder:CreateButtonAndAdd(columns, addon.L['Set custom'], function()
+		local lib = LibStub('Krowi_PopupDialog-1.0')
+		lib.ShowNumericInput({
+			text = addon.L['Enter number of columns (2-99):'],
+			acceptText = addon.L['Accept'],
+			cancelText = addon.L['Cancel'],
+			min = 2,
+			max = 99,
+			default = profile.NumColumns or 2,
+			callback = function(value)
+				profile.NumColumns = value
+				UpdateView()
+			end
+		})
+	end)
+	menuBuilder:AddChildMenu(menuObj, columns)
 
-	menuBuilder:CreateDivider(menuObj);
+	menuBuilder:CreateDivider(menuObj)
 
 	-- Remember Filter checkbox
-	menuBuilder:CreateCheckbox(menuObj, addon.L["RememberFilter"], profile, {"RememberFilter"});
-	menuBuilder:CreateCheckbox(menuObj, addon.L["RememberSearch"], profile, {"RememberSearch"});
-	menuBuilder:CreateCheckbox(menuObj, addon.L["RememberSearchBetweenVendors"], profile, {"RememberSearchBetweenVendors"});
+	menuBuilder:CreateCheckbox(menuObj, addon.L['RememberFilter'], profile, {'RememberFilter'})
+	menuBuilder:CreateCheckbox(menuObj, addon.L['RememberSearch'], profile, {'RememberSearch'})
+	menuBuilder:CreateCheckbox(menuObj, addon.L['RememberSearchBetweenVendors'], profile, {'RememberSearchBetweenVendors'})
 
-	menuBuilder:CreateDivider(menuObj);
+	if addon.Util.IsMainline then
+		menuBuilder:CreateDivider(menuObj)
 
-	-- Housing Quantity submenu
-	local housingQuantity = menuBuilder:CreateSubmenuButton(menuObj, addon.L["Housing Quantity"]);
-	for i = 1, 10 do
-		menuBuilder:CreateRadio(housingQuantity, tostring(i), addon.Filters.db.profile, {"HousingQuantity"}, i);
+		-- Housing Quantity submenu
+		local housingQuantity = menuBuilder:CreateSubmenuButton(menuObj, addon.L['Housing Quantity'])
+		local quantities = {1, 2, 5, 10}
+		for _, quantity in ipairs(quantities) do
+			menuBuilder:CreateRadio(housingQuantity, tostring(quantity), addon.Filters.db.profile, {'HousingQuantity'}, quantity)
+		end
+		local currentValue = addon.Filters.db.profile.HousingQuantity or 1
+		local isCustomValue = true
+		for _, quantity in ipairs(quantities) do
+			if currentValue == quantity then
+				isCustomValue = false
+				break
+			end
+		end
+		if isCustomValue then
+			menuBuilder:CreateRadio(housingQuantity, string.format('%s (%d)', addon.L['Custom'], currentValue), addon.Filters.db.profile, {'HousingQuantity'}, currentValue)
+		end
+
+		menuBuilder:CreateDivider(housingQuantity)
+		menuBuilder:CreateButtonAndAdd(housingQuantity, addon.L['Set custom'], function()
+			local lib = LibStub('Krowi_PopupDialog-1.0')
+			lib.ShowNumericInput({
+				text = addon.L['Enter housing quantity (1-999):'],
+				acceptText = addon.L['Accept'],
+				cancelText = addon.L['Cancel'],
+				min = 1,
+				max = 999,
+				default = addon.Filters.db.profile.HousingQuantity or 1,
+				callback = function(value)
+					addon.Filters.db.profile.HousingQuantity = value
+					UpdateView()
+				end
+			})
+		end)
+		menuBuilder:AddChildMenu(menuObj, housingQuantity)
 	end
-	menuBuilder:AddChildMenu(menuObj, housingQuantity);
+
+	-- Add the TokenBanner options here
+	menuBuilder:CreateDivider(menuObj)
+	addon.Gui.TokenBanner:CreateOptionsMenu(menuObj, menuBuilder)
 
 	-- Hide button
 	if profile.ShowHideOption then
-		menuBuilder:CreateDivider(menuObj);
-		menuBuilder:CreateButtonAndAdd(menuObj, addon.L["Hide"], function()
-			if not StaticPopup_IsCustomGenericConfirmationShown("KrowiEVU_ConfirmHideOptionsButton") then
+		menuBuilder:CreateDivider(menuObj)
+		menuBuilder:CreateButtonAndAdd(menuObj, addon.L['Hide'], function()
+			if not StaticPopup_IsCustomGenericConfirmationShown('KrowiEVU_ConfirmHideOptionsButton') then
 				StaticPopup_ShowCustomGenericConfirmation(
 					{
-						text = addon.L["Are you sure you want to hide the options button?"]:K_ReplaceVarsWithMenu{
-							general = addon.L["General"],
-							options = addon.L["Options"]
+						text = addon.L['Are you sure you want to hide the options button?']:K_ReplaceVarsWithMenu{
+							general = addon.L['General'],
+							options = addon.L['Options']
 						},
 						callback = function()
-							HideOptionsButtonCallback(self);
+							HideOptionsButtonCallback(self)
 						end,
-						referenceKey = "KrowiEVU_ConfirmHideOptionsButton"
+						referenceKey = 'KrowiEVU_ConfirmHideOptionsButton'
 					}
-				);
+				)
 			end
-		end);
+		end)
 	end
 end
 
 function KrowiEVU_OptionsButtonMixin:ShowPopup()
-	menuBuilder:ShowPopup();
+	menuBuilder:ShowPopup()
 end
 
 if not addon.Util.IsMainline then
 	function KrowiEVU_OptionsButtonMixin:OnMouseDown()
-		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-		UIMenuButtonStretchMixin.OnMouseDown(self);
-		menuBuilder:ShowPopup();
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+		UIMenuButtonStretchMixin.OnMouseDown(self)
+		menuBuilder:ShowPopup()
 	end
 end

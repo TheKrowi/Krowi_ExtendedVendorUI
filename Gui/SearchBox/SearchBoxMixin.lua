@@ -9,9 +9,9 @@ local function RestorePreviousFilter()
 end
 
 function KrowiEVU_SearchBoxMixin:OnLoad()
-    self.clearButton:SetScript("OnClick", function(selfFunc)
+    self.clearButton:SetScript('OnClick', function(selfFunc)
         SearchBoxTemplateClearButton_OnClick(selfFunc)
-        if GetMerchantFilter() == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_SEARCH"] then
+        if GetMerchantFilter() == _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_SEARCH'] then
             RestorePreviousFilter()
         end
     end)
@@ -21,7 +21,7 @@ function KrowiEVU_SearchBoxMixin:OnTextChanged()
 	SearchBoxTemplate_OnTextChanged(self)
 
 	if self:HasFocus() then
-        KrowiEVU_FilterButton:SetFilter(_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_SEARCH"])
+        KrowiEVU_FilterButton:SetFilter(_G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_SEARCH'])
 	end
 end
 
@@ -30,23 +30,23 @@ function KrowiEVU_SearchBoxMixin:ClearSearchBox()
 end
 
 function KrowiEVU_SearchBoxMixin:OnEditFocusGained()
-    if self:GetText() ~= "" then
+    if self:GetText() ~= '' then
         return
     end
     previousFilter = GetMerchantFilter()
 end
 
-hooksecurefunc("MerchantFrame_SetFilter", function(self, filter)
+hooksecurefunc('MerchantFrame_SetFilter', function(self, filter)
 	if not filter then
 		return
 	end
-	if filter ~= _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_SEARCH"] then
+	if filter ~= _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_SEARCH'] then
         KrowiEVU_SearchBox:ClearSearchBox()
     end
 end)
 
-MerchantFrame:HookScript("OnShow", function(self)
-    local currentNpcName = UnitName("npc")
+MerchantFrame:HookScript('OnShow', function(self)
+    local currentNpcName = UnitName('npc')
 
     -- Scenario 1: RememberSearch=true AND RememberSearchBetweenVendors=true → keep search across all vendors
     if addon.Options.db.profile.RememberSearch and addon.Options.db.profile.RememberSearchBetweenVendors then
@@ -63,20 +63,20 @@ MerchantFrame:HookScript("OnShow", function(self)
     -- Scenario 3: RememberSearch=true AND RememberSearchBetweenVendors=false AND different NPC AND has search → clear
     -- Scenario 4: RememberSearch=false → always clear
     previousUnitName = currentNpcName
-    if KrowiEVU_SearchBox:GetText() ~= "" then
+    if KrowiEVU_SearchBox:GetText() ~= '' then
         KrowiEVU_SearchBox:ClearSearchBox()
-        if GetMerchantFilter() == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_SEARCH"] then
+        if GetMerchantFilter() == _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_SEARCH'] then
             RestorePreviousFilter()
         end
     end
 end)
 
--- MerchantFrame:HookScript("OnHide", function(self)
+-- MerchantFrame:HookScript('OnHide', function(self)
 --     if addon.Options.db.profile.RememberSearch then
 --         return
 --     end
 --     KrowiEVU_SearchBox:ClearSearchBox()
---     if GetMerchantFilter() == _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_SEARCH"] then
+--     if GetMerchantFilter() == _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_SEARCH'] then
 --         RestorePreviousFilter()
 --     end
 -- end)

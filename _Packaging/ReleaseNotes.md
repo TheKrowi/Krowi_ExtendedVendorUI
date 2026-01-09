@@ -1,15 +1,16 @@
 ### Added
-- Remember search option: Keep search text when reopening the same vendor
-- Remember search between vendors option: Keep search text across different vendors
-- Options button positioned next to search box for quick access
+- Support for WoW 12.0.0 (Midnight)
 
 ### Changed
-- Search functionality with "Search" filter option to search for items by name
-- Improved UI element positioning and sizing logic for search box and options button
-- Updated filter button to use localized strings instead of global strings
-- Enhanced search box behavior with proper filter restoration
+- Columns menu presets now start at 2 (removed 1-column preset)
 
 ### Fixed
-- Search box now properly clears when switching between non-search filters
-- Options button and search box visibility when switching between merchant info and buyback modes
-- Filter button positioning adjustments based on column count
+- Token Banner now uses `C_MerchantFrame.GetItemInfo` instead of deprecated `GetMerchantItemInfo` for better compatibility
+
+### Mists Classic
+- Added `C_MerchantFrame.GetItemInfo` polyfill for Classic versions that lack this API
+- Housing Quantity menu is now hidden
+
+### WoW Classic
+- Added `C_MerchantFrame.GetItemInfo` polyfill for Classic versions that lack this API
+- Housing Quantity menu is now hidden

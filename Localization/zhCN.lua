@@ -1,14 +1,14 @@
-local addonName, addon = ...;
-local L = LibStub(addon.Libs.AceLocale):NewLocale(addonName, "zhCN");
+local addonName, addon = ...
+local L = addon.Localization.GetLocale("zhCN")
 if not L then return end
-addon.L = L;
+addon.L = L
 
-addon.Plugins:LoadLocalization(L);
+KrowiEVU.PluginsApi:LoadPluginLocalization(L)
 
 -- [[ https://legacy.curseforge.com/wow/addons/krowi-extended-vendor-ui/localization ]] --
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2025-12-23 18-21-28 ]] --
+-- [[ Exported at 2025-12-30 18-32-36 ]] --
 L["Are you sure you want to hide the options button?"] = "是否确定隐藏按钮？再次显示按钮请到 {gameMenu} > {addOns} > 商人 > {general} > {options}"
 L["Author"] = "作者"
 L["Build"] = "版本"
