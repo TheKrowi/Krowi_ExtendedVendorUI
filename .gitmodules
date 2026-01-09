@@ -1,0 +1,12 @@
+[submodule "Libs/Krowi_Menu"]
+	path = Libs/Krowi_Menu
+	url = https://github.com/TheKrowi/Krowi_Menu
+[submodule "Libs/Krowi_Util"]
+	path = Libs/Krowi_Util
+	url = https://github.com/TheKrowi/Krowi_Util
+[submodule "Libs/Krowi_PopupDialog"]
+	path = Libs/Krowi_PopupDialog
+	url = https://github.com/TheKrowi/Krowi_PopupDialog
+[submodule "Libs/Krowi_Currency"]
+	path = Libs/Krowi_Currency
+	url = https://github.com/TheKrowi/Krowi_Currency
