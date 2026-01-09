@@ -1,12 +1,12 @@
-local _, addon = ...;
+local _, addon = ...
 
 local TEXTURE_SIZE = 14
-local currency = LibStub("Krowi_Currency-1.0");
+local currency = LibStub('Krowi_Currency-1.0')
 
-KrowiEVU_TokenMixin = {};
+KrowiEVU_TokenMixin = {}
 
 local function GetOptionsForLib()
-	local options = addon.Options.db.profile.TokenBanner;
+	local options = addon.Options.db.profile.TokenBanner
 	return {
 		MoneyLabel = options.MoneyLabel,
 		MoneyAbbreviate = options.MoneyAbbreviate,
@@ -14,28 +14,28 @@ local function GetOptionsForLib()
 		MoneyGoldOnly = options.MoneyGoldOnly,
 		MoneyColored = options.MoneyColored,
 		CurrencyAbbreviate = options.CurrencyAbbreviate,
-		GoldLabel = addon.L["Gold Label"],
-		SilverLabel = addon.L["Silver Label"],
-		CopperLabel = addon.L["Copper Label"],
+		GoldLabel = addon.L['Gold Label'],
+		SilverLabel = addon.L['Silver Label'],
+		CopperLabel = addon.L['Copper Label'],
 		TextureSize = TEXTURE_SIZE
-	};
+	}
 end
 
 function KrowiEVU_TokenMixin:OnEnter()
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+    GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
     if self.IsGold then
-        GameTooltip:AddLine("Total Gold Cost");
+        GameTooltip:AddLine('Total Gold Cost')
     elseif self.IsCurrency or self.IsItem then
-        GameTooltip:SetHyperlink(self.Link);
+        GameTooltip:SetHyperlink(self.Link)
     end
-    GameTooltip_AddBlankLineToTooltip(GameTooltip);
-    GameTooltip:AddDoubleLine("Have", self.Have, 1, 1, 1, 1, 1, 1);
-    GameTooltip:AddDoubleLine("Need", self.Need, 1, 1, 1, 1, 1, 1);
-    GameTooltip:Show();
+    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+    GameTooltip:AddDoubleLine('Have', self.Have, 1, 1, 1, 1, 1, 1)
+    GameTooltip:AddDoubleLine('Need', self.Need, 1, 1, 1, 1, 1, 1)
+    GameTooltip:Show()
 end
 
 function KrowiEVU_TokenMixin:OnLeave()
-    GameTooltip:Hide();
+    GameTooltip:Hide()
 end
 
 function KrowiEVU_TokenMixin:Draw()
@@ -45,13 +45,13 @@ function KrowiEVU_TokenMixin:Draw()
 
     local text = self.Need
     if self.Have then
-        text = self.Have .. " / " .. text
+        text = self.Have .. ' / ' .. text
     end
     if self.IconTexture then
-        text = text .. " |T" .. self.IconTexture .. ":" .. TEXTURE_SIZE .. ":" .. TEXTURE_SIZE .. ":2:0|t";
+        text = text .. ' |T' .. self.IconTexture .. ':' .. TEXTURE_SIZE .. ':' .. TEXTURE_SIZE .. ':2:0|t'
     end
-    self.Text:SetText(text);
-    self:SetWidth(self.Text:GetStringWidth());
+    self.Text:SetText(text)
+    self:SetWidth(self.Text:GetStringWidth())
 
     self:Show()
 end
@@ -70,16 +70,16 @@ function KrowiEVU_TokenMixin:SetCurrency(texture, value, link)
     self.IsCurrency = true
     self.IsItem = false
 
-	local options = GetOptionsForLib();
-    self.Need, self.IconTexture = currency:FormatCurrency(value, options), texture or "Interface\\Icons\\Inv_Misc_QuestionMark"
-    self.Link = link;
+	local options = GetOptionsForLib()
+    self.Need, self.IconTexture = currency:FormatCurrency(value, options), texture or 'Interface\\Icons\\Inv_Misc_QuestionMark'
+    self.Link = link
 
-    local currencyInfo = C_CurrencyInfo.GetCurrencyInfoFromLink(link);
+    local currencyInfo = C_CurrencyInfo.GetCurrencyInfoFromLink(link)
     if not currencyInfo then
         return
     end
 
-    self.Have = currency:FormatCurrency(currencyInfo.quantity, options);
+    self.Have = currency:FormatCurrency(currencyInfo.quantity, options)
 end
 
 function KrowiEVU_TokenMixin:SetItem(texture, value, link)
@@ -87,18 +87,18 @@ function KrowiEVU_TokenMixin:SetItem(texture, value, link)
     self.IsCurrency = false
     self.IsItem = true
 
-	local options = GetOptionsForLib();
-    self.Need, self.IconTexture = currency:FormatCurrency(value, options), texture or "Interface\\Icons\\Inv_Misc_QuestionMark"
-    self.Link = link;
+	local options = GetOptionsForLib()
+    self.Need, self.IconTexture = currency:FormatCurrency(value, options), texture or 'Interface\\Icons\\Inv_Misc_QuestionMark'
+    self.Link = link
 
-    local itemId = tonumber(link:match("item:(%d+)"));
+    local itemId = tonumber(link:match('item:(%d+)'))
     if not itemId then
         return
     end
 
-    self.Have = currency:FormatCurrency(C_Item.GetItemCount(link, true, false, true, true), options);
+    self.Have = currency:FormatCurrency(C_Item.GetItemCount(link, true, false, true, true), options)
 end
 
 function KrowiEVU_TokenMixin:OnShow()
-    -- print("Token shown", self.Have, self.Need);
+    -- print('Token shown', self.Have, self.Need)
 end

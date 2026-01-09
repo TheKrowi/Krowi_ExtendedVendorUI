@@ -1,4 +1,4 @@
 <Ui>
-    <Script file="CanIMogIt.lua" />
-    <Script file="ElvUI.lua" />
+    <Script file='CanIMogIt.lua' />
+    <Script file='ElvUI.lua' />
 </Ui>

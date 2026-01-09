@@ -1,20 +1,16 @@
 ### Added
-- Full ElvUI support
-- **Token Banner**: New UI component displaying player currencies and money
-  - Customizable display options for money formatting (labels, abbreviation, separators, colors)
-  - Customizable display options for currency formatting
-  - Options menu integration for easy configuration
-- Numeric input dialog functionality to Krowi_PopupDialog library
-- Custom input option for Rows, Columns, and Housing Quantity settings with preset values
-- Visual indication for custom values in menus showing "Custom (x)" format
+- Support for WoW 12.0.0 (Midnight)
 
 ### Changed
-- Rows menu now uses presets (1, 2, 5, 10) with custom input dialog for values 1-99
-- Columns menu now uses presets (1, 2, 5, 10) with custom input dialog for values 1-99
-- Housing Quantity menu now uses presets (1, 2, 5, 10) with custom input dialog for values 1-999
+- Columns menu presets now start at 2 (removed 1-column preset)
 
-### Added (19.1)
-- ElvUI skinning support for Token Banner and merchant insets
+### Fixed
+- Token Banner now uses `C_MerchantFrame.GetItemInfo` instead of deprecated `GetMerchantItemInfo` for better compatibility
 
-### Fixed (19.1)
-- Merchant frame size now properly resets when viewing buyback tab
+### Mists Classic
+- Added `C_MerchantFrame.GetItemInfo` polyfill for Classic versions that lack this API
+- Housing Quantity menu is now hidden
+
+### WoW Classic
+- Added `C_MerchantFrame.GetItemInfo` polyfill for Classic versions that lack this API
+- Housing Quantity menu is now hidden

@@ -1,5 +1,5 @@
-local addonName, addon = ...;
-local L = LibStub(addon.Libs.AceLocale):NewLocale(addonName, "deDE");
+local addonName, addon = ...
+local L = LibStub(addon.Libs.AceLocale):NewLocale(addonName, "deDE")
 if not L then return end
 
 -- [[ https://legacy.curseforge.com/wow/addons/krowi-extended-vendor-ui/localization ]] --

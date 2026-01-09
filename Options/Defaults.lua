@@ -1,11 +1,11 @@
-local _, addon = ...;
+local _, addon = ...
 
 addon.Options.Defaults = {
     profile = {
         ShowMinimapIcon = false,
         NumRows = 5,
         NumColumns = 2,
-        Direction = addon.L["Rows first"],
+        Direction = 'Rows',
         Minimap = {
             hide = true -- not ShowMinimapIcon
         },
@@ -15,12 +15,12 @@ addon.Options.Defaults = {
         RememberSearch = false,
         RememberSearchBetweenVendors = false,
         TokenBanner = {
-            MoneyLabel = "Icon",
-            MoneyAbbreviate = "None",
-            ThousandsSeparator = "Space",
+            MoneyLabel = 'Icon',
+            MoneyAbbreviate = 'None',
+            ThousandsSeparator = 'Space',
             MoneyGoldOnly = false,
             MoneyColored = true,
-	        CurrencyAbbreviate = "None",
+	        CurrencyAbbreviate = 'None',
         }
     }
-};
+}

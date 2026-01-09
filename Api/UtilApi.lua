@@ -1,4 +1,4 @@
-local _, addon = ...;
+local _, addon = ...
 
-KrowiEVU.UtilApi = {};
-KrowiEVU.UtilApi.InjectOptions = addon.InjectOptions;
+KrowiEVU.UtilApi = {}
+KrowiEVU.UtilApi.InjectOptions = addon.InjectOptions

@@ -1,12 +1,12 @@
-local _, addon = ...;
-local elv = {};
-KrowiEVU.PluginsApi:RegisterPlugin("ElvUI", elv);
+local _, addon = ...
+local elv = {}
+KrowiEVU.PluginsApi:RegisterPlugin('ElvUI', elv)
 
 local function IsLoaded()
-    return ElvUI ~= nil;
+    return ElvUI ~= nil
 end
 
-local doSkin, engine, skins;
+local doSkin, engine, skins
 local isModern = addon.Util.IsMainline
 
 local function QuestIcon_SetTexture(iconQuest, texture)
@@ -85,99 +85,99 @@ end
 
 local function SkinMerchantItemButtons()
     if isModern then
-        SkinModernMerchantItemButtons();
+        SkinModernMerchantItemButtons()
     else
-        SkinClassicMerchantItemButtons();
+        SkinClassicMerchantItemButtons()
     end
 end
 
 local function AddInfo(localizationName, getFunction, hidden)
     return {
-        order = KrowiEVU.UtilApi.InjectOptions.AutoOrderPlusPlus(), type = "toggle", width = "full",
-        name = addon.L["ElvUI " .. localizationName],
-        desc = addon.L["ElvUI " .. localizationName .. " Desc"],
-        descStyle = "inline",
+        order = KrowiEVU.UtilApi.InjectOptions.AutoOrderPlusPlus(), type = 'toggle', width = 'full',
+        name = addon.L['ElvUI ' .. localizationName],
+        desc = addon.L['ElvUI ' .. localizationName .. ' Desc'],
+        descStyle = 'inline',
         get = getFunction,
         disabled = true,
         hidden = hidden
-    };
+    }
 end
 
 function elv:InjectOptions()
     local pluginTable = KrowiEVU.UtilApi.InjectOptions:AddPluginTable(
-        "ElvUI",
-        addon.L["ElvUI"],
-        addon.L["ElvUI Desc"],
+        'ElvUI',
+        addon.L['ElvUI'],
+        addon.L['ElvUI Desc'],
         function()
-            return IsLoaded();
+            return IsLoaded()
         end
-    );
-    KrowiEVU.UtilApi.InjectOptions:AddTable(pluginTable, "SkinMerchant", AddInfo("Skin Merchant", function() return doSkin.Merchant; end));
-    KrowiEVU.UtilApi.InjectOptions:AddTable(pluginTable, "SkinMiscFrames", AddInfo("Skin Misc Frames", function() return doSkin.MiscFrames; end));
-    KrowiEVU.UtilApi.InjectOptions:AddTable(pluginTable, "SkinTooltip", AddInfo("Skin Tooltip", function() return doSkin.Tooltip; end));
+    )
+    KrowiEVU.UtilApi.InjectOptions:AddTable(pluginTable, 'SkinMerchant', AddInfo('Skin Merchant', function() return doSkin.Merchant end))
+    KrowiEVU.UtilApi.InjectOptions:AddTable(pluginTable, 'SkinMiscFrames', AddInfo('Skin Misc Frames', function() return doSkin.MiscFrames end))
+    KrowiEVU.UtilApi.InjectOptions:AddTable(pluginTable, 'SkinTooltip', AddInfo('Skin Tooltip', function() return doSkin.Tooltip end))
 
 end
 
 -- function elv:LoadLocalization(L)
---     L["ElvUI Skin Merchant"] = "Skin Merchant";
---     L["ElvUI Skin Merchant Desc"] = [=[Applies the ElvUI skin to the Merchant Frame.
+--     L['ElvUI Skin Merchant'] = 'Skin Merchant'
+--     L['ElvUI Skin Merchant Desc'] = [=[Applies the ElvUI skin to the Merchant Frame.
 -- -> Blizzard + Merchant Frame]=]
---     L["ElvUI Skin Misc Frames"] = "Skin Misc Frames"
---     L["ElvUI Skin Misc Frames Desc"] = [=[Applies the ElvUI skin to the Filter Menu, Right Click Menu and Popup Dialog.
+--     L['ElvUI Skin Misc Frames'] = 'Skin Misc Frames'
+--     L['ElvUI Skin Misc Frames Desc'] = [=[Applies the ElvUI skin to the Filter Menu, Right Click Menu and Popup Dialog.
 -- -> Blizzard + Misc Frames]=]
---     L["ElvUI Skin Tooltip"] = "Skin Tooltip"
---     L["ElvUI Skin Tooltip Desc"] = [=[Applies the ElvUI skin to the Tooltips.
+--     L['ElvUI Skin Tooltip'] = 'Skin Tooltip'
+--     L['ElvUI Skin Tooltip Desc'] = [=[Applies the ElvUI skin to the Tooltips.
 -- -> Blizzard + Tooltip]=]
 -- end
 
 function elv:Load()
-    doSkin = {};
+    doSkin = {}
 
     if not IsLoaded() then
-        return;
+        return
     end
 
-    engine = unpack(ElvUI);
-    skins = engine:GetModule("Skins");
-    local privateSkins = engine.private.skins;
-    local blizzardSkins = privateSkins.blizzard;
+    engine = unpack(ElvUI)
+    skins = engine:GetModule('Skins')
+    local privateSkins = engine.private.skins
+    local blizzardSkins = privateSkins.blizzard
 
-    doSkin.Merchant = blizzardSkins.enable and blizzardSkins.merchant;
-    doSkin.MiscFrames = blizzardSkins.enable and blizzardSkins.misc;
-    doSkin.Tooltip = blizzardSkins.enable and blizzardSkins.tooltip;
+    doSkin.Merchant = blizzardSkins.enable and blizzardSkins.merchant
+    doSkin.MiscFrames = blizzardSkins.enable and blizzardSkins.misc
+    doSkin.Tooltip = blizzardSkins.enable and blizzardSkins.tooltip
 
     for i = 1, 12, 1 do
-        _G["MerchantItem" .. i].PointXY = function() end;
+        _G['MerchantItem' .. i].PointXY = function() end
     end
 
     if not doSkin.Merchant then
-        return;
+        return
     end
 
-    hooksecurefunc(addon.Gui.MerchantItemsContainer, "LoadMaxNumItemSlots", function()
-        SkinMerchantItemButtons();
+    hooksecurefunc(addon.Gui.MerchantItemsContainer, 'LoadMaxNumItemSlots', function()
+        SkinMerchantItemButtons()
         SkinMerchantItemButtons = function() end -- No need to run again
-    end);
+    end)
 
-    hooksecurefunc(addon.Gui.FilterButton, "Load", function()
+    hooksecurefunc(addon.Gui.FilterButton, 'Load', function()
         skins:HandleDropDownBox(KrowiEVU_FilterButton)
-    end);
+    end)
 
-    hooksecurefunc(addon.Gui.SearchBox, "Load", function()
+    hooksecurefunc(addon.Gui.SearchBox, 'Load', function()
         skins:HandleEditBox(KrowiEVU_SearchBox)
-        KrowiEVU_SearchBox:SetHeight(22);
-        addon.Gui.SearchBox:SetPointOffsetXY(nil, 0);
-    end);
+        KrowiEVU_SearchBox:SetHeight(22)
+        addon.Gui.SearchBox:SetPointOffsetXY(nil, 0)
+    end)
 
     if not isModern then
-        hooksecurefunc(addon.Gui.OptionsButton, "Load", function()
+        hooksecurefunc(addon.Gui.OptionsButton, 'Load', function()
             skins:HandleButton(KrowiEVU_OptionsButton)
-        end);
+        end)
     end
 
-    hooksecurefunc("MerchantFrame_Update", function()
+    hooksecurefunc('MerchantFrame_Update', function()
         addon.Gui.MerchantFrame.UpdateRepairButtons()
-    end);
+    end)
 
     KrowiEVU_MerchantButtonsInset:StripTextures()
     KrowiEVU_MerchantButtonsInset:CreateBackdrop('Transparent')
@@ -186,8 +186,8 @@ function elv:Load()
     KrowiEVU_MerchantBuybackInset:StripTextures()
     KrowiEVU_MerchantEmptyInset:StripTextures()
 
-    hooksecurefunc(addon.Gui.TokenBanner, "Load", function()
+    hooksecurefunc(addon.Gui.TokenBanner, 'Load', function()
         KrowiEVU_TokenBanner:StripTextures()
         KrowiEVU_TokenBanner:CreateBackdrop('Transparent')
-    end);
+    end)
 end

@@ -1,34 +1,34 @@
-local _, addon = ...;
+local _, addon = ...
 
-addon.Gui.TokenBanner = {};
-local tokenBanner = addon.Gui.TokenBanner;
+addon.Gui.TokenBanner = {}
+local tokenBanner = addon.Gui.TokenBanner
 
-local preLoadTokenNum = 5;
+local preLoadTokenNum = 5
 
 local tokenPool = {}
 function HideAllTokens()
     for _, token in next, tokenPool do
-		token:Hide();
+		token:Hide()
 	end
 end
 
 local function GetPoolToken(index)
     if tokenPool[index] then
-        return tokenPool[index];
+        return tokenPool[index]
     end
-    local token = CreateFrame("Button", "KrowiEVU_TokenBannerToken" .. index, KrowiEVU_TokenBanner, "KrowiEVU_Token_Template");
-    tokenPool[index] = token;
+    local token = CreateFrame('Button', 'KrowiEVU_TokenBannerToken' .. index, KrowiEVU_TokenBanner, 'KrowiEVU_Token_Template')
+    tokenPool[index] = token
     return token
 end
 
 local tokenLines
 local function DrawTokenQuick(index)
-    local token = GetPoolToken(index);
+    local token = GetPoolToken(index)
     if index == 1 then
         tokenLines = 1
-        token:SetPoint("TOPRIGHT", KrowiEVU_TokenBanner, "TOPRIGHT", -10, addon.Util.IsMainline and -5 or -4);
+        token:SetPoint('TOPRIGHT', KrowiEVU_TokenBanner, 'TOPRIGHT', -10, addon.Util.IsMainline and -5 or -4)
     else
-        token:SetPoint("TOPRIGHT", _G["KrowiEVU_TokenBannerToken" .. (index - 1)], "TOPLEFT", -10, 0);
+        token:SetPoint('TOPRIGHT', _G['KrowiEVU_TokenBannerToken' .. (index - 1)], 'TOPLEFT', -10, 0)
     end
 
     token:Draw()
@@ -41,18 +41,18 @@ local function DrawToken(index)
 
     if token:GetLeft() < KrowiEVU_TokenBanner:GetLeft() + 10 then
         local offset = 5 + (token:GetHeight() + 3) * tokenLines
-        token:SetPoint("TOPRIGHT", KrowiEVU_TokenBanner, "TOPRIGHT", -10, addon.Util.IsMainline and -offset or -offset + 1);
-        tokenLines = tokenLines + 1;
+        token:SetPoint('TOPRIGHT', KrowiEVU_TokenBanner, 'TOPRIGHT', -10, addon.Util.IsMainline and -offset or -offset + 1)
+        tokenLines = tokenLines + 1
     end
 end
 
 function tokenBanner:Load()
-    local banner = CreateFrame("Frame", "KrowiEVU_TokenBanner", MerchantMoneyInset, "KrowiEVU_ThinGoldEdge_Template"); -- ThinGoldEdgeTemplate
-    banner:SetPoint("TOPLEFT", MerchantMoneyInset, "TOPLEFT", 3, -2);
-    banner:SetPoint("BOTTOMRIGHT", MerchantMoneyInset, "BOTTOMRIGHT", -3, 2);
+    local banner = CreateFrame('Frame', 'KrowiEVU_TokenBanner', MerchantMoneyInset, 'KrowiEVU_ThinGoldEdge_Template') -- ThinGoldEdgeTemplate
+    banner:SetPoint('TOPLEFT', MerchantMoneyInset, 'TOPLEFT', 3, -2)
+    banner:SetPoint('BOTTOMRIGHT', MerchantMoneyInset, 'BOTTOMRIGHT', -3, 2)
 
     for i = 1, preLoadTokenNum do
-        DrawTokenQuick(i);
+        DrawTokenQuick(i)
     end
     HideAllTokens()
 end
@@ -64,63 +64,66 @@ end
 
 local function HideBlizzardTokenFrame()
     -- if MerchantMoneyInset then
-    --     MerchantMoneyInset:Hide();
+    --     MerchantMoneyInset:Hide()
     -- end
     if MerchantExtraCurrencyInset then
-        MerchantExtraCurrencyInset:Hide();
+        MerchantExtraCurrencyInset:Hide()
     end
     if MerchantMoneyBg then
-        MerchantMoneyBg:Hide();
+        MerchantMoneyBg:Hide()
     end
     if MerchantExtraCurrencyBg then
-        MerchantExtraCurrencyBg:Hide();
+        MerchantExtraCurrencyBg:Hide()
     end
     if MerchantMoneyFrame then
-        MerchantMoneyFrame:Hide();
+        MerchantMoneyFrame:Hide()
     end
     if MerchantExtraCurrencyBg then
-        MerchantExtraCurrencyBg:Hide();
+        MerchantExtraCurrencyBg:Hide()
     end
     for i = 1, MAX_MERCHANT_CURRENCIES do
-        local token = _G["MerchantToken"..i];
+        local token = _G['MerchantToken'..i]
         if token then
-            token:Hide();
+            token:Hide()
         end
     end
 end
 
 -- MerchantFrame_UpdateCurrencies is called before MerchantFrame_Update so we need to do the handling here
-hooksecurefunc("MerchantFrame_Update", function()
+hooksecurefunc('MerchantFrame_Update', function()
     if not KrowiEVU_TokenBanner then
-        return;
+        return
     end
 
     HideBlizzardTokenFrame()
 
-    addon.Util.DelayFunction("KrowiEVU_TokenBannerUpdate", 0.25, function()
+    addon.Util.DelayFunction('KrowiEVU_TokenBannerUpdate', 0.25, function()
         tokenBanner:Update()
         addon.Gui.MerchantFrame.SetMerchantFrameSize()
-    end);
-end);
+    end)
+end)
 
 local function HideRemainingTokens(startIndex)
-    local numTokens = #tokenPool;
+    local numTokens = #tokenPool
     for i = startIndex, numTokens, 1 do
-        tokenPool[i]:Hide();
+        tokenPool[i]:Hide()
     end
 end
 
 -- Calculate functions
 local function CalculateGoldCount(goldCount, itemIndex)
-    local _, _, price, _, _, _, _, extendedCost = GetMerchantItemInfo(itemIndex);
-    if price and price > 0 and not extendedCost then
-        goldCount = goldCount + price;
+    local info = C_MerchantFrame.GetItemInfo(itemIndex)
+    if not info then
+        return goldCount
+    end
+    if info.price and info.price > 0 and not info.hasExtendedCost then
+        goldCount = goldCount + info.price
     end
     return goldCount
 end
 
 local function CalculateCurrencyCounts(currencyCounts, link, texture, value)
-    if not link:find("currency:") then
+    if not link:find('currency:') then
         return currencyCounts
     end
 
@@ -129,15 +132,15 @@ local function CalculateCurrencyCounts(currencyCounts, link, texture, value)
             link = link,
             texture = texture,
             count = 0
-        };
+        }
     end
-    currencyCounts[link].count = currencyCounts[link].count + value;
+    currencyCounts[link].count = currencyCounts[link].count + value
 
     return currencyCounts
 end
 
 local function CalculateItemCounts(itemCounts, link, texture, value)
-    if not link:find("item:") then
+    if not link:find('item:') then
         return itemCounts
     end
 
@@ -146,21 +149,21 @@ local function CalculateItemCounts(itemCounts, link, texture, value)
             link = link,
             texture = texture,
             count = 0
-        };
+        }
     end
-    itemCounts[link].count = itemCounts[link].count + value;
+    itemCounts[link].count = itemCounts[link].count + value
 
     return itemCounts
 end
 
 local function CalculateOtherCounts(currencyCounts, itemCounts, itemIndex)
-    local numCosts = GetMerchantItemCostInfo(itemIndex);
+    local numCosts = GetMerchantItemCostInfo(itemIndex)
     if numCosts and numCosts > 0 then
         for costIndex = 1, numCosts do
-            local texture, value, link = GetMerchantItemCostItem(itemIndex, costIndex);
+            local texture, value, link = GetMerchantItemCostItem(itemIndex, costIndex)
             if texture and value and link then
-                currencyCounts = CalculateCurrencyCounts(currencyCounts, link, texture, value);
-                itemCounts = CalculateItemCounts(itemCounts, link, texture, value);
+                currencyCounts = CalculateCurrencyCounts(currencyCounts, link, texture, value)
+                itemCounts = CalculateItemCounts(itemCounts, link, texture, value)
             end
         end
     end
@@ -168,45 +171,45 @@ local function CalculateOtherCounts(currencyCounts, itemCounts, itemIndex)
 end
 
 local function CalculateCounts()
-    local currencyCounts, itemCounts, goldCount = {}, {}, 0;
+    local currencyCounts, itemCounts, goldCount = {}, {}, 0
     for i = 1, #addon.CachedItemIndices do
-        goldCount = CalculateGoldCount(goldCount, i);
-        currencyCounts, itemCounts = CalculateOtherCounts(currencyCounts, itemCounts, i);
+        goldCount = CalculateGoldCount(goldCount, i)
+        currencyCounts, itemCounts = CalculateOtherCounts(currencyCounts, itemCounts, i)
     end
     return goldCount, currencyCounts, itemCounts
 end
 
 -- Update / Draw functions
-local tokenIndex;
+local tokenIndex
 local function DrawGoldToken(goldCount)
     if goldCount <= 0 then
         return
     end
 
-    tokenIndex = tokenIndex + 1;
-    local token = GetPoolToken(tokenIndex);
-    token:SetGold(goldCount);
-    DrawToken(tokenIndex);
+    tokenIndex = tokenIndex + 1
+    local token = GetPoolToken(tokenIndex)
+    token:SetGold(goldCount)
+    DrawToken(tokenIndex)
 end
 
 local function DrawCurrencyToken(texture, value, link)
-    tokenIndex = tokenIndex + 1;
-    local token = GetPoolToken(tokenIndex);
-    token:SetCurrency(texture, value, link);
-    DrawToken(tokenIndex);
+    tokenIndex = tokenIndex + 1
+    local token = GetPoolToken(tokenIndex)
+    token:SetCurrency(texture, value, link)
+    DrawToken(tokenIndex)
 end
 
 local function DrawItemToken(texture, value, link)
-    tokenIndex = tokenIndex + 1;
-    local token = GetPoolToken(tokenIndex);
-    token:SetItem(texture, value, link);
-    DrawToken(tokenIndex);
+    tokenIndex = tokenIndex + 1
+    local token = GetPoolToken(tokenIndex)
+    token:SetItem(texture, value, link)
+    DrawToken(tokenIndex)
 end
 
 function tokenBanner:Update()
     local goldCount, currencyCounts, itemCounts = CalculateCounts()
 
-    tokenIndex = 0;
+    tokenIndex = 0
 
     DrawGoldToken(goldCount)
 
@@ -224,16 +227,16 @@ function tokenBanner:Update()
 end
 
 function tokenBanner:CreateOptionsMenu(menuObj, menuBuilder)
-    local profile = addon.Options.db.profile.TokenBanner;
+    local profile = addon.Options.db.profile.TokenBanner
 
-    local tokenBannerMenu = menuBuilder:CreateSubmenuButton(menuObj, addon.L["Token Banner"]);
+    local tokenBannerMenu = menuBuilder:CreateSubmenuButton(menuObj, addon.L['Token Banner'])
 
-	local lib = LibStub("Krowi_Currency-1.0");
-	lib:CreateMoneyOptionsMenu(tokenBannerMenu, menuBuilder, profile);
+	local lib = LibStub('Krowi_Currency-1.0')
+	lib:CreateMoneyOptionsMenu(tokenBannerMenu, menuBuilder, profile)
 
-	menuBuilder:CreateDivider(tokenBannerMenu);
+	menuBuilder:CreateDivider(tokenBannerMenu)
 
-	lib:CreateCurrencyOptionsMenu(tokenBannerMenu, menuBuilder, profile);
+	lib:CreateCurrencyOptionsMenu(tokenBannerMenu, menuBuilder, profile)
 
-    menuBuilder:AddChildMenu(menuObj, tokenBannerMenu);
+    menuBuilder:AddChildMenu(menuObj, tokenBannerMenu)
 end

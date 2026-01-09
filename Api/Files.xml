@@ -1,5 +1,5 @@
 <Ui>
-    <Script file="Api.lua" />
-    <Script file="PluginsApi.lua" />
-    <Script file="UtilApi.lua" />
+    <Script file='Api.lua' />
+    <Script file='PluginsApi.lua' />
+    <Script file='UtilApi.lua' />
 </Ui>

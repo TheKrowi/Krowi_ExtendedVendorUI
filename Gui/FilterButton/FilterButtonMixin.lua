@@ -8,19 +8,19 @@ KrowiEVU_FilterButtonMixin = {}
 local lootFilterTextMap = {}
 
 local function InitializeLootFilterTextMap()
-	lootFilterTextMap[LE_LOOT_FILTER_ALL] = addon.L["All"]
-	lootFilterTextMap[LE_LOOT_FILTER_BOE] = addon.L["Bind on Equip"]
-	lootFilterTextMap[LE_LOOT_FILTER_CLASS] = addon.L["All Specs"]
-	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_SEARCH"]] = addon.L["Search"]
-	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"]] = addon.L["Pets"]
-	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"]] = addon.L["Mounts"]
-	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"]] = addon.L["Toys"]
-	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG"]] = addon.L["Appearances"]
-	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG_SETS"]] = addon.L["Appearance Sets"]
-	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_ILLUSIONS"]] = addon.L["Illusions"]
-	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_RECIPES"]] = addon.L["Recipes"]
-	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_HOUSING"]] = addon.L["Housing"]
-	lootFilterTextMap[_G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"]] = addon.L["Custom"]
+	lootFilterTextMap[LE_LOOT_FILTER_ALL] = addon.L['All']
+	lootFilterTextMap[LE_LOOT_FILTER_BOE] = addon.L['Bind on Equip']
+	lootFilterTextMap[LE_LOOT_FILTER_CLASS] = addon.L['All Specs']
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_SEARCH']] = addon.L['Search']
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_PETS']] = addon.L['Pets']
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_MOUNTS']] = addon.L['Mounts']
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_TOYS']] = addon.L['Toys']
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_TRANSMOG']] = addon.L['Appearances']
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_TRANSMOG_SETS']] = addon.L['Appearance Sets']
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_ILLUSIONS']] = addon.L['Illusions']
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_RECIPES']] = addon.L['Recipes']
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_HOUSING']] = addon.L['Housing']
+	lootFilterTextMap[_G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_CUSTOM']] = addon.L['Custom']
 end
 
 local function GetLootFilterText(lootFilter)
@@ -41,12 +41,12 @@ function KrowiEVU_FilterButtonMixin:OnLoad()
 	self:SetFrameLevel(self:GetParent():GetFrameLevel() + 7)
 
 	local config = {
-		uniqueTag = "KEVU_FILTERS",
+		uniqueTag = 'KEVU_FILTERS',
 		callbacks = addon.MenuBuilder.BindCallbacks(self, {
-			OnCheckboxSelect = "OnCheckboxSelect",
-			KeyEqualsText = "KeyEqualsText",
-			OnRadioSelect = "OnRadioSelect",
-			OnAllSelect = "OnAllSelect",
+			OnCheckboxSelect = 'OnCheckboxSelect',
+			KeyEqualsText = 'KeyEqualsText',
+			OnRadioSelect = 'OnRadioSelect',
+			OnAllSelect = 'OnAllSelect',
 		}),
 		translations = addon.L
 	}
@@ -103,7 +103,7 @@ function KrowiEVU_FilterButtonMixin:OnRadioSelect(filters, keys, value)
 end
 
 function KrowiEVU_FilterButtonMixin:OnAllSelect(filters, keys, value)
-	for index, _ in next, addon.Filters[keys .. "Types"] do
+	for index, _ in next, addon.Filters[keys .. 'Types'] do
 		addon.Util.WriteNestedKeys(filters, {keys, index}, value)
 	end
 	MerchantFrame_SetFilter(nil, GetMerchantFilter())
@@ -137,13 +137,13 @@ end
 function KrowiEVU_FilterButtonMixin:CreateMenu(menu)
 	local mb = self.menuBuilder
 
-	mb:CreateTitle(menu, addon.L["Default filters"])
+	mb:CreateTitle(menu, addon.L['Default filters'])
 
 	-- Class/Spec filters (Mainline only)
 	if isModern then
-		local className = UnitClass("player")
+		local className = UnitClass('player')
 		local classButton = mb:CreateSubmenuButton(menu, className)
-		local sex = UnitSex("player")
+		local sex = UnitSex('player')
 		local numSpecs = GetNumSpecializations()
 
 		for i = 1, numSpecs do
@@ -151,112 +151,112 @@ function KrowiEVU_FilterButtonMixin:CreateMenu(menu)
 			local filter = LE_LOOT_FILTER_SPEC1 + i - 1
 			self:CreateRadio(classButton, name, filter)
 		end
-		self:CreateRadio(classButton, addon.L["All Specs"], LE_LOOT_FILTER_CLASS)
+		self:CreateRadio(classButton, addon.L['All Specs'], LE_LOOT_FILTER_CLASS)
 		mb:AddChildMenu(menu, classButton)
 
-		self:CreateRadio(menu, addon.L["Bind on Equip"], LE_LOOT_FILTER_BOE)
+		self:CreateRadio(menu, addon.L['Bind on Equip'], LE_LOOT_FILTER_BOE)
 	end
 
-	self:CreateRadio(menu, addon.L["All"], LE_LOOT_FILTER_ALL)
+	self:CreateRadio(menu, addon.L['All'], LE_LOOT_FILTER_ALL)
 
 	mb:CreateDivider(menu)
 
-	self:CreateRadio(menu, addon.L["Search"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_SEARCH"])
+	self:CreateRadio(menu, addon.L['Search'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_SEARCH'])
 
 	mb:CreateDivider(menu)
 
 	-- Only show section
-	mb:CreateTitle(menu, addon.L["Only show"])
+	mb:CreateTitle(menu, addon.L['Only show'])
 
 	if isModern then
-		self:CreateRadio(menu, addon.L["Pets"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_PETS"])
+		self:CreateRadio(menu, addon.L['Pets'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_PETS'])
 	end
-	self:CreateRadio(menu, addon.L["Mounts"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_MOUNTS"])
-	self:CreateRadio(menu, addon.L["Toys"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TOYS"])
+	self:CreateRadio(menu, addon.L['Mounts'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_MOUNTS'])
+	self:CreateRadio(menu, addon.L['Toys'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_TOYS'])
 
 	-- Appearances submenu with armor/weapon filters
-	local appearances = self:CreateSubmenuRadio(menu, addon.L["Appearances"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG"])
+	local appearances = self:CreateSubmenuRadio(menu, addon.L['Appearances'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_TRANSMOG'])
 	mb:CreateTitle(appearances, C_Item.GetItemClassInfo(4)) -- Armor
 	for index, _ in next, addon.Filters.ArmorTypes do
 		local text = C_Item.GetItemSubClassInfo(4, index)
-		self:CreateCheckbox(appearances, text, {"OnlyShow", "Armor", index})
+		self:CreateCheckbox(appearances, text, {'OnlyShow', 'Armor', index})
 	end
 	mb:CreateDivider(appearances)
-	self:CreateSelectDeselectAllButtons(appearances, addon.Filters.db.profile.OnlyShow, "Armor")
+	self:CreateSelectDeselectAllButtons(appearances, addon.Filters.db.profile.OnlyShow, 'Armor')
 	mb:CreateDivider(appearances)
 	mb:CreateTitle(appearances, C_Item.GetItemClassInfo(2)) -- Weapons
 	for index, _ in next, addon.Filters.WeaponTypes do
 		local text = C_Item.GetItemSubClassInfo(2, index)
-		self:CreateCheckbox(appearances, text, {"OnlyShow", "Weapon", index})
+		self:CreateCheckbox(appearances, text, {'OnlyShow', 'Weapon', index})
 	end
 	mb:CreateDivider(appearances)
-	self:CreateSelectDeselectAllButtons(appearances, addon.Filters.db.profile.OnlyShow, "Weapon")
+	self:CreateSelectDeselectAllButtons(appearances, addon.Filters.db.profile.OnlyShow, 'Weapon')
 	mb:AddChildMenu(menu, appearances)
 
 	if isModern then
-		self:CreateRadio(menu, addon.L["Appearance Sets"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_TRANSMOG_SETS"])
-		self:CreateRadio(menu, addon.L["Illusions"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_ILLUSIONS"])
-		self:CreateRadio(menu, addon.L["Recipes"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_RECIPES"])
-		self:CreateRadio(menu, addon.L["Housing"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_HOUSING"])
+		self:CreateRadio(menu, addon.L['Appearance Sets'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_TRANSMOG_SETS'])
+		self:CreateRadio(menu, addon.L['Illusions'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_ILLUSIONS'])
+		self:CreateRadio(menu, addon.L['Recipes'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_RECIPES'])
+		self:CreateRadio(menu, addon.L['Housing'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_HOUSING'])
 	end
 
 	-- Custom filter section
-	local custom = self:CreateSubmenuRadio(menu, addon.L["Custom"], _G[addon.Metadata.Prefix .. "_LE_LOOT_FILTER_CUSTOM"])
+	local custom = self:CreateSubmenuRadio(menu, addon.L['Custom'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_CUSTOM'])
 	if isModern then
-		self:CreateCheckbox(custom, addon.L["Pets"], {"Custom", "Pets"})
+		self:CreateCheckbox(custom, addon.L['Pets'], {'Custom', 'Pets'})
 	end
-	self:CreateCheckbox(custom, addon.L["Mounts"], {"Custom", "Mounts"})
-	self:CreateCheckbox(custom, addon.L["Toys"], {"Custom", "Toys"})
+	self:CreateCheckbox(custom, addon.L['Mounts'], {'Custom', 'Mounts'})
+	self:CreateCheckbox(custom, addon.L['Toys'], {'Custom', 'Toys'})
 
 	-- Custom Appearances submenu
-	local customAppearances = mb:CreateSubmenuButton(custom, addon.L["Appearances"])
+	local customAppearances = mb:CreateSubmenuButton(custom, addon.L['Appearances'])
 	mb:CreateTitle(customAppearances, C_Item.GetItemClassInfo(4)) -- Armor
 	for index, _ in next, addon.Filters.ArmorTypes do
 		local text = C_Item.GetItemSubClassInfo(4, index)
-		self:CreateCheckbox(customAppearances, text, {"Custom", "Armor", index})
+		self:CreateCheckbox(customAppearances, text, {'Custom', 'Armor', index})
 	end
 	mb:CreateDivider(customAppearances)
-	self:CreateSelectDeselectAllButtons(customAppearances, addon.Filters.db.profile.Custom, "Armor")
+	self:CreateSelectDeselectAllButtons(customAppearances, addon.Filters.db.profile.Custom, 'Armor')
 	mb:CreateDivider(customAppearances)
 	mb:CreateTitle(customAppearances, C_Item.GetItemClassInfo(2)) -- Weapons
 	for index, _ in next, addon.Filters.WeaponTypes do
 		local text = C_Item.GetItemSubClassInfo(2, index)
-		self:CreateCheckbox(customAppearances, text, {"Custom", "Weapon", index})
+		self:CreateCheckbox(customAppearances, text, {'Custom', 'Weapon', index})
 	end
 	mb:CreateDivider(customAppearances)
-	self:CreateSelectDeselectAllButtons(customAppearances, addon.Filters.db.profile.Custom, "Weapon")
+	self:CreateSelectDeselectAllButtons(customAppearances, addon.Filters.db.profile.Custom, 'Weapon')
 	mb:AddChildMenu(custom, customAppearances)
 
 	if isModern then
-		self:CreateCheckbox(custom, addon.L["Appearance Sets"], {"Custom", "TransmogSets"})
-		self:CreateCheckbox(custom, addon.L["Illusions"], {"Custom", "Illusions"})
-		self:CreateCheckbox(custom, addon.L["Recipes"], {"Custom", "Recipes"})
-		self:CreateCheckbox(custom, addon.L["Housing"], {"Custom", "Housing"})
+		self:CreateCheckbox(custom, addon.L['Appearance Sets'], {'Custom', 'TransmogSets'})
+		self:CreateCheckbox(custom, addon.L['Illusions'], {'Custom', 'Illusions'})
+		self:CreateCheckbox(custom, addon.L['Recipes'], {'Custom', 'Recipes'})
+		self:CreateCheckbox(custom, addon.L['Housing'], {'Custom', 'Housing'})
 	end
-	self:CreateCheckbox(custom, addon.L["Other"], {"Custom", "Other"})
+	self:CreateCheckbox(custom, addon.L['Other'], {'Custom', 'Other'})
 	mb:AddChildMenu(menu, custom)
 
 	mb:CreateDivider(menu)
 
 	-- Hide collected section
-	mb:CreateTitle(menu, addon.L["Hide collected"])
+	mb:CreateTitle(menu, addon.L['Hide collected'])
 	if isModern then
-		self:CreateCheckbox(menu, addon.L["Pets"], {"HideCollected", "Pets"})
+		self:CreateCheckbox(menu, addon.L['Pets'], {'HideCollected', 'Pets'})
 	end
-	self:CreateCheckbox(menu, addon.L["Mounts"], {"HideCollected", "Mounts"})
-	self:CreateCheckbox(menu, addon.L["Toys"], {"HideCollected", "Toys"})
-	self:CreateCheckbox(menu, addon.L["Appearances"], {"HideCollected", "Transmog"})
+	self:CreateCheckbox(menu, addon.L['Mounts'], {'HideCollected', 'Mounts'})
+	self:CreateCheckbox(menu, addon.L['Toys'], {'HideCollected', 'Toys'})
+	self:CreateCheckbox(menu, addon.L['Appearances'], {'HideCollected', 'Transmog'})
 	if isModern then
-		self:CreateCheckbox(menu, addon.L["Appearance Sets"], {"HideCollected", "TransmogSets"})
-		self:CreateCheckbox(menu, addon.L["Illusions"], {"HideCollected", "Illusions"})
-		self:CreateCheckbox(menu, addon.L["Recipes"], {"HideCollected", "Recipes"})
-		self:CreateCheckbox(menu, addon.L["Housing"], {"HideCollected", "Housing"})
+		self:CreateCheckbox(menu, addon.L['Appearance Sets'], {'HideCollected', 'TransmogSets'})
+		self:CreateCheckbox(menu, addon.L['Illusions'], {'HideCollected', 'Illusions'})
+		self:CreateCheckbox(menu, addon.L['Recipes'], {'HideCollected', 'Recipes'})
+		self:CreateCheckbox(menu, addon.L['Housing'], {'HideCollected', 'Housing'})
 	end
 end
 
 -- Hooks
 
-hooksecurefunc("MerchantFrame_SetFilter", function(self, filter)
+hooksecurefunc('MerchantFrame_SetFilter', function(self, filter)
 	if not filter then
 		return
 	end
@@ -265,14 +265,14 @@ hooksecurefunc("MerchantFrame_SetFilter", function(self, filter)
 end)
 
 if isModern then
-	hooksecurefunc("ResetSetMerchantFilter", function(self)
+	hooksecurefunc('ResetSetMerchantFilter', function(self)
 		if addon.Options.db.profile.RememberFilter and KrowiEVU_Filters.LastFilter then
 			MerchantFrame_SetFilter(nil, KrowiEVU_Filters.LastFilter)
 		end
 		KrowiEVU_FilterButton:OverrideText(GetLootFilterText(GetMerchantFilter()))
 	end)
 else
-	MerchantFrame:HookScript("OnShow", function(self)
+	MerchantFrame:HookScript('OnShow', function(self)
 		if addon.Options.db.profile.RememberFilter and KrowiEVU_Filters and KrowiEVU_Filters.LastFilter then
 			MerchantFrame_SetFilter(nil, KrowiEVU_Filters.LastFilter)
 		else
