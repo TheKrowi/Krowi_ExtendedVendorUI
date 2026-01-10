@@ -34,7 +34,7 @@ filters.WeaponTypes = {
 	[6] = 'Polearm',
 	[7] = 'OneHSword',
 	[8] = 'TwoHSword',
-	[9] = 'Warglaives',
+	[9] = addon.Util.IsMainline and 'Warglaives' or nil,
 	[10] = 'Staff',
 	[11] = 'Bearclaw',
 	[12] = 'Catclaw',
@@ -46,6 +46,19 @@ filters.WeaponTypes = {
 	[19] = 'Wand',
 	[20] = 'Fishingpole',
 }
+
+-- Create sorted index arrays for consistent ordering in UI
+filters.ArmorIndices = {}
+for index in next, filters.ArmorTypes do
+	table.insert(filters.ArmorIndices, index)
+end
+table.sort(filters.ArmorIndices)
+
+filters.WeaponIndices = {}
+for index in next, filters.WeaponTypes do
+	table.insert(filters.WeaponIndices, index)
+end
+table.sort(filters.WeaponIndices)
 
 local defaults = {
 	profile = {

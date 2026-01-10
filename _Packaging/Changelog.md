@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.1 - 2026-01-10
+### Changed
+- Filter menus now display armor and weapon types in consistent sorted order
+
+### Mists Classic
+- Warglaives filter now properly excluded
+
+### TBC Classic
+- Support added
+- Warglaives filter now properly excluded
+
+### WoW Classic
+- Warglaives filter now properly excluded
+
 ## 20.0 - 2026-01-09
 ### Added
 - Support for WoW 12.0.0 (Midnight)

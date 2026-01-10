@@ -14,3 +14,16 @@
 ### WoW Classic
 - Added `C_MerchantFrame.GetItemInfo` polyfill for Classic versions that lack this API
 - Housing Quantity menu is now hidden
+
+### Changed (20.1)
+- Filter menus now display armor and weapon types in consistent sorted order
+
+### Mists Classic (20.1)
+- Warglaives filter now properly excluded
+
+### TBC Classic (20.1)
+- Support added
+- Warglaives filter now properly excluded
+
+### WoW Classic (20.1)
+- Warglaives filter now properly excluded
