@@ -177,7 +177,7 @@ function KrowiEVU_FilterButtonMixin:CreateMenu(menu)
 	-- Appearances submenu with armor/weapon filters
 	local appearances = self:CreateSubmenuRadio(menu, addon.L['Appearances'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_TRANSMOG'])
 	mb:CreateTitle(appearances, C_Item.GetItemClassInfo(4)) -- Armor
-	for index, _ in next, addon.Filters.ArmorTypes do
+	for _, index in ipairs(addon.Filters.ArmorIndices) do
 		local text = C_Item.GetItemSubClassInfo(4, index)
 		self:CreateCheckbox(appearances, text, {'OnlyShow', 'Armor', index})
 	end
@@ -185,7 +185,7 @@ function KrowiEVU_FilterButtonMixin:CreateMenu(menu)
 	self:CreateSelectDeselectAllButtons(appearances, addon.Filters.db.profile.OnlyShow, 'Armor')
 	mb:CreateDivider(appearances)
 	mb:CreateTitle(appearances, C_Item.GetItemClassInfo(2)) -- Weapons
-	for index, _ in next, addon.Filters.WeaponTypes do
+	for _, index in ipairs(addon.Filters.WeaponIndices) do
 		local text = C_Item.GetItemSubClassInfo(2, index)
 		self:CreateCheckbox(appearances, text, {'OnlyShow', 'Weapon', index})
 	end
@@ -211,7 +211,7 @@ function KrowiEVU_FilterButtonMixin:CreateMenu(menu)
 	-- Custom Appearances submenu
 	local customAppearances = mb:CreateSubmenuButton(custom, addon.L['Appearances'])
 	mb:CreateTitle(customAppearances, C_Item.GetItemClassInfo(4)) -- Armor
-	for index, _ in next, addon.Filters.ArmorTypes do
+	for _, index in ipairs(addon.Filters.ArmorIndices) do
 		local text = C_Item.GetItemSubClassInfo(4, index)
 		self:CreateCheckbox(customAppearances, text, {'Custom', 'Armor', index})
 	end
@@ -219,7 +219,7 @@ function KrowiEVU_FilterButtonMixin:CreateMenu(menu)
 	self:CreateSelectDeselectAllButtons(customAppearances, addon.Filters.db.profile.Custom, 'Armor')
 	mb:CreateDivider(customAppearances)
 	mb:CreateTitle(customAppearances, C_Item.GetItemClassInfo(2)) -- Weapons
-	for index, _ in next, addon.Filters.WeaponTypes do
+	for _, index in ipairs(addon.Filters.WeaponIndices) do
 		local text = C_Item.GetItemSubClassInfo(2, index)
 		self:CreateCheckbox(customAppearances, text, {'Custom', 'Weapon', index})
 	end
