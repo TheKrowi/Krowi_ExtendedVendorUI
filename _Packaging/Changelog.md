@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.1 - 2026-02-08
+### Added
+- Option to only show needed, have or both (have/need) for tokens in the token banner
+
 ## 21.0 - 2026-01-14
 ### Changed
 - Support for WoW 12.0.0 (Midnight)
