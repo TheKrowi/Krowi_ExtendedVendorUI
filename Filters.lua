@@ -292,7 +292,50 @@ do -- Transmog
 	end
 
 	function filters.IsTransmogCollected(itemId)
-		return C_TransmogCollection.PlayerHasTransmog(itemId)
+			-- If this exact item/source is known
+			if C_TransmogCollection.PlayerHasTransmog(itemId) then
+					return true
+			end
+
+			-- Try to obtain the sourceID from C_TransmogCollection.GetItemInfo
+			local first, second = C_TransmogCollection.GetItemInfo(itemId)
+			local sourceID = second
+			if type(first) == 'table' then
+					-- table form may include the source info under known keys
+					sourceID = sourceID or first.sourceID or first.itemModifiedAppearanceID or first.modifiedAppearanceID
+			end
+
+			-- If we have a sourceID, get the appearanceID via GetAppearanceSourceInfo
+			local appearanceID
+			if sourceID then
+					local appearanceInfo = C_TransmogCollection.GetAppearanceSourceInfo(sourceID)
+					appearanceID = appearanceInfo and (appearanceInfo.itemAppearanceID or appearanceInfo.appearanceID)
+			end
+
+			-- fallback: if GetItemInfo returned an appearanceID directly in the second position
+			if not appearanceID then
+					-- sometimes the return values can be (appearanceID, <other>) — try those
+					if type(first) == 'number' then
+							appearanceID = first
+					elseif type(second) == 'number' then
+							appearanceID = second
+					end
+			end
+
+			if not appearanceID then
+					return false
+			end
+
+			local sourceIDs = C_TransmogCollection.GetAllAppearanceSources(appearanceID)
+			if sourceIDs then
+					for _, src in ipairs(sourceIDs) do
+							if C_TransmogCollection.PlayerHasTransmogItemModifiedAppearance(src) then
+									return true
+							end
+					end
+			end
+
+			return false
 	end
 end
 
