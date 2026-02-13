@@ -4,3 +4,6 @@
 
 ### Added (21.1)
 - Option to only show needed, have or both (have/need) for tokens in the token banner
+
+### Added (21.2)
+- Clicking tokens now opens the currency window and can be linked in chat
