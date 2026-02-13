@@ -21,6 +21,7 @@ addon.Options.Defaults = {
             MoneyGoldOnly = false,
             MoneyColored = true,
 	        CurrencyAbbreviate = 'None',
+            Format = 'Both',
         }
     }
 }
