@@ -18,9 +18,16 @@ merchantItemsContainer.ItemWidth, merchantItemsContainer.ItemHeight = MerchantIt
 local function ItemSlotOnEnter(button)
 	GameTooltip:SetOwner(button, 'ANCHOR_RIGHT')
 	if MerchantFrame.selectedTab == 1 then
-		GameTooltip:SetMerchantItem(addon.CachedItemIndices[button:GetID()])
-		GameTooltip_ShowCompareItem(GameTooltip)
-		MerchantFrame.itemHover = button:GetID()
+			local realIndex = addon.CachedItemIndices[button:GetID()]
+			-- avoid passing nil/0 to C_TooltipInfo.GetMerchantItem (causes bad argument error)
+			if realIndex and realIndex > 0 then
+					GameTooltip:SetMerchantItem(realIndex)
+					GameTooltip_ShowCompareItem(GameTooltip)
+					MerchantFrame.itemHover = button:GetID()
+			else
+					-- nothing valid to show for this display slot
+					return
+			end
 	else
 		GameTooltip:SetBuybackItem(button:GetID())
 		if IsModifiedClick('DRESSUP') and button.hasItem then
