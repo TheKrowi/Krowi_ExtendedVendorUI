@@ -105,3 +105,14 @@ end
 function KrowiEVU_TokenMixin:OnShow()
     -- print('Token shown', self.Have, self.Need)
 end
+
+function KrowiEVU_TokenMixin:OnClick()
+    if IsModifiedClick("CHATLINK") then
+        local linkedToChat = HandleModifiedItemClick(self.Link);
+        if linkedToChat then return end
+    end
+
+    if self.IsCurrency then
+        CharacterFrame:ToggleTokenFrame();
+    end
+end

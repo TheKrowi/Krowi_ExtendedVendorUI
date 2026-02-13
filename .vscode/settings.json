@@ -291,7 +291,9 @@
         "MerchantBuyBackItemNameFrame",
         "KrowiEVU_TokenBannerToken1",
         "MerchantBuyBackItemSlotTexture",
-        "KROWI_LIBMAN"
+        "KROWI_LIBMAN",
+        "CharacterFrame",
+        "HandleModifiedItemClick"
     ],
     "fsdeploy.nodes": [
         {

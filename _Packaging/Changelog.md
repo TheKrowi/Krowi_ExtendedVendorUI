@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.2 - 2026-02-13
+### Added
+- Clicking tokens now opens the currency window and can be linked in chat
+
 ## 21.1 - 2026-02-08
 ### Added
 - Option to only show needed, have or both (have/need) for tokens in the token banner
