@@ -7,3 +7,6 @@
 
 ### Added (21.2)
 - Clicking tokens now opens the currency window and can be linked in chat
+
+### Fixed (21.3)
+- Recipe filtering should once again work

@@ -293,7 +293,8 @@
         "MerchantBuyBackItemSlotTexture",
         "KROWI_LIBMAN",
         "CharacterFrame",
-        "HandleModifiedItemClick"
+        "HandleModifiedItemClick",
+        "ITEM_SPELL_KNOWN"
     ],
     "fsdeploy.nodes": [
         {

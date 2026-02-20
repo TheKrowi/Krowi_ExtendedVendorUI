@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.3 - 2026-02-20
+### Fixed
+- Recipe filtering should once again work
+
 ## 21.2 - 2026-02-13
 ### Added
 - Clicking tokens now opens the currency window and can be linked in chat
