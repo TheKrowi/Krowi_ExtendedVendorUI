@@ -5,17 +5,21 @@ KrowiEVU.PluginsApi:LoadPluginLocalization(L)
 
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2026-02-08 10-26-35 ]] --
+-- [[ Exported at 2026-06-03 13-26-26 ]] --
 L["Are you sure you want to hide the options button?"] = [=[Are you sure you want to hide the options button?
 The options button can be shown again via {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options}]=]
 L["Arsenals"] = true
 L["Both"] = true
+L["Bulk Purchase"] = true
+L["Buy"] = true
 L["Columns"] = true
 L["Columns first"] = true
 L["Custom"] = true
 L["Default filters"] = true
 L["Deselect All"] = true
 L["Direction"] = true
+L["Enable bulk purchase"] = true
+L["Enable bulk purchase Desc"] = "Shift-click a vendor item to open the bulk purchase window."
 L["Ensembles"] = true
 L["Enter housing quantity"] = "Enter housing quantity (1-999):"
 L["Enter number of columns"] = "Enter number of columns (2-99):"
@@ -28,12 +32,15 @@ L["Housing Quantity"] = true
 L["Icon Left click"] = "Open Merchant Window Options"
 L["Icon Right click"] = "Open Options"
 L["Illusions"] = "Illusions (experimental)"
+L["Max"] = true
+L["Maximum purchase"] = true
 L["Mounts"] = true
 L["Need"] = true
 L["Only show"] = true
 L["Options button"] = true
 L["Options Desc"] = "Open the options that are also available from the options button in the merchant window."
 L["Other"] = true
+L["Partial stack"] = true
 L["Pets"] = true
 L["Plugin_CanIMogIt_Desc"] = [=[This plugin fixes the overlay icons on vendor items when different filters are applied.
 
@@ -65,6 +72,14 @@ L["Show Hide option"] = "Show '{hide}' option"
 L["Show Hide option Desc"] = "Show the '{hide}' option in the {optionsButton} drop down."
 L["Show options button"] = true
 L["Show options button Desc"] = "Show / hide the options button in the merchant window."
+L["Show purchase confirmation"] = true
+L["Show purchase confirmation Desc"] = "Show a confirmation dialog when buying more than one stack."
+L["Stack"] = true
+L["Stack purchase"] = true
+L["Stack size"] = true
 L["Token Banner"] = true
 L["Token Format"] = true
 L["Toys"] = true
+L["Vendor has"] = true
+L["You can afford"] = true
+L["You can fit"] = true

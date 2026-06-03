@@ -6,4 +6,5 @@
     <Include file='FilterButton/FilterButton.xml'/>
     <Include file='SearchBox/SearchBox.xml'/>
     <Include file='TokenBanner/TokenBanner.xml'/>
+    <Include file='BulkPurchase/BulkPurchaseFrame.xml'/>
 </Ui>
