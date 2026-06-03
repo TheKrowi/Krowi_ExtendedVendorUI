@@ -294,7 +294,8 @@
         "KROWI_LIBMAN",
         "CharacterFrame",
         "HandleModifiedItemClick",
-        "ITEM_SPELL_KNOWN"
+        "ITEM_SPELL_KNOWN",
+        "KrowiEVU_BulkPurchaseFrame"
     ],
     "fsdeploy.nodes": [
         {

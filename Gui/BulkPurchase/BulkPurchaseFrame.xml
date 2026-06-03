@@ -1,0 +1,185 @@
+<Ui>
+    <Script file='BulkPurchaseMixin.lua'/>
+    <Script file='BulkPurchase.lua'/>
+
+    <Frame name='KrowiEVU_BulkPurchaseFrame' hidden='true' parent='UIParent' toplevel='true' frameStrata='HIGH' enableMouse='true' enableKeyboard='true'>
+        <Size x='230' y='134'/>
+        <Layers>
+            <Layer level='BACKGROUND'>
+                <Texture name='$parentTopTex' file='Interface\MoneyFrame\UI-MoneyFrame2'>
+                    <Size x='230' y='14'/>
+                    <Anchors><Anchor point='TOP'/></Anchors>
+                    <TexCoords left='0' right='0.671875' top='0' bottom='0.109375'/>
+                </Texture>
+                <Texture name='$parentBottomTex' file='Interface\MoneyFrame\UI-MoneyFrame2'>
+                    <Size x='230' y='20'/>
+                    <Anchors><Anchor point='BOTTOM'/></Anchors>
+                    <TexCoords left='0' right='0.671875' top='0.59375' bottom='0.75'/>
+                </Texture>
+                <Texture name='$parentBackTex' file='Interface\MoneyFrame\UI-MoneyFrame2'>
+                    <Anchors>
+                        <Anchor point='TOPLEFT' relativeTo='$parentTopTex' relativePoint='BOTTOMLEFT'/>
+                        <Anchor point='BOTTOMRIGHT' relativeTo='$parentBottomTex' relativePoint='TOPRIGHT'/>
+                    </Anchors>
+                    <TexCoords left='0' right='0.671875' top='0.109375' bottom='0.59375'/>
+                </Texture>
+            </Layer>
+            <Layer level='BORDER'>
+                <Texture name='KrowiEVU_BulkMoneyTex' file='Interface\MoneyFrame\UI-MoneyFrame'>
+                    <Size x='121' y='33'/>
+                    <Anchors>
+                        <Anchor point='TOP'>
+                            <Offset><AbsDimension x='1' y='-14'/></Offset>
+                        </Anchor>
+                    </Anchors>
+                    <TexCoords left='0.10546875' right='0.578125' top='0.109375' bottom='0.3671875'/>
+                </Texture>
+                <FontString name='KrowiEVU_BulkAmountText' inherits='GameFontHighlight' justifyH='RIGHT'>
+                    <Anchors>
+                        <Anchor point='RIGHT' relativeTo='KrowiEVU_BulkMoneyTex'>
+                            <Offset><AbsDimension x='-12' y='2'/></Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button name='KrowiEVU_BulkLeftButton'>
+                <Size x='16' y='16'/>
+                <Anchors>
+                    <Anchor point='TOPRIGHT' relativeTo='KrowiEVU_BulkMoneyTex' relativePoint='TOP'>
+                        <Offset><AbsDimension x='-60' y='-8'/></Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>KrowiEVU_BulkPurchaseMixin:Left_Click()</OnClick>
+                </Scripts>
+                <NormalTexture file='Interface\MoneyFrame\Arrow-Left-Up'/>
+                <PushedTexture file='Interface\MoneyFrame\Arrow-Left-Down'/>
+                <DisabledTexture file='Interface\MoneyFrame\Arrow-Left-Disabled'/>
+            </Button>
+            <Button name='KrowiEVU_BulkRightButton'>
+                <Size x='16' y='16'/>
+                <Anchors>
+                    <Anchor point='TOPLEFT' relativeTo='KrowiEVU_BulkMoneyTex' relativePoint='TOP'>
+                        <Offset><AbsDimension x='63' y='-8'/></Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>KrowiEVU_BulkPurchaseMixin:Right_Click()</OnClick>
+                </Scripts>
+                <NormalTexture file='Interface\MoneyFrame\Arrow-Right-Up'/>
+                <PushedTexture file='Interface\MoneyFrame\Arrow-Right-Down'/>
+                <DisabledTexture file='Interface\MoneyFrame\Arrow-Right-Disabled'/>
+            </Button>
+
+            <Button name='KrowiEVU_BulkBuyButton' inherits='UIPanelButtonTemplate' text='OKAY'>
+                <Size x='78' y='24'/>
+                <Anchors>
+                    <Anchor point='RIGHT' relativePoint='BOTTOM'>
+                        <Offset><AbsDimension x='-3' y='30'/></Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>KrowiEVU_BulkPurchaseMixin:Buy_Click()</OnClick>
+                </Scripts>
+            </Button>
+            <Button name='KrowiEVU_BulkCancelButton' inherits='UIPanelButtonTemplate' text='CANCEL'>
+                <Size x='78' y='24'/>
+                <Anchors>
+                    <Anchor point='LEFT' relativePoint='BOTTOM'>
+                        <Offset><AbsDimension x='5' y='30'/></Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>KrowiEVU_BulkPurchaseMixin:Cancel_Click()</OnClick>
+                </Scripts>
+            </Button>
+
+            <Button name='KrowiEVU_BulkStackButton' inherits='UIPanelButtonTemplate'>
+                <Size x='78' y='24'/>
+                <Anchors>
+                    <Anchor point='BOTTOM' relativeTo='KrowiEVU_BulkBuyButton' relativePoint='TOP'>
+                        <Offset><AbsDimension x='0' y='2'/></Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnLoad>self:RegisterForClicks('LeftButtonUp', 'RightButtonUp')</OnLoad>
+                    <OnClick>KrowiEVU_BulkPurchaseMixin:Stack_Click(self, button)</OnClick>
+                    <OnEnter>KrowiEVU_BulkPurchaseMixin:OnEnter(self)</OnEnter>
+                    <OnLeave>KrowiEVU_BulkPurchaseMixin:OnLeave()</OnLeave>
+                </Scripts>
+            </Button>
+            <Button name='KrowiEVU_BulkMaxButton' inherits='UIPanelButtonTemplate'>
+                <Size x='78' y='24'/>
+                <Anchors>
+                    <Anchor point='BOTTOM' relativeTo='KrowiEVU_BulkCancelButton' relativePoint='TOP'>
+                        <Offset><AbsDimension x='0' y='2'/></Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>KrowiEVU_BulkPurchaseMixin:Max_Click()</OnClick>
+                    <OnEnter>KrowiEVU_BulkPurchaseMixin:OnEnter(self)</OnEnter>
+                    <OnLeave>KrowiEVU_BulkPurchaseMixin:OnLeave()</OnLeave>
+                </Scripts>
+            </Button>
+
+            <Frame name='KrowiEVU_BulkCurrencyFrame'>
+                <Size x='204' y='24'/>
+                <Anchors>
+                    <Anchor point='TOP'><Offset x='2' y='-45'/></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer>
+                        <Texture name='KrowiEVU_BulkCurrency1'>
+                            <Size x='16' y='16'/>
+                            <Anchors><Anchor point='LEFT'><Offset x='48' y='0'/></Anchor></Anchors>
+                        </Texture>
+                        <FontString name='KrowiEVU_BulkCurrencyAmt1' inherits='GameFontHighlightSmall'>
+                            <Anchors>
+                                <Anchor point='RIGHT' relativeTo='KrowiEVU_BulkCurrency1' relativePoint='LEFT'>
+                                    <Offset x='-2' y='0'/>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <Texture name='KrowiEVU_BulkCurrency2'>
+                            <Size x='16' y='16'/>
+                            <Anchors>
+                                <Anchor point='LEFT' relativeTo='KrowiEVU_BulkCurrency1' relativePoint='RIGHT'>
+                                    <Offset x='18' y='0'/>
+                                </Anchor>
+                            </Anchors>
+                        </Texture>
+                        <FontString name='KrowiEVU_BulkCurrencyAmt2' inherits='GameFontHighlightSmall'>
+                            <Anchors>
+                                <Anchor point='RIGHT' relativeTo='KrowiEVU_BulkCurrency2' relativePoint='LEFT'>
+                                    <Offset x='-2' y='0'/>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <Texture name='KrowiEVU_BulkCurrency3'>
+                            <Size x='16' y='16'/>
+                            <Anchors>
+                                <Anchor point='LEFT' relativeTo='KrowiEVU_BulkCurrency2' relativePoint='RIGHT'>
+                                    <Offset x='18' y='0'/>
+                                </Anchor>
+                            </Anchors>
+                        </Texture>
+                        <FontString name='KrowiEVU_BulkCurrencyAmt3' inherits='GameFontHighlightSmall'>
+                            <Anchors>
+                                <Anchor point='RIGHT' relativeTo='KrowiEVU_BulkCurrency3' relativePoint='LEFT'>
+                                    <Offset x='-2' y='0'/>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+        </Frames>
+        <Scripts>
+            <OnChar>KrowiEVU_BulkPurchaseMixin:OnChar(text)</OnChar>
+            <OnKeyDown>KrowiEVU_BulkPurchaseMixin:OnKeyDown(key)</OnKeyDown>
+            <OnHide>KrowiEVU_BulkPurchaseMixin:OnHide()</OnHide>
+        </Scripts>
+    </Frame>
+</Ui>

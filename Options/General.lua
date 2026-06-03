@@ -153,13 +153,41 @@ local optionsButton = {
     }
 }
 
+local bulkPurchase = {
+    order = OrderPP(), type = 'group',
+    name = addon.L['Bulk Purchase'],
+    args = {
+        BulkPurchaseGroup = {
+            order = OrderPP(), type = 'group', inline = true,
+            name = addon.L['Bulk Purchase'],
+            args = {
+                Enabled = {
+                    order = OrderPP(), type = 'toggle', width = AdjustedWidth(),
+                    name = addon.L['Enable bulk purchase'],
+                    desc = addon.L['Enable bulk purchase Desc']:KEVU_AddDefaultValueText('BulkPurchase.Enabled'),
+                    get = function() return addon.Options.db.profile.BulkPurchase.Enabled end,
+                    set = function(_, value) addon.Options.db.profile.BulkPurchase.Enabled = value end
+                },
+                ShowConfirm = {
+                    order = OrderPP(), type = 'toggle', width = AdjustedWidth(),
+                    name = addon.L['Show purchase confirmation'],
+                    desc = addon.L['Show purchase confirmation Desc']:KEVU_AddDefaultValueText('BulkPurchase.ShowConfirm'),
+                    get = function() return addon.Options.db.profile.BulkPurchase.ShowConfirm end,
+                    set = function(_, value) addon.Options.db.profile.BulkPurchase.ShowConfirm = value end
+                },
+            }
+        }
+    }
+}
+
 options.OptionsTable.args['General'] = {
     type = 'group', childGroups = 'tab',
     name = addon.Util.L['General'],
     args = {
         Info = info,
         Icon = icon,
-        Options = optionsButton
+        Options = optionsButton,
+        BulkPurchase = bulkPurchase,
     }
 }
 

@@ -14,6 +14,10 @@ addon.Options.Defaults = {
         RememberFilter = false,
         RememberSearch = false,
         RememberSearchBetweenVendors = false,
+        BulkPurchase = {
+            Enabled = true,
+            ShowConfirm = true,
+        },
         TokenBanner = {
             MoneyLabel = 'Icon',
             MoneyAbbreviate = 'None',

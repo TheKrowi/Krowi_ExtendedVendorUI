@@ -30,6 +30,8 @@ function loadHelper:OnEvent(event, arg1, arg2)
 
             addon.Icon:Load()
 
+            addon.Gui.BulkPurchase:Load()
+
             addon.Api.Load()
 
             if addon.Util.IsMainline then
