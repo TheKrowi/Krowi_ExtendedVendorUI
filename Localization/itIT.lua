@@ -6,7 +6,7 @@ KrowiEVU.PluginsApi:LoadPluginLocalization(L)
 
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2026-02-08 10-26-37 ]] --
+-- [[ Exported at 2026-06-03 13-26-28 ]] --
 L["Are you sure you want to hide the options button?"] = [=[Vuoi davvero nascondere il pulsante opzioni?
 Il pulsante può essere mostrato di nuovo da {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options}]=]
 L["Columns"] = "Colonne"
@@ -23,18 +23,3 @@ L["Rows"] = "Righe"
 L["Rows first"] = "Prima righe"
 L["Show options button"] = "Mostra il pulsante opzioni"
 L["Show options button Desc"] = "Mostra / nascondi il pulsante opzioni nella finestra del mercante."
-L["Bulk Purchase"] = true
-L["Enable bulk purchase"] = true
-L["Enable bulk purchase Desc"] = true
-L["Show purchase confirmation"] = true
-L["Show purchase confirmation Desc"] = true
-L["Buy"] = true
-L["Stack"] = true
-L["Max"] = true
-L["Stack purchase"] = true
-L["Stack size"] = true
-L["Partial stack"] = true
-L["Maximum purchase"] = true
-L["You can fit"] = true
-L["You can afford"] = true
-L["Vendor has"] = true

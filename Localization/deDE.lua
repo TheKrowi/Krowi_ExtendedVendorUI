@@ -6,7 +6,7 @@ KrowiEVU.PluginsApi:LoadPluginLocalization(L)
 
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2026-02-08 10-26-36 ]] --
+-- [[ Exported at 2026-06-03 13-26-26 ]] --
 L["Are you sure you want to hide the options button?"] = "Bist du sicher, dass du die Schaltfläche \"Optionen\" ausblenden möchtest? Die Schaltfläche \"Optionen\" kann wieder eingeblendet werden über {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options} "
 L["Arsenals"] = "Arsenal"
 L["Columns"] = "Spalten"
@@ -48,18 +48,3 @@ L["Show Hide option Desc"] = "Zeige die Option '{hide}' in der Auswahl-Liste {op
 L["Show options button"] = "Zeige Optionen-Schaltfläche"
 L["Show options button Desc"] = "Ein-/Ausblenden der Optionen-Schaltfläche im Händlerfenster."
 L["Toys"] = "Spielzeuge"
-L["Bulk Purchase"] = true
-L["Enable bulk purchase"] = true
-L["Enable bulk purchase Desc"] = true
-L["Show purchase confirmation"] = true
-L["Show purchase confirmation Desc"] = true
-L["Buy"] = true
-L["Stack"] = true
-L["Max"] = true
-L["Stack purchase"] = true
-L["Stack size"] = true
-L["Partial stack"] = true
-L["Maximum purchase"] = true
-L["You can fit"] = true
-L["You can afford"] = true
-L["Vendor has"] = true

@@ -6,7 +6,7 @@ KrowiEVU.PluginsApi:LoadPluginLocalization(L)
 
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2026-02-08 10-26-38 ]] --
+-- [[ Exported at 2026-06-03 13-26-29 ]] --
 L["Are you sure you want to hide the options button?"] = "是否确定隐藏按钮？再次显示按钮请到 {gameMenu} > {addOns} > 商人 > {general} > {options}"
 L["Columns"] = "列数"
 L["Columns first"] = "先竖后横排列"
@@ -31,18 +31,3 @@ L["Select All"] = "全部选择"
 L["Show options button"] = "显示设置按钮"
 L["Show options button Desc"] = "显示/隐藏商人界面的设置按钮"
 L["Toys"] = "玩具"
-L["Bulk Purchase"] = true
-L["Enable bulk purchase"] = true
-L["Enable bulk purchase Desc"] = true
-L["Show purchase confirmation"] = true
-L["Show purchase confirmation Desc"] = true
-L["Buy"] = true
-L["Stack"] = true
-L["Max"] = true
-L["Stack purchase"] = true
-L["Stack size"] = true
-L["Partial stack"] = true
-L["Maximum purchase"] = true
-L["You can fit"] = true
-L["You can afford"] = true
-L["Vendor has"] = true

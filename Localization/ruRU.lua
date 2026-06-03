@@ -6,19 +6,22 @@ KrowiEVU.PluginsApi:LoadPluginLocalization(L)
 
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2026-02-08 10-26-38 ]] --
+-- [[ Exported at 2026-06-03 13-26-28 ]] --
 L["Are you sure you want to hide the options button?"] = "Вы уверены, что хотите скрыть кнопку настроек? Кнопку настроек можно заново вкоючить через {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options}"
 L["Arsenals"] = "Арсеналы"
+L["Both"] = "Вместе"
 L["Columns"] = "Столбцы"
 L["Columns first"] = "Сначала столбцы"
 L["Custom"] = "Разное"
 L["Default filters"] = "Фильтры по-умолчанию"
 L["Deselect All"] = "Оратить всё выделение "
+L["Direction"] = "Точечно"
 L["Ensembles"] = "Множество"
 L["Enter housing quantity"] = "Введите количество жилья (1-999):"
 L["Enter number of columns"] = "Введите количество столбцов (2-99):"
 L["Enter number of rows"] = "Введите количество строк  (1-99):"
 L["Filters"] = "Фильтры"
+L["Have"] = "Имеется"
 L["Hide collected"] = "Спрятать собранные"
 L["Housing"] = "Жильё"
 L["Housing Quantity"] = "Количество Жилья"
@@ -26,21 +29,7 @@ L["Icon Left click"] = "для быстрой настройки слоёв"
 L["Icon Right click"] = "для Настроек"
 L["Illusions"] = "Иллюзии (а надо?)"
 L["Mounts"] = "Средства передвижения"
-L["Bulk Purchase"] = true
-L["Enable bulk purchase"] = true
-L["Enable bulk purchase Desc"] = true
-L["Show purchase confirmation"] = true
-L["Show purchase confirmation Desc"] = true
-L["Buy"] = true
-L["Stack"] = true
-L["Max"] = true
-L["Stack purchase"] = true
-L["Stack size"] = true
-L["Partial stack"] = true
-L["Maximum purchase"] = true
-L["You can fit"] = true
-L["You can afford"] = true
-L["Vendor has"] = true
+L["Need"] = "Нужно"
 L["Only show"] = "Показ только"
 L["Options button"] = "кнопка настройки"
 L["Options Desc"] = "Открыть настройки, также доступны по кнопке настроек из меню торговца."
@@ -69,4 +58,5 @@ L["Show Hide option Desc"] = "Показ '{hide}'  настроек в {optionsB
 L["Show options button"] = "Показ кнопки настроек"
 L["Show options button Desc"] = "Показ / скрыть мнопку настроек в меню продавца."
 L["Token Banner"] = "Баннер токенов"
+L["Token Format"] = "Формат Токена"
 L["Toys"] = "Игрушки"
