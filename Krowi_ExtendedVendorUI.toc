@@ -2,11 +2,12 @@
 ## Title: Krowi's |cFF1D92C2Extended Vendor UI|r
 ## X-Prefix: KrowiEVU
 ## X-Acronym: KEVU
-## Version: 22.0
+## Version: 22.1
 ## Author: Krowi-Frostmane EU
 ## LoadWith: Blizzard_MerchantFrame
 ## SavedVariables: KrowiEVU_Options, KrowiEVU_Filters, KrowiEVU_Debug
 ## Notes: Extends the size of your Merchant Frame.
+## Notes-zhCN: 扩展商人商品界面，自定义筛选显示商品。
 ## AddonCompartmentFuncOnEnter: KrowiEVU_OnAddonCompartmentEnter
 ## AddonCompartmentFuncOnLeave: KrowiEVU_OnAddonCompartmentLeave
 ## AddonCompartmentFunc: KrowiEVU_OnAddonCompartmentClick
@@ -20,7 +21,7 @@
 ## Category-koKR: 소지품
 ## Category-ptBR: Inventário
 ## Category-ruRU: Предметы
-## Category-zhCN: 物品栏
+## Category-zhCN: 用户界面
 ## Category-zhTW: 物品欄
 ## X-Slug: krowi-extended-vendor-ui
 ## X-CurseForge-ID: 872787
