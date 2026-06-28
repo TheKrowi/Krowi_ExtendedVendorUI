@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.1 - 2026-06-28
+### Added
+- Updated/expanded zhCN translations
+
+### Fixed
+- Recipe filter now also detects consumable items that teach recipes (e.g. some items classified as Consumable rather than Recipe)
+- Hovering over an item slot no longer errors when the item index is missing from the cache
+
 ## 22.0 - 2026-06-03
 ### Added
 - Bulk Purchase: buy multiple stacks of a vendor item at once

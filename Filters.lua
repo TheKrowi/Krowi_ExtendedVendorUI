@@ -382,8 +382,21 @@ if addon.Util.IsMainline then -- Recipes
 	end
 
 	function filters.IsRecipe(itemId)
-		local classId = select(6, C_Item.GetItemInfoInstant(itemId))
-		return classId == Enum.ItemClass.Recipe
+		local classId, subclassId = select(6, C_Item.GetItemInfoInstant(itemId))
+		if classId == Enum.ItemClass.Recipe then
+			return true
+		end
+		if classId == Enum.ItemClass.Consumable and subclassId ~= Enum.ItemConsumableSubclass.Other then
+			local tooltipInfo = C_TooltipInfo.GetItemByID(itemId)
+			if tooltipInfo then
+				for _, line in next, tooltipInfo.lines do
+					if line.type == Enum.TooltipDataLineType.ItemSpellTriggerLearn then
+						return true
+					end
+				end
+			end
+		end
+		return false
 	end
 
 	function filters.IsRecipeCollected(itemId)
