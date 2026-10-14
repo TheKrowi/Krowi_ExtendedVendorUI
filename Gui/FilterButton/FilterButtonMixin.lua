@@ -147,7 +147,7 @@ function KrowiEVU_FilterButtonMixin:CreateMenu(menu)
 		local numSpecs = GetNumSpecializations()
 
 		for i = 1, numSpecs do
-			local _, name = GetSpecializationInfo(i, nil, nil, nil, sex)
+			local _, name = C_SpecializationInfo.GetSpecializationInfo(i, nil, nil, nil, sex)
 			local filter = LE_LOOT_FILTER_SPEC1 + i - 1
 			self:CreateRadio(classButton, name, filter)
 		end
