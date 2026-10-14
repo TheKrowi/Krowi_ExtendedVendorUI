@@ -1,10 +1,11 @@
 # Plan: Stop reading deprecated Blizzard globals
-Spec: [spec.md](spec.md). Status: accepted
+Spec: [spec.md](spec.md). Status: done
 
 ## Files that change
 - `Gui/BulkPurchase/BulkPurchaseMixin.lua` lines 7-11: drop the `C_X and ... or OldGlobal` guards, keep the local names and the column alignment.
 - `Gui/FilterButton/FilterButtonMixin.lua` line 150: `C_SpecializationInfo.GetSpecializationInfo`.
 - `.gitignore`: add `.claude/worktrees/`, so worktrees under the main checkout are never swept into a release commit (the main checkout excludes it locally in `.git/info/exclude` until this merges).
+- `.vscode/settings.json` (added during the build, Krowi's choice on 2026-10-14): the fsdeploy nodes exclude `.claude` and `docs`, so a save in the main window no longer copies worktree files into the AddOns folder.
 
 Routine plan: one-to-one replacements by the functions the old names resolve to; no frames, hooks, protected actions or saved variables change.
 

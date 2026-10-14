@@ -1,5 +1,5 @@
 # Intent: Stop reading deprecated Blizzard globals
-Author: Krowi (maintainer), from a deprecated-API scan across their addons. Source: idea. Status: accepted
+Author: Krowi (maintainer), from a deprecated-API scan across their addons. Source: idea. Status: done
 
 ## Problem
 Nothing is broken for players today. But WoW 12.1.5 just deleted a batch of deprecated globals, which broke Krowi's Vendorer, and Extended Vendor UI still names old globals in two files: the bulk purchase window keeps fallbacks to the pre-C_Container and pre-C_Item globals, and the merchant filter menu calls `GetSpecializationInfo`, which Retail only keeps as a deprecated alias. When Blizzard deletes that alias, the spec filters in the merchant filter menu will error on Retail.

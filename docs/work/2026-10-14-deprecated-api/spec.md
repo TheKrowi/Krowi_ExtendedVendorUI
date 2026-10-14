@@ -1,5 +1,5 @@
 # Spec: Stop reading deprecated Blizzard globals
-Intent: [intent.md](intent.md). Status: accepted
+Intent: [intent.md](intent.md). Status: done
 
 ## Requirements
 1. `Find-DeprecatedApi.ps1` reports no use outside `Libs/` for `-Branch live`, `classic`, `classic_anniversary` and `classic_era`.
