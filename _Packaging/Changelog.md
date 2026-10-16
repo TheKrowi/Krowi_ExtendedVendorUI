@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.2 - 2026-10-16
+### Changed
+- Support for WoW 12.1.5, TBC Anniversary 2.5.6 and Classic Era 1.15.9
+
 ## 22.1 - 2026-06-28
 ### Added
 - Updated/expanded zhCN translations
