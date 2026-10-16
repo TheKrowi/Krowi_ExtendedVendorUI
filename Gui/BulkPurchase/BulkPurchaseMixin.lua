@@ -4,11 +4,11 @@ local _, addon = ...
 KrowiEVU_BulkPurchaseMixin = {}
 local mixin = KrowiEVU_BulkPurchaseMixin
 
-local ContainerGetNumFreeSlots = C_Container and C_Container.GetContainerNumFreeSlots or GetContainerNumFreeSlots
-local ContainerGetNumSlots     = C_Container and C_Container.GetContainerNumSlots     or GetContainerNumSlots
-local ContainerGetItemInfo     = C_Container and C_Container.GetContainerItemInfo     or GetContainerItemInfo
-local GetItemFamily_  = C_Item and C_Item.GetItemFamily  or GetItemFamily
-local GetItemCount_   = C_Item and C_Item.GetItemCount   or GetItemCount
+local ContainerGetNumFreeSlots = C_Container.GetContainerNumFreeSlots
+local ContainerGetNumSlots     = C_Container.GetContainerNumSlots
+local ContainerGetItemInfo     = C_Container.GetContainerItemInfo
+local GetItemFamily_  = C_Item.GetItemFamily
+local GetItemCount_   = C_Item.GetItemCount
 
 local function GetMerchantItemInfoNormalized(index)
     if addon.Util.IsMainline then
