@@ -1,0 +1,81 @@
+# CLAUDE.md
+
+Krowi's Extended Vendor UI (prefix `KrowiEVU`, acronym `KEVU`) is a World of Warcraft addon in Lua 5.1 + WoW XML that turns Blizzard's merchant frame into a grid of configurable rows and columns and adds custom filters (pets, mounts, toys, appearances, sets, illusions, recipes, housing, armor and weapon types), a search box, a token banner with total costs, and a bulk purchase window. The workspace-wide rules (tooling traps, the game loop, taint, git, release safety, how Krowi wants choices presented) load from `../CLAUDE.md` and `Krowi_ClaudeKit/WowAddons.md`; this file adds only what is specific to this repo.
+
+There is no build, lint or test step: the game is the test harness. The `krowi` plugin (enabled in `.claude/settings.json`) syntax-checks every edited `.lua` with Lua 5.1 and guards the known tooling traps. The repo is public and takes outside pull requests, but `.claude/settings.json` points at the private kit by absolute path, so the plugin loads only on Krowi's machine; that is intended.
+
+## Clients and loading
+
+- One TOC, `Krowi_ExtendedVendorUI.toc`, for four clients: `## Interface` (line 1) holds one number each for Retail 12.x, Mists Classic 5.5.x, TBC Anniversary 2.5.x and Classic Era 1.15.x. There are no per-client TOCs or TOC conditionals; code branches at runtime on `addon.Util.IsMainline` (`WOW_PROJECT_ID == WOW_PROJECT_MAINLINE`, `Libs/Krowi_Util/Krowi_Util.lua:24`), so every Classic client takes the same path. The Pets, Sets, Illusions, Recipes and Housing filters are Retail-only.
+- Saved variables `KrowiEVU_Options, KrowiEVU_Filters, KrowiEVU_Debug`, all account-wide (TOC line 8; `KrowiEVU_Debug` is never used). A new saved variable must be added to that line or it is lost on logout.
+- `## LoadWith: Blizzard_MerchantFrame` does nothing: no client has that addon. `MerchantFrame` comes from `Blizzard_UIPanels_Game`, which loads before any addon, and the files rely on that at load time (`MerchantItem1:GetSize()` at `Gui/MerchantItemsContainer.lua:15`).
+- Load order is the TOC: `Libs\Files.xml` (Krowi_Util, LibDBIcon, the Ace libs, Krowi_PopupDialog, Krowi_Menu, Krowi_Currency, Krowi_Util's `Options/InjectOptions.lua`, then `Libs.lua`), `Api\Files.xml`, `Plugins\Files.xml`, `Localization\Files.xml`, `Krowi_ExtendedVendorUI.lua`, `Options\Files.xml` (starting with Krowi_Util's `Options/Options.lua`), `Libs\Krowi_Util\Icon.lua`, `Icon.lua`, `Filters.lua`, `Gui\Files.xml`. A file only sees what earlier files defined, and a new `.lua` must be listed in its folder's `Files.xml` or it never loads. Most of the merchant-frame work (hooks, API wrappers, extra slots) runs when its file loads, not at boot.
+- Boot is a single `ADDON_LOADED` for this addon (`Krowi_ExtendedVendorUI.lua:14-42`): plugin options, `addon.Options:Load(true)` (AceDB `KrowiEVU_Options`, then each options page; the Profiles page calls `addon.Filters:Load()`, which creates AceDB `KrowiEVU_Filters`), plugins, `MerchantItemsContainer:LoadMaxNumItemSlots()`, the filter button, search box, options button, token banner, icon and bulk purchase, `addon.Api.Load()`, and on Retail `C_HousingCatalog.CreateCatalogSearcher()`. No other event is registered; merchant open and close are followed through hooks.
+
+## Libraries
+
+- Submodules under `Libs/`: `Krowi_Util`, `Krowi_Menu`, `Krowi_PopupDialog`, `Krowi_Currency` (develop and release them in `../Krowi_Libraries/<lib>`, never here). Bundled, not submodules: AceConfig, AceDB, AceDBOptions, AceGUI, LibDBIcon. LibStub, CallbackHandler, LibDataBroker and AceLocale come from Krowi_Util. The repo defines no LibStub library of its own.
+- `Libs/Libs.lua` calls `KROWI_LIBMAN:NewAddon(...)`, which sets `addon.Util` (Krowi_Util_2), `addon.MenuBuilder` (Krowi_Menu_2), `addon.Metadata` (TOC fields) and `addon.Localization`, then sets `addon.CurrencyLib` (Krowi_Currency_2). Krowi_Util files loaded into this addon's namespace set `addon.InjectOptions`, `addon.Options` and `addon.Icon` (with the addon compartment globals). Krowi_Util's `Options/Profiles.lua` is not loaded; this repo's `Options/Profiles.lua` takes its place.
+
+## Architecture
+
+- **Filtering works by replacing Blizzard's merchant API** (`Gui/MerchantFrame.lua:132-268`). `GetMerchantNumItems` rebuilds `addon.CachedItemIndices`, the real indices that pass `addon.Filters:Validate`; `GetMerchantItemLink`, `GetMerchantItemID`, `GetMerchantItemCostInfo`, `GetMerchantItemCostItem`, `CanAffordMerchantItem`, `BuyMerchantItem`, `PickupMerchantItem`, `GetMerchantItemMaxStack`, `MerchantFrame_GetProductInfo` and `C_MerchantFrame.GetItemInfo` (plus `GetMerchantItemInfo` on Classic) map a visible index to the real one through `GetCachedIndex`, which returns 0 for an unknown index. Blizzard's own `MerchantFrame_UpdateMerchantInfo` then pages through the filtered list, and four Blizzard purchase popups get their `OnAccept` replaced so they buy through the wrapper (`:246-262`). This is the design, and it is the repo's largest taint surface.
+- **The grid** (`Gui/MerchantItemsContainer.lua`): `MERCHANT_ITEMS_PER_PAGE = NumRows * NumColumns` (:91), extra `MerchantItemN` frames from `MerchantItemTemplate` (:75), placed in post-hooks of `MerchantFrame_UpdateMerchantInfo` and `MerchantFrame_UpdateBuybackInfo`. On Classic `MerchantFrame_Update` itself is replaced by a wrapper (:115-119); on Retail the code hooks `MerchantFrame.FilterDropdown:Update`. `Gui/MerchantFrame.lua` resizes `MerchantFrame` and re-anchors its insets, page and repair buttons.
+- **Filters** (`Filters.lua`): custom filter ids `KrowiEVU_LE_LOOT_FILTER_*` (100 and up) next to Blizzard's `LE_LOOT_FILTER_*`. On Classic the addon defines `GetMerchantFilter` and `SetMerchantFilter` (`Filters.lua:105-114`) and, when missing, `MerchantFrame_SetFilter` (`Krowi_ExtendedVendorUI.lua:45-51`). The filter and options menus are built with `addon.MenuBuilder` (Blizzard's Menu API on Retail, a UIDropDownMenu frame on Classic, both inside Krowi_Menu).
+- `Gui/`: `FilterButton/`, `SearchBox/` and `OptionsButton/` (modern and classic variants through local `CreateModern`/`CreateClassic`), `TokenBanner/` (gold, currency and item totals, replacing Blizzard's money and token row), `BulkPurchase/` (a shift-click on an item opens `KrowiEVU_BulkPurchaseFrame`, which buys stack by stack every 0.5 s through the wrapped `BuyMerchantItem`).
+- `Options/`: AceConfig pages in Blizzard Settings (General, Profiles, Plugins, Credits). Defaults for `KrowiEVU_Options` are in `Options/Defaults.lua`, for `KrowiEVU_Filters` in `Filters.lua:63-103`; both are AceDB with every character on the shared `Default` profile. `Gui/FilterButton/FilterButtonMixin.lua:263-264` also writes a raw `LastFilter` at the root of `KrowiEVU_Filters`. There is no version field and no migration code.
+- **Public API** (`Api/`): the global `KrowiEVU` with `PluginsApi` (`RegisterPlugin`, `RegisterEvent`, `LoadPluginLocalization`) and `UtilApi.InjectOptions`. Built-in plugins: `Plugins/CanIMogIt.lua` and `Plugins/ElvUI.lua` (skins the frame when ElvUI's merchant skin is on). Krowi_Vendorer reads `KrowiEVU_MerchantItemsContainer` (`Api/Api.lua:8`) to step aside and calls its `HideAll()`; keep both.
+
+## Taint-sensitive areas
+
+`Gui/MerchantFrame.lua`, `Gui/MerchantItemsContainer.lua`, `Filters.lua:105-114`, `Krowi_ExtendedVendorUI.lua:45-51`, the filter hooks in `Gui/FilterButton/` and `Gui/SearchBox/`, `Gui/TokenBanner/`, `Gui/BulkPurchase/` and `Plugins/ElvUI.lua` replace Blizzard globals, write into Blizzard frames and tables, or sit on the purchase path. Run the `krowi:taint-reviewer` agent after changing any of them, and check the Classic branch as well as Retail. The whole addon was reviewed on 2026-10-15 against the live, classic, classic_anniversary and classic_era clones of wow-ui-source; the findings are under Known debt. The root cause is the API-replacement design itself: removing it means addon-owned item buttons with their own paging that call the merchant API with the real index, a work item of its own and never a side fix. The smaller findings can be fixed one at a time without changing what the player sees.
+
+## Localization
+
+`Localization/enUS.lua`, `deDE`, `frFR`, `itIT`, `ruRU`, `zhCN` and `Shared.lua`, loaded by `Localization/Files.xml`. The `AUTOGENTOKEN` marker is on line 6 of `enUS.lua` and line 7 of the others; above it is only the `NewLocale` call and `KrowiEVU.PluginsApi:LoadPluginLocalization(L)`. A new string goes into `enUS.lua` below the marker (22.0 appended its strings at the end; the next CurseForge export sorts them). Do not add `L["..."] = true` to the other locale files: outside the default locale AceLocale stores the key itself, so the player sees the raw key instead of the English text. Those files hold only translations and fall back to enUS; a renamed key is renamed in every file that has it. Ask Krowi whether a new string should also go onto the CurseForge localization page. `Shared.lua` aliases Blizzard global strings and finally sets `addon.L`.
+
+## Code style
+
+Match the file you are editing; this repo's style is not Krowi_AchievementFilter's and must not be converted to it:
+
+- Indentation is mixed. Tabs in `Filters.lua`, `Gui/MerchantFrame.lua`, `Gui/FilterButton/FilterButtonMixin.lua`, `Gui/OptionsButton/OptionsButtonMixin.lua` and the FilterButton, OptionsButton and SearchBox XML; 4 spaces in the other files. Several files mix both (`Gui/MerchantItemsContainer.lua`, `Plugins/ElvUI.lua`, `Gui/TokenBanner/TokenMixin.lua`, `Krowi_ExtendedVendorUI.lua:45-51`): follow the surrounding block. New files use 4 spaces, like most code added since 21.0.
+- No semicolons (two lines in `TokenMixin.lua` are the exception).
+- Single quotes in code; the locale files use double quotes (the CurseForge export format), except `Shared.lua`.
+- Line 1 is `local _, addon = ...` (or `local addonName, addon = ...`); older files put `-- [[ Namespaces ]] --` above it. No copyright banner. Section comments are `-- [[ Name ]] --`.
+- Module tables on `addon.*` (`addon.Gui.FilterButton`, `addon.Filters`) with a camelCase local alias; functions PascalCase, locals camelCase; globals, frames, mixins and templates `KrowiEVU_<Name>`, `KrowiEVU_<Name>Mixin`, `KrowiEVU_<Name>_Template`.
+- CRLF on disk (LF in git, `core.autocrlf=true`), no BOM, no final newline (except `Localization/Files.xml`, which git stores with CRLF, and the bundled Ace libs). There is no `.editorconfig`.
+- `.vscode/settings.json` lists the globals the Lua language server accepts (still with `KrowiV_*` names from Krowi_Vendorer). The Ketho WoW API extension writes the `Lua.runtime.*` and `Lua.workspace.library` keys there and prunes WoW API globals itself, so add only addon and library globals by hand.
+- Do not restyle lines you are not otherwise changing.
+
+## Testing in game
+
+`.vscode/settings.json` fsdeploys on every save (`deployWorkspaceOnSave`) to `_retail_` only; the Classic, Era and PTR nodes are commented out. Its nodes exclude `.claude` and `docs`, so a save no longer copies a worktree's files into the AddOns folder, but it still redeploys the main checkout over a worktree deploy. Before an in-game check, run the kit's `Deploy.ps1 -WhatIf` (add `-Client Classic`, `Anniversary` or `Era` for the other clients) and deploy, then `/reload` and `Read-GameErrors.ps1` (see `WowAddons.md`, Closing the loop with the game). Open a vendor and switch filters, page, search and buy back; check a Classic client separately, since it runs the non-mainline branches. Buying is a real action: test bulk purchase on cheap items.
+
+## Git and release
+
+- `dev` is the integration branch. Releases are cut on `dev` (`Release x.y` commits and tags) and then merged to `main` through a "Dev" pull request with a merge commit (#84, #86). Branch new work from `dev`; the release preflight detects `dev` as the release branch.
+- Release only with the plugin's `krowi:release` skill. Versions are `major.minor` (22.1) and are uploaded as stable: no GitHub release has ever been a pre-release.
+- `origin` still points at the repo's old name, `TheKrowi/Krowi_MerchantFrameExtended` (GitHub redirects it to `TheKrowi/Krowi_ExtendedVendorUI`); the `StefanoVe` remote is a contributor's fork. Branches `cata-classic-test`, `cata-classic-test-2` and `shopping-list` are old and unmerged; `filters` is merged.
+- `raw/` and `wiki/` hold LLM-wiki notes from 2026-06-03 (a codebase analysis and six articles), not a GitHub wiki. They are stale (version 21.3, Cataclysm and Wrath clients, no Bulk Purchase): trust the code over them. Neither fsdeploy nor the addon manager's zip ships them.
+
+## Known debt (verified 2026-10-15)
+
+Taint, from the 2026-10-15 review (each checked against wow-ui-source; none reproduced in game):
+
+- `Gui/MerchantFrame.lua:157-244` replaces ten Blizzard merchant API globals and `MerchantFrame_GetProductInfo`, and `Gui/MerchantItemsContainer.lua:91` writes `MERCHANT_ITEMS_PER_PAGE`: every Blizzard merchant refresh, hover, click and purchase popup runs addon code, and every other addon calling these APIs gets filtered indices. Blizzard's `C_MerchantFrame.IsMerchantItemRefundable(index)` (live `MerchantFrame.lua:356`) is not remapped, so under a filter the non-refundable prompt checks the wrong item.
+- `Gui/MerchantFrame.lua:161-177` writes a `GetItemInfo` polyfill into Blizzard's `C_MerchantFrame` table on Classic, and `:265-268` replaces the real function on Retail. On Classic the two stack and map the index twice, so the token banner's gold total (`Gui/TokenBanner/TokenBanner.lua:115`) is wrong while a filter hides items.
+- `Gui/MerchantFrame.lua:246-262` replaces `OnAccept` on four Blizzard purchase popups with code identical to Blizzard's own: only taint, no effect.
+- `Gui/MerchantItemsContainer.lua:115-119` replaces `MerchantFrame_Update` on Classic. On Retail `:111` hooks `MerchantFrame.FilterDropdown:Update`, which Blizzard skips under the `MerchantFilterDisabled` game rule (live `MerchantFrame.lua:195-198`), leaving the grid with stale rows. Both exist only to call `PrepareInfo()`, which could run at the top of the hooks at :171 and :180.
+- `Krowi_ExtendedVendorUI.lua:45-51` defines the Blizzard-named global `MerchantFrame_SetFilter` (no client has one), which sets `MerchantFrame.page` and calls `MerchantFrame_Update()` from addon code, also on every vendor open through `Gui/FilterButton/FilterButtonMixin.lua:267-283`.
+- Leaked or Blizzard-named globals: `GetMerchantFilter` and `SetMerchantFilter` on Classic (`Filters.lua:105-114`), `HideAllTokens` (`Gui/TokenBanner/TokenBanner.lua:9`, a missing `local`).
+- `Gui/MerchantFrame.lua:239-244` wraps `MerchantFrame_GetProductInfo` to set `productInfo.index`, which nothing reads; Era has no original.
+- Possible secret-value error on Retail: `Gui/SearchBox/SearchBoxMixin.lua:49-65` stores and compares `UnitName('npc')`, which is `SecretWhenUnitNameIdentityRestricted`, without an `issecretvalue` probe.
+
+Other bugs and drift:
+
+- With Bulk Purchase on, `Gui/BulkPurchase/BulkPurchaseMixin.lua:137-138` calls `MerchantItemButton_OnModifiedClick` again after Blizzard's own `OnClick` did (live `MerchantFrame.xml:43-49`): a shift-click with chat open links the item twice, a ctrl-click dresses up twice.
+- Classic: `Gui/BulkPurchase/BulkPurchaseMixin.lua:19` reads `GetMerchantItemInfo` without `isPurchasable`, so `hasExtendedCost` gets `isUsable`; clicking a currency in the token banner calls `CharacterFrame:ToggleTokenFrame()` (`Gui/TokenBanner/TokenMixin.lua:116`), which only Retail has.
+- `Gui/OptionsButton/OptionsButtonMixin.lua:47` points at `Interface\AddOns\Krowi_MerchantFrameExtended\Media\`, the old folder name, so the arrow texture in the hide-options-button text never shows.
+- `Plugin_CanIMogIt_Name` is `= true` in the deDE, frFR, itIT and ruRU exports, so those clients show the raw key as the plugin name.
+- `README.md` and `_Packaging/Description.md` do not mention Bulk Purchase.
+- Unused: `addon.IsWrathClassic` and `addon.IsDragonflightRetail` (`Krowi_ExtendedVendorUI.lua:7-8`), `KrowiEVU_Debug`, the empty `filters:RefreshFilters`, `Gui/TokenBanner/TokenBannerMixin.lua` and `Options/Options.lua`.
