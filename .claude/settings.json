@@ -1,0 +1,34 @@
+{
+    "extraKnownMarketplaces": {
+        "krowi-claudekit": {
+            "source": {
+                "source": "directory",
+                "path": "E:/World of Warcraft Addon Development/Krowi_ClaudeKit"
+            }
+        }
+    },
+    "enabledPlugins": {
+        "krowi@krowi-claudekit": true
+    },
+    "permissions": {
+        "additionalDirectories": [
+            "../wow-ui-source/",
+            "../Krowi_ClaudeKit/"
+        ],
+        "allow": [
+            "PowerShell(& \"E:\\World of Warcraft Addon Development\\Krowi_ClaudeKit\\tools\\Deploy.ps1\" -WhatIf)",
+            "PowerShell(& \"E:\\World of Warcraft Addon Development\\Krowi_ClaudeKit\\tools\\Deploy.ps1\" -WhatIf *)",
+            "PowerShell(& \"E:\\World of Warcraft Addon Development\\Krowi_ClaudeKit\\tools\\Read-GameErrors.ps1\")",
+            "PowerShell(& \"E:\\World of Warcraft Addon Development\\Krowi_ClaudeKit\\tools\\Read-GameErrors.ps1\" *)",
+            "PowerShell(& \"E:\\World of Warcraft Addon Development\\Krowi_ClaudeKit\\tools\\Read-GameScreenshot.ps1\")",
+            "PowerShell(& \"E:\\World of Warcraft Addon Development\\Krowi_ClaudeKit\\tools\\Read-GameScreenshot.ps1\" *)",
+            "PowerShell(& \"E:\\World of Warcraft Addon Development\\Krowi_ClaudeKit\\skills\\release\\Check-ReleaseReady.ps1\")",
+            "PowerShell(& \"E:\\World of Warcraft Addon Development\\Krowi_ClaudeKit\\skills\\release\\Check-ReleaseReady.ps1\" *)",
+            "PowerShell(& \"E:\\World of Warcraft Addon Development\\Krowi_ClaudeKit\\skills\\release\\Show-ReleaseZip.ps1\")",
+            "PowerShell(& \"E:\\World of Warcraft Addon Development\\Krowi_ClaudeKit\\skills\\release\\Show-ReleaseZip.ps1\" *)"
+        ]
+    },
+    "worktree": {
+        "baseRef": "head"
+    }
+}

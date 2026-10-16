@@ -10,3 +10,6 @@
 ### Fixed (22.1)
 - Recipe filter now also detects consumable items that teach recipes (e.g. some items classified as Consumable rather than Recipe)
 - Hovering over an item slot no longer errors when the item index is missing from the cache
+
+### Changed (22.2)
+- Support for WoW 12.1.5, TBC Anniversary 2.5.6 and Classic Era 1.15.9
