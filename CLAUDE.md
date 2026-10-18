@@ -53,7 +53,7 @@ Match the file you are editing; this repo's style is not Krowi_AchievementFilter
 
 ## Git and release
 
-- `dev` is the integration branch. Releases are cut on `dev` (`Release x.y` commits and tags) and then merged to `main` through a "Dev" pull request with a merge commit (#84, #86). Branch new work from `dev`; the release preflight detects `dev` as the release branch.
+- `main` is the only long-lived branch and the release branch. Releases used to be cut on `dev` and merged to `main` through a "Dev" pull request (#84, #86); `dev` was merged into `main` and removed on 2026-10-18. Branch new work from `main` and open PRs against it.
 - Release only with the plugin's `krowi:release` skill. Versions are `major.minor` (22.1) and ship as stable, `--stability stable`: no GitHub release has ever been a pre-release.
 - `origin` still points at the repo's old name, `TheKrowi/Krowi_MerchantFrameExtended` (GitHub redirects it to `TheKrowi/Krowi_ExtendedVendorUI`); the `StefanoVe` remote is a contributor's fork. Branches `cata-classic-test`, `cata-classic-test-2` and `shopping-list` are old and unmerged; `filters` is merged.
 - `raw/` and `wiki/` hold LLM-wiki notes from 2026-06-03 (a codebase analysis and six articles), not a GitHub wiki. They are stale (version 21.3, Cataclysm and Wrath clients, no Bulk Purchase): trust the code over them. Neither fsdeploy nor the addon manager's zip ships them.
