@@ -12,7 +12,7 @@ Nothing is reported broken by players, and no taint error has been reproduced in
 The CanIMogIt plugin no longer runs: it looks for `MerchantFrame_CIMIOnClick`, which current CanIMogIt does not have, so CanIMogIt's icons are not refreshed after a filter or search change. Slots added by raising Rows or Columns get no CanIMogIt icon and no ElvUI skin until `/reload`.
 
 ## Proposed outcome
-Extended Vendor UI shows the filtered vendor in its own item grid and leaves Blizzard's merchant functions and constants alone. A player who uses only Extended Vendor UI sees and does exactly what they do today, on every client: the same grid, look, paging, filters, search, token banner, Bulk Purchase, tooltips, cursors, purchase confirmations, buyback tab and options. The bugs above go away. Other addons see the vendor's real list again. CanIMogIt icons and the ElvUI skin keep working on every slot, and get better where they fall short today.
+Extended Vendor UI shows the filtered vendor in its own item grid and leaves Blizzard's merchant functions and constants alone. A player who uses only Extended Vendor UI sees and does exactly what they do today, on every client: the same grid, look, paging, filters, search, token banner, Bulk Purchase, tooltips, cursors, purchase confirmations, buyback tab and options. The bugs above go away. Other addons see the vendor's real list again. CanIMogIt icons and the ElvUI skin keep working on every slot, and get better where they fall short today. Players who use GW2_UI's or EllesmereUI's merchant skin, or EllesmereUI's merchant item levels, keep them on Extended Vendor UI's slots: Extended Vendor UI brings its own plugins for them.
 
 ## Affected users and systems
 - Players on the four clients the TOC lists (`## Interface: 120105, 50504, 20506, 11509`): Retail 12.1.5, Mists Classic 5.5.4, TBC Anniversary 2.5.6, Classic Era 1.15.9.
@@ -28,8 +28,9 @@ Extended Vendor UI shows the filtered vendor in its own item grid and leaves Bli
 - Purchase safety stays Blizzard's: every confirmation Blizzard shows today (extended cost, non-refundable, high price, limited currency) still shows, including when an item is dragged to a bag or a character slot.
 - Saved variables keep their shape; no migration.
 - Krowi_Vendorer and the public API keep working.
+- One release carries the redesign and the GW2_UI and EllesmereUI plugins; no release in between.
 
 ## Open questions
-Both answered at the design gate (spec.md, Decision).
-- Players who also run an addon that draws onto Blizzard's `MerchantItemN` buttons (Plumber's merchant prices, EllesmereUI's item levels and tile skin, GW2_UI's skin) lose those additions on the merchant tab. Is that acceptable?
-- Should other addons get a documented way to decorate Extended Vendor UI's item buttons?
+The draft's two questions (what happens to other addons' additions on Blizzard's `MerchantItemN` buttons, and a documented way for other addons to decorate Extended Vendor UI's slots) were answered at the design gate (spec.md, Decision).
+
+Open: how to serve Plumber's merchant prices, whose code Extended Vendor UI cannot reach. Decided before the release.
