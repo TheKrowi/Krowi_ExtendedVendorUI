@@ -102,6 +102,13 @@ local function SkinPageControls()
 end
 
 -- GW2_UI skins from a timer after PLAYER_LOGIN, after this addon loads, so everything waits for the first merchant window
+local function SkinPending()
+    SkinPageControls()
+    for _, itemSlot in ipairs(pendingItemSlots) do
+        SkinItemSlot(itemSlot)
+    end
+end
+
 local function OnFirstShow()
     if skin ~= nil then
         return
@@ -112,11 +119,13 @@ local function OnFirstShow()
         return
     end
 
-    SkinPageControls()
-    for _, itemSlot in ipairs(pendingItemSlots) do
-        SkinItemSlot(itemSlot)
-    end
+    local ok, err = pcall(SkinPending)
     wipe(pendingItemSlots)
+    if not ok then
+        skin = false -- GW2_UI changed under the plugin: leave the slots unskinned instead of erroring on every draw
+        geterrorhandler()(err)
+        return
+    end
     addon.Gui.MerchantItemsContainer:Update()
 end
 

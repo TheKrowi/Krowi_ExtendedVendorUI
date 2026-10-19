@@ -81,10 +81,7 @@ end
 -- Raises a money or currency frame by CURRENCY_LIFT every time drawing anchors it
 local function LiftCurrency(frame)
     local applying = false
-    local function Apply()
-        if applying then
-            return
-        end
+    local function Lift()
         local points = {}
         for i = 1, frame:GetNumPoints() do
             local point, relativeTo, relativePoint, x, y = frame:GetPoint(i)
@@ -93,12 +90,22 @@ local function LiftCurrency(frame)
         if #points == 0 then
             return
         end
-        applying = true
         frame:ClearAllPoints()
         for _, p in ipairs(points) do
             frame:SetPoint(p[1], p[2], p[3], p[4], p[5])
         end
+    end
+    -- Runs inside the addon's draw, outside the plugin error guard, so it guards itself
+    local function Apply()
+        if applying then
+            return
+        end
+        applying = true
+        local ok, err = pcall(Lift)
         applying = false
+        if not ok then
+            geterrorhandler()(err)
+        end
     end
     hooksecurefunc(frame, 'SetPoint', Apply)
     Apply()
@@ -132,8 +139,7 @@ local function SkinTile(itemSlot)
         qualityBorder:SetFrameLevel(button:GetFrameLevel() + 6)
         borderApi.CreateBorder(qualityBorder, 0, 0, 0, 1, 1, 'OVERLAY', 7)
         slotData[button] = { qualityBorder = qualityBorder }
-        hooksecurefunc(button, 'SetItemButtonQuality', PaintQualityBorder)
-        PaintQualityBorder(button)
+        PaintQualityBorder(button) -- And after every draw, from OnItemSlotUpdated
     end
 
     -- The icon centred in the row instead of at its top
@@ -191,14 +197,22 @@ end
 
 -- [[ Plugin ]] --
 -- EllesmereUI skins at PLAYER_LOGIN, after this addon loads, so the tile skin waits for the first merchant window
+local function SkinPending()
+    for _, itemSlot in ipairs(pendingItemSlots) do
+        SkinTile(itemSlot)
+    end
+end
+
 local function OnFirstShow()
     if tileSkinOn ~= nil then
         return
     end
     tileSkinOn = IsTileSkinOn() and true or false
     if tileSkinOn then
-        for _, itemSlot in ipairs(pendingItemSlots) do
-            SkinTile(itemSlot)
+        local ok, err = pcall(SkinPending)
+        if not ok then
+            tileSkinOn = false -- EllesmereUI changed under the plugin: leave the slots unskinned instead of erroring on every draw
+            geterrorhandler()(err)
         end
     end
     wipe(pendingItemSlots)
