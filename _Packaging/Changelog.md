@@ -11,8 +11,7 @@ All notable changes to this project will be documented in this file.
 - The token banner's gold total is right again while a filter is active (Classic)
 - With Bulk Purchase on, shift-clicking an item into chat links it once and ctrl-clicking it opens the dressing room once
 - Can I Mog It icons now update after changing the filter, the search or the page
-- With ElvUI, every item now shows its quality colour, not only the first 12 (Classic)
-- Slots added by raising the rows or columns now get the ElvUI skin and Can I Mog It icons without a reload
+- Slots added by raising the rows or columns now get Can I Mog It icons without a reload
 - The item grid now also updates where Blizzard turns its own merchant filter off (Retail)
 
 ## 22.2 - 2026-10-16

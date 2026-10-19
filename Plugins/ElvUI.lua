@@ -10,16 +10,8 @@ end
 
 local doSkin, engine, skins
 local isModern = addon.Util.IsMainline
-local hasCurrencyIconSkin = not isModern and not addon.Util.IsMistsClassic -- ElvUI's TBC and Classic (Era) merchant skins
 
--- ElvUI's skins for MerchantItemN (ElvUI/Game/<client>/Modules/Skins/Merchant.lua) only reach Blizzard's slots, so the addon's slots get the same steps here
-local function QuestIcon_SetTexture(iconQuest, texture)
-	if texture == TEXTURE_ITEM_QUEST_BANG then
-		iconQuest:SetTexture(engine.Media.Textures.BagQuestIcon)
-	end
-end
-
--- Mainline Merchant.lua:100-131
+-- This addon's own ElvUI slot skin, as in 22.2, applied when a slot is created
 local function SkinModernItemSlot(item)
 	local itemName = item:GetName()
 	item:Size(155, 45)
@@ -48,12 +40,9 @@ local function SkinModernItemSlot(item)
 	questIcon:SetTexCoord(0, 1, 0, 1)
 	questIcon:SetInside()
 
-	hooksecurefunc(questIcon, 'SetTexture', QuestIcon_SetTexture)
-
 	skins:HandleIconBorder(button.IconBorder)
 end
 
--- Mists, TBC and Classic Merchant.lua:33-62, plus the alternate currency icons of the TBC and Classic skins
 local function SkinClassicItemSlot(item)
 	local itemName = item:GetName()
 	local button = _G[itemName .. 'ItemButton']
@@ -83,27 +72,88 @@ local function SkinClassicItemSlot(item)
 
 	money:ClearAllPoints()
 	money:Point('BOTTOMLEFT', button, 'BOTTOMRIGHT', 3, 0)
+end
 
-	if hasCurrencyIconSkin then
-		for j = 1, 2 do
-			local currencyItem = _G[itemName .. 'AltCurrencyFrameItem' .. j]
-			local currencyIcon = _G[itemName .. 'AltCurrencyFrameItem' .. j .. 'Texture']
+-- ElvUI v16's merchant skin (ElvUI/Game/Shared/Skins/Merchant.lua, one file for every client) skins MerchantItem1 up to
+-- MERCHANT_ITEMS_PER_PAGE on each merchant update, on top of the skin above; until 22.2 that included this addon's slots.
+-- The same steps, in the same order: on the first draw of each slot, after the skin above.
+local QUEST_ICON = [[Interface\ContainerFrame\UI-Icon-QuestBang]] -- Merchant.lua:14
 
-			currencyIcon.backdrop = CreateFrame('Frame', nil, currencyItem)
-			currencyIcon.backdrop:SetTemplate()
-			currencyIcon.backdrop:OffsetFrameLevel(nil, currencyItem)
-			currencyIcon.backdrop:SetOutside(currencyIcon)
-
-			currencyIcon:SetTexCoords()
-			currencyIcon:SetParent(currencyIcon.backdrop)
-		end
+local function ElvQuestIcon_SetTexture(iconQuest, texture)
+	if texture == QUEST_ICON then
+		iconQuest:SetTexture(engine.Media.Textures.BagQuestIcon)
 	end
 end
 
--- Mainline Merchant.lua:39-56, run after each draw since drawing anchors the prices again
-local function PlaceModernPrices(item)
+-- Merchant.lua:70-114 (HandleMerchantItem)
+local elvSkinned = setmetatable({}, { __mode = 'k' })
+local function ElvSkinItemSlot(item)
+	if elvSkinned[item] then
+		return
+	end
+	elvSkinned[item] = true
+
+	local itemName = item:GetName()
+	item:Size(155, 45)
+	item:StripTextures(true)
+	item:CreateBackdrop('Transparent')
+	item.backdrop:Point('TOPLEFT', -3, 2)
+	item.backdrop:Point('BOTTOMRIGHT', 2, -3)
+
+	local slot = _G[itemName .. 'SlotTexture']
+	item.Name:Point('LEFT', slot, 'RIGHT', -5, 5)
+	item.Name:Size(110, 30)
+
+	local button = _G[itemName .. 'ItemButton']
+	button:StripTextures()
+	button:StyleButton()
+	button:SetTemplate(nil, true)
+	button:Point('TOPLEFT', item, 'TOPLEFT', 4, -4)
+
+	local icon = button.icon
+	icon:SetTexCoords()
+	icon:ClearAllPoints()
+	icon:Point('TOPLEFT', 1, -1)
+	icon:Point('BOTTOMRIGHT', -1, 1)
+
+	if engine.Modern then
+		local questIcon = button.IconQuestTexture
+		questIcon:SetTexCoord(0, 1, 0, 1)
+		questIcon:SetInside()
+
+		hooksecurefunc(questIcon, 'SetTexture', ElvQuestIcon_SetTexture)
+	end
+
+	button.IconOverlay:SetInside(button, 1, 1) -- Decor items
+
+	skins:HandleIconBorder(button.IconBorder)
+
+	for j = 1, MAX_ITEM_COST do
+		_G[itemName .. 'AltCurrencyFrameItem' .. j .. 'Texture']:SetTexCoords()
+	end
+end
+
+-- Merchant.lua:47-57
+local function SetQualityColor(button, name, link)
+	local quality = link and C_Item.GetItemQualityByID(link)
+	if quality and quality > 1 then
+		local r, g, b = engine:GetItemQualityColor(quality)
+		button:SetBackdropBorderColor(r, g, b)
+		name:SetTextColor(r, g, b)
+	else
+		button:SetBackdropBorderColor(unpack(engine.media.bordercolor))
+		name:SetTextColor(1, 1, 1)
+	end
+end
+
+-- Merchant.lua:133-154 for one slot, after each draw since drawing anchors the prices again
+local function UpdateItemSlot(item, index)
 	local itemName = item:GetName()
 	local button = _G[itemName .. 'ItemButton']
+
+	if not engine.Modern and index then -- Classic merchants have no quality borders; only filled slots
+		SetQualityColor(button, _G[itemName .. 'Name'], button.link)
+	end
 
 	local money = _G[itemName .. 'MoneyFrame']
 	money:ClearAllPoints()
@@ -119,48 +169,12 @@ local function PlaceModernPrices(item)
 	end
 end
 
--- Mists Merchant.lua:128-153 (the same in TBC and Classic), for every slot instead of MerchantItem1-12
-local function ColorClassicItemSlot(item)
-	local itemName = item:GetName()
-	local button = _G[itemName .. 'ItemButton']
-	local name = _G[itemName .. 'Name']
-
-	if button.link then
-		local quality = C_Item.GetItemQualityByID(button.link)
-		if quality and quality > 1 then
-			local r, g, b = engine:GetItemQualityColor(quality)
-			button:SetBackdropBorderColor(r, g, b)
-			name:SetTextColor(r, g, b)
-		else
-			button:SetBackdropBorderColor(unpack(engine.media.bordercolor))
-			name:SetTextColor(1, 1, 1)
-		end
-	else
-		button:SetBackdropBorderColor(unpack(engine.media.bordercolor))
-		name:SetTextColor(1, 1, 1)
-	end
-end
-
--- Mainline Merchant.lua:166-169; Mists Merchant.lua:66-75, TBC and Classic Merchant.lua:84-93
+-- Merchant.lua:228-231
 local function SkinPageControls()
-	local prevButton, nextButton, pageText = KrowiEVU_MerchantPrevPageButton, KrowiEVU_MerchantNextPageButton, KrowiEVU_MerchantPageText
-	if isModern then
-		skins:HandleNextPrevButton(nextButton, nil, nil, true, true)
-		skins:HandleNextPrevButton(prevButton, nil, nil, true, true)
-		nextButton:ClearAllPoints()
-		nextButton:Point('LEFT', pageText, 'RIGHT', 100, 4)
-	else
-		pageText:SetTextColor(1, 1, 1)
-		pageText:Point('BOTTOM', -2, 10)
-
-		skins:HandleNextPrevButton(nextButton, nil, nil, nil, true)
-		nextButton:Point('BOTTOMRIGHT', MerchantFrame, 'BOTTOMRIGHT', -11, 10)
-		nextButton:Size(24)
-
-		skins:HandleNextPrevButton(prevButton, nil, nil, nil, true)
-		prevButton:Point('TOPLEFT', nextButton, 'TOPLEFT', -30, 0)
-		prevButton:Size(24)
-	end
+	skins:HandleNextPrevButton(KrowiEVU_MerchantNextPageButton, nil, nil, true, true)
+	skins:HandleNextPrevButton(KrowiEVU_MerchantPrevPageButton, nil, nil, true, true)
+	KrowiEVU_MerchantNextPageButton:ClearAllPoints()
+	KrowiEVU_MerchantNextPageButton:Point('LEFT', KrowiEVU_MerchantPageText, 'RIGHT', 100, 4)
 end
 
 -- ElvUI skins at PLAYER_LOGIN, after this addon loads, so the page controls and the buyback fix wait for the first merchant window
@@ -174,7 +188,8 @@ local function OnFirstShow()
 	SkinPageControls()
 
 	if not isModern then
-		-- ElvUI's Classic buyback hook moves MerchantItem1-12 with PointXY (MerchantItemPoint); this hook comes after it and puts them back
+		-- ElvUI before v16 moved MerchantItem1-12 with PointXY in its Classic buyback hook (MerchantItemPoint); this hook comes after it
+		-- and puts them back. Harmless with v16, which no longer moves them.
 		hooksecurefunc('MerchantFrame_UpdateBuybackInfo', function()
 			addon.Gui.MerchantItemsContainer:PlaceBuybackItemSlots()
 		end)
@@ -290,9 +305,6 @@ function elv:OnItemSlotUpdated(item, index)
     if not (doSkin and doSkin.Merchant) then
         return
     end
-    if isModern then
-        PlaceModernPrices(item)
-    elseif index then
-        ColorClassicItemSlot(item)
-    end
+    ElvSkinItemSlot(item)
+    UpdateItemSlot(item, index)
 end
