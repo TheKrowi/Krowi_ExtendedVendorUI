@@ -8,7 +8,7 @@ local menuBuilder
 
 local function UpdateView()
 	merchantItemsContainer:LoadMaxNumItemSlots()
-	MerchantFrame_Update()
+	merchantItemsContainer:Refresh()
 	addon.Gui.TokenBanner:Update()
 end
 

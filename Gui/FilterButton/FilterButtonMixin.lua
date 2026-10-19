@@ -63,7 +63,7 @@ function KrowiEVU_FilterButtonMixin:OnLoad()
 	-- Modern needs SetupMenuForModern
 	if isModern then
 		menuBuilder:SetupMenuForModern(self)
-		self:OverrideText(GetLootFilterText(GetMerchantFilter()))
+		self:OverrideText(GetLootFilterText(addon.Filters:GetFilter()))
 	end
 end
 
@@ -79,7 +79,7 @@ function KrowiEVU_FilterButtonMixin:OnMouseDown()
 end
 
 function KrowiEVU_FilterButtonMixin:SetFilter(value)
-	MerchantFrame_SetFilter(nil, value)
+	addon.Filters:SetFilter(value)
 	if isModern then
 		self:OverrideText(GetLootFilterText(value))
 	else
@@ -91,11 +91,11 @@ end
 
 function KrowiEVU_FilterButtonMixin:OnCheckboxSelect(filters, keys)
 	addon.Util.WriteNestedKeys(filters, keys, not addon.Util.ReadNestedKeys(filters, keys))
-	MerchantFrame_SetFilter(nil, GetMerchantFilter())
+	addon.Filters:SetFilter(addon.Filters:GetFilter())
 end
 
 function KrowiEVU_FilterButtonMixin:KeyEqualsText(filters, keys, value)
-	return GetMerchantFilter() == value
+	return addon.Filters:GetFilter() == value
 end
 
 function KrowiEVU_FilterButtonMixin:OnRadioSelect(filters, keys, value)
@@ -106,7 +106,7 @@ function KrowiEVU_FilterButtonMixin:OnAllSelect(filters, keys, value)
 	for index, _ in next, addon.Filters[keys .. 'Types'] do
 		addon.Util.WriteNestedKeys(filters, {keys, index}, value)
 	end
-	MerchantFrame_SetFilter(nil, GetMerchantFilter())
+	addon.Filters:SetFilter(addon.Filters:GetFilter())
 end
 
 -- Menu Helpers
@@ -256,28 +256,22 @@ end
 
 -- Hooks
 
-hooksecurefunc('MerchantFrame_SetFilter', function(self, filter)
-	if not filter then
-		return
-	end
-	KrowiEVU_Filters = KrowiEVU_Filters or {}
-	KrowiEVU_Filters.LastFilter = filter
-end)
-
 if isModern then
 	hooksecurefunc('ResetSetMerchantFilter', function(self)
 		if addon.Options.db.profile.RememberFilter and KrowiEVU_Filters.LastFilter then
-			MerchantFrame_SetFilter(nil, KrowiEVU_Filters.LastFilter)
+			addon.Filters:SetFilter(KrowiEVU_Filters.LastFilter)
+		else
+			addon.Filters:SyncFilter()
 		end
-		KrowiEVU_FilterButton:OverrideText(GetLootFilterText(GetMerchantFilter()))
+		KrowiEVU_FilterButton:OverrideText(GetLootFilterText(addon.Filters:GetFilter()))
 	end)
 else
 	MerchantFrame:HookScript('OnShow', function(self)
 		if addon.Options.db.profile.RememberFilter and KrowiEVU_Filters and KrowiEVU_Filters.LastFilter then
-			MerchantFrame_SetFilter(nil, KrowiEVU_Filters.LastFilter)
+			addon.Filters:SetFilter(KrowiEVU_Filters.LastFilter)
 		else
-			MerchantFrame_SetFilter(nil, LE_LOOT_FILTER_ALL)
+			addon.Filters:SetFilter(LE_LOOT_FILTER_ALL)
 		end
-		KrowiEVU_FilterButton:SetText(GetLootFilterText(GetMerchantFilter()))
+		KrowiEVU_FilterButton:SetText(GetLootFilterText(addon.Filters:GetFilter()))
 	end)
 end

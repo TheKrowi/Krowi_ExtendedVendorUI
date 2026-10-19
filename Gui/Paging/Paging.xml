@@ -1,0 +1,50 @@
+<Ui>
+    <!-- Copies of Blizzard's MerchantPrevPageButton and MerchantNextPageButton (live Blizzard_UIPanels_Game/Mainline/MerchantFrame.xml:520-575, the same on Classic), without their OnClick -->
+    <Button name='KrowiEVU_MerchantPrevPageButton_Template' hidden='true' virtual='true'>
+        <Size x='32' y='32'/>
+        <Layers>
+            <Layer level='BACKGROUND'>
+                <FontString inherits='GameFontNormal' justifyH='LEFT' text='PREV'>
+                    <Anchors>
+                        <Anchor point='LEFT' relativeTo='$parent' relativePoint='RIGHT'/>
+                    </Anchors>
+                </FontString>
+                <Texture file='Interface\Buttons\UI-PageButton-Background'>
+                    <Size x='32' y='32'/>
+                    <Anchors>
+                        <Anchor point='CENTER' x='0' y='1'/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <NormalTexture file='Interface\Buttons\UI-SpellbookIcon-PrevPage-Up'/>
+        <PushedTexture file='Interface\Buttons\UI-SpellbookIcon-PrevPage-Down'/>
+        <DisabledTexture file='Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled'/>
+        <HighlightTexture file='Interface\Buttons\UI-Common-MouseHilight' alphaMode='ADD'/>
+    </Button>
+
+    <Button name='KrowiEVU_MerchantNextPageButton_Template' hidden='true' virtual='true'>
+        <Size x='32' y='32'/>
+        <Layers>
+            <Layer level='BACKGROUND'>
+                <FontString inherits='GameFontNormal' justifyH='RIGHT' text='NEXT'>
+                    <Anchors>
+                        <Anchor point='RIGHT' relativeTo='$parent' relativePoint='LEFT' x='-3' y='0'/>
+                    </Anchors>
+                </FontString>
+                <Texture file='Interface\Buttons\UI-PageButton-Background'>
+                    <Size x='32' y='32'/>
+                    <Anchors>
+                        <Anchor point='CENTER' x='0' y='1'/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <NormalTexture file='Interface\Buttons\UI-SpellbookIcon-NextPage-Up'/>
+        <PushedTexture file='Interface\Buttons\UI-SpellbookIcon-NextPage-Down'/>
+        <DisabledTexture file='Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled'/>
+        <HighlightTexture file='Interface\Buttons\UI-Common-MouseHilight' alphaMode='ADD'/>
+    </Button>
+
+    <Script file='Paging.lua'/>
+</Ui>

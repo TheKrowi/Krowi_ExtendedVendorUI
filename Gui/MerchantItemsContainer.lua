@@ -2,6 +2,8 @@
 local _, addon = ...
 addon.Gui.MerchantItemsContainer = {}
 local merchantItemsContainer = addon.Gui.MerchantItemsContainer
+local merchantItemSlot = addon.Gui.MerchantItemSlot
+local paging = addon.Gui.Paging
 
 merchantItemsContainer.FirstOffsetX = 11
 merchantItemsContainer.FirstOffsetY = -69
@@ -14,142 +16,97 @@ merchantItemsContainer.DefaultBuybackInfoNumRows = 6
 merchantItemsContainer.DefaultBuybackInfoNumColumns = 2
 merchantItemsContainer.ItemWidth, merchantItemsContainer.ItemHeight = MerchantItem1:GetSize()
 
--- Choosing to overwrite this function as not to mess with the GameTooltip's SetMerchantItem
-local function ItemSlotOnEnter(button)
-	GameTooltip:SetOwner(button, 'ANCHOR_RIGHT')
-	if MerchantFrame.selectedTab == 1 then
-		local index = addon.CachedItemIndices[button:GetID()]
-		if not index then return end
-		GameTooltip:SetMerchantItem(index)
-		GameTooltip_ShowCompareItem(GameTooltip)
-		MerchantFrame.itemHover = button:GetID()
-	else
-		GameTooltip:SetBuybackItem(button:GetID())
-		if IsModifiedClick('DRESSUP') and button.hasItem then
-			ShowInspectCursor()
-		else
-			ShowBuybackSellCursor(button:GetID())
-		end
-	end
-end
+-- The merchant tab shows the addon's own item slots, KrowiEVU_MerchantItem<N>, with the vendor's real indices that pass the filter.
+-- Blizzard's MerchantItem1-10 keep being filled by Blizzard's own code and are hidden there; the buyback tab uses Blizzard's MerchantItem1-12.
+local indices = {}
+local itemSlots = {}
+local isOwnItemButton = {}
 
-local function SetOnEnter(frame)
-    frame:SetScript('OnEnter', ItemSlotOnEnter)
-    frame.UpdateTooltip = ItemSlotOnEnter
-    local function handleModifiedClick(btn, button)
+-- [[ Item slots ]] --
+-- Blizzard's MerchantItemTemplate OnClick (live MerchantFrame.xml:43-49), with Bulk Purchase taking the modified clicks when it is on
+local function ItemButton_OnClick(self, button)
+    if IsModifiedClick() then
         if addon.Options.db and addon.Options.db.profile.BulkPurchase.Enabled then
-            KrowiEVU_BulkPurchaseMixin:OnModifiedClick(btn, button)
+            KrowiEVU_BulkPurchaseMixin:OnModifiedClick(self, button)
         else
-            MerchantItemButton_OnModifiedClick(btn, button)
+            MerchantItemButton_OnModifiedClick(self, button)
         end
+    else
+        MerchantItemButton_OnClick(self, button)
     end
-    frame:HookScript('OnClick', function(btn, button)
-        if addon.Options.db and addon.Options.db.profile.BulkPurchase.Enabled and IsModifiedClick() then
-            handleModifiedClick(btn, button)
-            if MerchantFrame_CloseStackSplitFrame then
-                MerchantFrame_CloseStackSplitFrame()
-            elseif StackSplitFrame then
-                StackSplitFrame:Hide()
-            end
-        end
-    end)
-end
-
-local infoNumRows, infoNumColumns = 0, 0
-local itemSlotTable = {}
-for i = 1, 12, 1 do
-    SetOnEnter(_G['MerchantItem' .. i].ItemButton)
-	tinsert(itemSlotTable, _G['MerchantItem' .. i])
-end
-
-function merchantItemsContainer:HideAll()
-    for _, itemSlot in next, itemSlotTable do
-		itemSlot:Hide()
-	end
 end
 
 local function GetItemSlot(index)
-	if itemSlotTable[index] then
-		return itemSlotTable[index]
-	end
-	local frame = CreateFrame('Frame', 'MerchantItem' .. index, MerchantFrame, 'MerchantItemTemplate')
-    SetOnEnter(frame.ItemButton)
-	itemSlotTable[index] = frame
-	return frame
+    if itemSlots[index] then
+        return itemSlots[index]
+    end
+    local itemSlot = CreateFrame('Frame', 'KrowiEVU_MerchantItem' .. index, MerchantFrame, 'MerchantItemTemplate')
+    itemSlot:Hide()
+    itemSlot.ItemButton:SetScript('OnClick', ItemButton_OnClick)
+    isOwnItemButton[itemSlot.ItemButton] = true
+    itemSlots[index] = itemSlot
+    KrowiEVU.PluginsApi:CallPlugins('OnItemSlotCreated', itemSlot)
+    return itemSlot
+end
+
+local function GetBlizzardItemSlot(index)
+    return _G['MerchantItem' .. index]
 end
 
 function merchantItemsContainer:LoadMaxNumItemSlots()
-    local maxNumRows = math.max(addon.Options.db.profile.NumRows, self.DefaultBuybackInfoNumRows)
-    local maxNumColumns = math.max(addon.Options.db.profile.NumColumns, self.DefaultBuybackInfoNumColumns)
-    local maxNumItems = maxNumRows * maxNumColumns
-    if #itemSlotTable < maxNumItems then
-        for i = 1, maxNumItems, 1 do
-            local itemSlot = GetItemSlot(i)
-            itemSlot:Hide()
-        end
-    end
-    MERCHANT_ITEMS_PER_PAGE = addon.Options.db.profile.NumRows * addon.Options.db.profile.NumColumns
-end
-
-function merchantItemsContainer:PrepareMerchantInfo()
-    infoNumRows, infoNumColumns = addon.Options.db.profile.NumRows, addon.Options.db.profile.NumColumns
-end
-
-function merchantItemsContainer:PrepareBuybackInfo()
-    infoNumRows, infoNumColumns = self.DefaultBuybackInfoNumRows, self.DefaultBuybackInfoNumColumns
-end
-
-function merchantItemsContainer:PrepareInfo()
-    if MerchantFrame.selectedTab == 1 then
-		self:PrepareMerchantInfo()
-	else
-		self:PrepareBuybackInfo()
-	end
-end
-
-if addon.Util.IsMainline then
-    hooksecurefunc(MerchantFrame.FilterDropdown, 'Update', function()
-        merchantItemsContainer:PrepareInfo()
-    end)
-else
-    local preHookFunction = MerchantFrame_Update
-    function MerchantFrame_Update()
-        merchantItemsContainer:PrepareInfo()
-        preHookFunction()
+    local maxNumItems = addon.Options.db.profile.NumRows * addon.Options.db.profile.NumColumns
+    for i = 1, maxNumItems, 1 do
+        GetItemSlot(i)
     end
 end
 
-function merchantItemsContainer:DrawItemSlot(index, row, column, offsetX, offsetY)
-    local itemSlot = GetItemSlot(index)
-    local calculatedOffsetX = self.FirstOffsetX + (column - 1) * (offsetX + self.ItemWidth)
-    local calculatedOffsetY = self.FirstOffsetY - (row - 1) * (offsetY + self.ItemHeight)
+function merchantItemsContainer:GetIndices()
+    return indices
+end
+
+local function HideItemSlots()
+    for _, itemSlot in next, itemSlots do
+        itemSlot:Hide()
+    end
+end
+
+function merchantItemsContainer:HideAll()
+    HideItemSlots()
+    paging:Hide()
+    for i = 1, BUYBACK_ITEMS_PER_PAGE, 1 do
+        GetBlizzardItemSlot(i):Hide()
+    end
+end
+
+-- [[ Placement ]] --
+local function PlaceItemSlot(itemSlot, row, column, offsetX, offsetY)
+    local calculatedOffsetX = merchantItemsContainer.FirstOffsetX + (column - 1) * (offsetX + merchantItemsContainer.ItemWidth)
+    local calculatedOffsetY = merchantItemsContainer.FirstOffsetY - (row - 1) * (offsetY + merchantItemsContainer.ItemHeight)
     itemSlot:ClearAllPoints()
     itemSlot:SetPoint('TOPLEFT', MerchantFrame, 'TOPLEFT', calculatedOffsetX, calculatedOffsetY)
-    itemSlot:Show()
 end
 
-function merchantItemsContainer:DrawItemSlots(numRows, numColumns, offsetX, offsetY)
+local function PlaceItemSlots(getItemSlot, numRows, numColumns, offsetX, offsetY, show)
     if addon.Options.db.profile.Direction == 'Columns' then
         for row = 1, numRows, 1 do
             for column = 1, numColumns, 1 do
-                local index = (column - 1) * numRows + row
-                self:DrawItemSlot(index, row, column, offsetX, offsetY)
+                local itemSlot = getItemSlot((column - 1) * numRows + row)
+                PlaceItemSlot(itemSlot, row, column, offsetX, offsetY)
+                if show then
+                    itemSlot:Show()
+                end
             end
         end
     else
         for column = 1, numColumns, 1 do
             for row = 1, numRows, 1 do
-                local index = (row - 1) * numColumns + column
-                self:DrawItemSlot(index, row, column, offsetX, offsetY)
+                local itemSlot = getItemSlot((row - 1) * numColumns + column)
+                PlaceItemSlot(itemSlot, row, column, offsetX, offsetY)
+                if show then
+                    itemSlot:Show()
+                end
             end
         end
-    end
-end
-
-function merchantItemsContainer:HideRemainingItemSlots(startIndex)
-    local numItemSlots = #itemSlotTable
-    for i = startIndex, numItemSlots, 1 do
-        itemSlotTable[i]:Hide()
     end
 end
 
@@ -157,26 +114,139 @@ function merchantItemsContainer:DrawMerchantBuyBackItem(show)
     if show then
         MerchantBuyBackItem:ClearAllPoints()
         MerchantBuyBackItem:SetPoint('LEFT', KrowiEVU_MerchantBuybackInset, 7, 0)
-	    MerchantBuyBackItem:Show()
+        MerchantBuyBackItem:Show()
     else
         MerchantBuyBackItem:Hide()
     end
 end
 
-function merchantItemsContainer:DrawForMerchantInfo()
-	self:DrawItemSlots(infoNumRows, infoNumColumns, self.OffsetX, self.OffsetMerchantInfoY)
-    self:HideRemainingItemSlots(infoNumRows * infoNumColumns + 1)
-	self:DrawMerchantBuyBackItem(true)
+-- [[ Merchant tab ]] --
+local function DrawPage()
+    local numRows, numColumns = addon.Options.db.profile.NumRows, addon.Options.db.profile.NumColumns
+    local itemsPerPage = numRows * numColumns
+    PlaceItemSlots(GetItemSlot, numRows, numColumns, merchantItemsContainer.OffsetX, merchantItemsContainer.OffsetMerchantInfoY, true)
+    for i = itemsPerPage + 1, #itemSlots, 1 do
+        itemSlots[i]:Hide()
+    end
+
+    local firstIndex = (paging:GetPage() - 1) * itemsPerPage
+    for i = 1, itemsPerPage, 1 do
+        local itemSlot = itemSlots[i]
+        local index = indices[firstIndex + i]
+        merchantItemSlot.Draw(itemSlot, index)
+        KrowiEVU.PluginsApi:CallPlugins('OnItemSlotUpdated', itemSlot, index)
+    end
+
+    paging:Update(#indices, itemsPerPage)
+    KrowiEVU.PluginsApi:CallPlugins('OnItemSlotsUpdated')
 end
+
+function merchantItemsContainer:Update()
+    if MerchantFrame.selectedTab ~= 1 then
+        return
+    end
+    addon.Filters:BuildList(indices)
+    DrawPage()
+    addon.Gui.MerchantFrame.SetMerchantFrameSize()
+    addon.Gui.TokenBanner:RequestUpdate()
+end
+
+-- For changes made outside a Blizzard refresh, like the options button
+function merchantItemsContainer:Refresh()
+    if not MerchantFrame:IsShown() or MerchantFrame.selectedTab ~= 1 then
+        return
+    end
+    self:Update()
+    addon.Gui.MerchantFrame.UpdateMerchantInfoLayout()
+end
+
+local function HideBlizzardMerchantInfo()
+    for i = 1, MERCHANT_ITEMS_PER_PAGE, 1 do
+        local itemSlot = GetBlizzardItemSlot(i)
+        if itemSlot then
+            itemSlot:Hide()
+        end
+    end
+    MerchantPrevPageButton:Hide()
+    MerchantNextPageButton:Hide()
+    MerchantPageText:Hide()
+end
+
 hooksecurefunc('MerchantFrame_UpdateMerchantInfo', function()
-    merchantItemsContainer:DrawForMerchantInfo()
+    if MerchantFrame.selectedTab ~= 1 then -- Krowi_Vendorer calls this on its own tabs
+        return
+    end
+    HideBlizzardMerchantInfo()
+    merchantItemsContainer:Update()
+    merchantItemsContainer:DrawMerchantBuyBackItem(true)
 end)
 
-function merchantItemsContainer:DrawForBuybackInfo()
-	self:DrawItemSlots(infoNumRows, infoNumColumns, self.OffsetX, self.OffsetBuybackInfoY)
-    self:HideRemainingItemSlots(infoNumRows * infoNumColumns + 1)
-	self:DrawMerchantBuyBackItem(false)
+-- [[ Buyback tab ]] --
+-- Only sets the anchors, so it can run again after another addon moved Blizzard's slots
+function merchantItemsContainer:PlaceBuybackItemSlots(show)
+    PlaceItemSlots(GetBlizzardItemSlot, self.DefaultBuybackInfoNumRows, self.DefaultBuybackInfoNumColumns, self.OffsetX, self.OffsetBuybackInfoY, show)
 end
+
 hooksecurefunc('MerchantFrame_UpdateBuybackInfo', function()
-    merchantItemsContainer:DrawForBuybackInfo()
+    HideItemSlots()
+    paging:Hide()
+    merchantItemsContainer:PlaceBuybackItemSlots(true)
+    merchantItemsContainer:DrawMerchantBuyBackItem(false)
+end)
+
+-- [[ Page, filter and item data changes ]] --
+local function CloseStackSplit()
+    if StackSplitFrame and StackSplitFrame:IsShown() and isOwnItemButton[StackSplitFrame.owner] then
+        if StackSplitCancelButton_OnClick then
+            StackSplitCancelButton_OnClick()
+        elseif StackSplitFrameCancel_Click then
+            StackSplitFrameCancel_Click()
+        else
+            StackSplitFrame:Hide()
+        end
+    end
+end
+
+paging.OnPageChanged = function()
+    CloseStackSplit()
+    DrawPage()
+end
+
+addon.Filters:RegisterListener(function()
+    paging:SetPage(1)
+    if MerchantFrame:IsShown() then
+        merchantItemsContainer:Update()
+    end
+end)
+
+local redrawPending
+merchantItemSlot.OnItemInfoReceived = function()
+    if redrawPending then
+        return
+    end
+    redrawPending = true
+    C_Timer.After(0, function()
+        redrawPending = nil
+        if MerchantFrame:IsShown() then
+            merchantItemsContainer:Update()
+        end
+    end)
+end
+
+MerchantFrame:HookScript('OnHide', function()
+    paging:SetPage(1)
+end)
+
+local eventFrame = CreateFrame('Frame')
+eventFrame:RegisterEvent('MERCHANT_SHOW')
+eventFrame:RegisterEvent('MERCHANT_CLOSED')
+eventFrame:SetScript('OnEvent', function(_, event)
+    if event == 'MERCHANT_SHOW' then
+        paging:SetPage(1) -- Also when switching vendors with the window open
+        if MerchantFrame:IsShown() then
+            merchantItemsContainer:Update()
+        end
+    else
+        merchantItemSlot.StopQualityUpdates()
+    end
 end)

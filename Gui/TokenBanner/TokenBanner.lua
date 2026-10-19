@@ -89,6 +89,17 @@ local function HideBlizzardTokenFrame()
     end
 end
 
+function tokenBanner:RequestUpdate()
+    if not KrowiEVU_TokenBanner then
+        return
+    end
+
+    addon.Util.DelayFunction('KrowiEVU_TokenBannerUpdate', 0.25, function()
+        tokenBanner:Update()
+        addon.Gui.MerchantFrame.SetMerchantFrameSize()
+    end)
+end
+
 -- MerchantFrame_UpdateCurrencies is called before MerchantFrame_Update so we need to do the handling here
 hooksecurefunc('MerchantFrame_Update', function()
     if not KrowiEVU_TokenBanner then
@@ -97,10 +108,7 @@ hooksecurefunc('MerchantFrame_Update', function()
 
     HideBlizzardTokenFrame()
 
-    addon.Util.DelayFunction('KrowiEVU_TokenBannerUpdate', 0.25, function()
-        tokenBanner:Update()
-        addon.Gui.MerchantFrame.SetMerchantFrameSize()
-    end)
+    tokenBanner:RequestUpdate()
 end)
 
 local function HideRemainingTokens(startIndex)
@@ -112,7 +120,7 @@ end
 
 -- Calculate functions
 local function CalculateGoldCount(goldCount, itemIndex)
-    local info = C_MerchantFrame.GetItemInfo(itemIndex)
+    local info = addon.Gui.MerchantItemSlot.GetItemInfo(itemIndex)
     if not info then
         return goldCount
     end
@@ -172,9 +180,9 @@ end
 
 local function CalculateCounts()
     local currencyCounts, itemCounts, goldCount = {}, {}, 0
-    for i = 1, #addon.CachedItemIndices do
-        goldCount = CalculateGoldCount(goldCount, i)
-        currencyCounts, itemCounts = CalculateOtherCounts(currencyCounts, itemCounts, i)
+    for _, index in ipairs(addon.Gui.MerchantItemsContainer:GetIndices()) do
+        goldCount = CalculateGoldCount(goldCount, index)
+        currencyCounts, itemCounts = CalculateOtherCounts(currencyCounts, itemCounts, index)
     end
     return goldCount, currencyCounts, itemCounts
 end

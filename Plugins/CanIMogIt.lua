@@ -10,12 +10,17 @@ function canIMogIt:InjectOptions()
     end)
 end
 
-function canIMogIt:Load()
-    if MerchantFrame_CIMIOnClick then
-        hooksecurefunc('MerchantFrame_SetFilter', function()
-            C_Timer.After(0.1, function()
-                MerchantFrame_CIMIOnClick()
-            end)
-        end)
+-- CanIMogIt puts its overlay only on Blizzard's MerchantItemN (CanIMogIt/Overlay/Merchant.lua), so the addon's slots get theirs here,
+-- through the same public functions, and are refreshed on every draw. The overlay reads the item button's link.
+function canIMogIt:OnItemSlotUpdated(slot)
+    if not (CIMI_AddToFrame and MerchantFrame_CIMIUpdateIcon) then
+        return
+    end
+    local itemButton = slot.ItemButton
+    if not itemButton.CanIMogItOverlay then
+        CIMI_AddToFrame(itemButton, MerchantFrame_CIMIUpdateIcon)
+    end
+    if itemButton.CanIMogItOverlay then
+        MerchantFrame_CIMIUpdateIcon(itemButton.CanIMogItOverlay)
     end
 end
