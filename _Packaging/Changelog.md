@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 
 ## 22.3
+### Added
+- GW2 UI's merchant skin on every vendor item
+- EllesmereUI's merchant skin and item levels on every vendor item (Retail)
+
 ### Changed
 - Other addons that read the vendor's items, like Auctionator, Zygor and TSM, now see all of them, not only the ones the filter shows
 
