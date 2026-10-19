@@ -56,6 +56,9 @@ Baseline and reproduction on 22.2, taken by Krowi on 2026-10-19 before the new b
 - Retail, the buyback tab: 6x2, Tooth Pick x10 in slot 1, the frame at its normal width.
 - Retail, search `tink`: only Tinker's Kit; the filter button reads Search.
 - Retail, Bulk Purchase on, chat box open, shift-click on Vanishing Powder: reproduced, the chat box gets `Say: [Vanishing Powder][Vanishing Powder]`.
+- Retail, Mirvedon (Silvermoon, 71 items, currency costs), the vendor for the after-check because Jeeves has to be summoned: 11 rows x 5 columns, filter All with every Hide collected box ticked (so All already hides items). Page 1 of 2: 55 items, recipes the character cannot use tinted red, names in quality colours, an unaffordable `175` heraldry cost greyed; Prev disabled, `Page 1 of 2`, Next. Page 2 of 2: 16 items, Next disabled. Sell-junk button and last-sold slot (Vanishing Powder x2), no repair buttons. Token banner `0 / 3`, `11 340 / 502 850`, `120 / 175`. The filter menu (Retail): Default filters, Paladin submenu, Binds when equipped, All, Search; Only show: Pets, Mounts, Toys, Appearances (Items) submenu, Appearances (Ensembles, Arsenals, ...), Illusions (experimental), Recipes, Housing, Custom submenu; Hide collected: the same eight.
+- Retail, Mirvedon buyback tab: Stinging Nettle x6 (grey name) and Vanishing Powder x2 in a 6x2 grid; the token banner keeps the merchant totals.
+- Retail, Mirvedon search `schem`: 13 Schematic items on one page, filter button `Search`, token banner `11 340 / 97 500`.
 - Not reproduced: Auctionator showed no tooltip prices on Krowi's character, so its wrong-item price could not be shown; the stale CanIMogIt icon (Jeeves sells nothing CanIMogIt marks) and the Classic gold total are left to the Classic baselines and the after-check.
 - Classic (Mists, Anniversary, Era): pending; each client is deployed only after its own baseline.
 
