@@ -2,10 +2,6 @@
 All notable changes to this project will be documented in this file.
 
 ## 22.3
-### Added
-- GW2 UI's merchant skin on every vendor item
-- EllesmereUI's merchant skin and item levels on every vendor item (Retail)
-
 ### Changed
 - Other addons that read the vendor's items, like Auctionator, Zygor and TSM, now see all of them, not only the ones the filter shows
 
@@ -16,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - With Bulk Purchase on, shift-clicking an item into chat links it once and ctrl-clicking it opens the dressing room once
 - Can I Mog It icons now update after changing the filter, the search or the page
 - Slots added by raising the rows or columns now get Can I Mog It icons without a reload
+- EllesmereUI's merchant skin and item levels now show on every item, not only the first 12 (Retail)
 - The item grid now also updates where Blizzard turns its own merchant filter off (Retail)
 - The vendor no longer shows an empty page after adding rows or columns while on a later page
 
