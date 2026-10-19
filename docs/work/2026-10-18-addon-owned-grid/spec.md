@@ -51,7 +51,13 @@ This is a redesign, not a single bug; the mechanism behind the known debt (`CLAU
 - The filter lives in the C merchant filter on Retail and in Blizzard-named globals on Classic (`Filters.lua:105-114`); every change goes through the addon's global `MerchantFrame_SetFilter` (`Krowi_ExtendedVendorUI.lua:45-51`), which writes `MerchantFrame.page` and calls `MerchantFrame_Update()`. `Gui/OptionsButton/OptionsButtonMixin.lua:9-13` also calls `MerchantFrame_Update()`.
 - `Plugins/CanIMogIt.lua:14` tests for `MerchantFrame_CIMIOnClick`, which the installed CanIMogIt does not define (its merchant refresh is `CIMI_UpdateMerchantFrame`, `CanIMogIt/Overlay/Merchant.lua:51`). `Plugins/ElvUI.lua:159-162` skins the slots once and then replaces its own skin function with a no-op, so slots added later stay unskinned; `:151-153` writes a `PointXY` no-op onto `MerchantItem1-12` to stop ElvUI's Classic `MerchantItemPoint` (`ElvUI/Game/Mists/Modules/Skins/Merchant.lua:13-23`) from moving the grid.
 
-Reproduction, recorded on 22.2 before any code changes (see Verification): Auctionator's price line under a filter (Retail), the Classic token banner gold total under a filter, the double chat link with Bulk Purchase on, and a stale CanIMogIt icon after a filter change.
+Baseline and reproduction on 22.2, taken by Krowi on 2026-10-19 before the new build was deployed (screenshots kept outside the repo):
+- Retail, Jeeves at 7x10, Direction Rows, filter All: 17 items in rows of 7, the other slots empty, no page controls; the repair and sell-junk buttons, the last-sold slot (Tooth Pick x10), the token banner `1 758 977g 98s 35c / 18g 34s 55c`, Krowi_Vendorer's Ignore List and Junk List tabs and its Auto Sell List.
+- Retail, the buyback tab: 6x2, Tooth Pick x10 in slot 1, the frame at its normal width.
+- Retail, search `tink`: only Tinker's Kit; the filter button reads Search.
+- Retail, Bulk Purchase on, chat box open, shift-click on Vanishing Powder: reproduced, the chat box gets `Say: [Vanishing Powder][Vanishing Powder]`.
+- Not reproduced: Auctionator showed no tooltip prices on Krowi's character, so its wrong-item price could not be shown; the stale CanIMogIt icon (Jeeves sells nothing CanIMogIt marks) and the Classic gold total are left to the Classic baselines and the after-check.
+- Classic (Mists, Anniversary, Era): pending; each client is deployed only after its own baseline.
 
 ## Design
 Extended Vendor UI keeps its own list of the vendor indices that pass the filter, and shows them in its own item slots with its own paging. Blizzard's merchant code runs untouched underneath: it still fills its own `MerchantItem1-10` and page widgets, which the addon hides on the merchant tab. Purchases, tooltips, confirmations and stack splitting stay Blizzard's code, run on the addon's slots with the vendor's real index.
