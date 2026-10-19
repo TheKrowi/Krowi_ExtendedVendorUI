@@ -23,7 +23,7 @@ Phase 1 (branch `refactor/2026-10-18-addon-owned-grid`):
 - `CLAUDE.md`: Architecture, Taint-sensitive areas, Known debt. `_Packaging/Changelog.md`: a `## 22.3` entry (Krowi sets the number).
 - Not changed: `.vscode/settings.json`, which has an uncommitted change in the main checkout.
 
-Phase 2 (branch `feat/2026-10-18-merchant-skin-plugins`, from the phase 1 branch): `Plugins/GW2_UI.lua`, `Plugins/EllesmereUI.lua`, `Plugins/Files.xml`, plugin strings in `Localization/enUS.lua`, a changelog line.
+Phase 2 (branch `feat/2026-10-18-merchant-skin-plugins`, from the phase 1 branch): `Plugins/GW2_UI.lua`, `Plugins/EllesmereUI.lua`, `Plugins/Files.xml`, plugin strings in `Localization/enUS.lua`, a changelog line. The four new strings (`Plugin_GW2UI_Name`, `_Desc`, `Plugin_EllesmereUI_Name`, `_Desc`) also go onto the CurseForge localization page (Krowi, 2026-10-19): after phase 2 is merged into `main`, through the addon manager's Export Localization for Base Namespace, enUS (it uploads the whole `enUS.lua` and deletes phrases missing from it), a step for Krowi since the addon manager is not driven outside the release skill.
 
 ## Order of work
 1. Baseline: 22.2 (this worktree before any code change) deployed to Retail, Classic, Anniversary and Era on 2026-10-19; Krowi takes the steps under Proof, baseline; results go into `spec.md`, Reproduction. Code is written meanwhile and deployed only after the baseline is recorded (approved with this plan).
