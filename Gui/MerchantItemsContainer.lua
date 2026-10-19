@@ -121,9 +121,19 @@ function merchantItemsContainer:DrawMerchantBuyBackItem(show)
 end
 
 -- [[ Merchant tab ]] --
+local firstDrawDone
 local function DrawPage()
+    if not firstDrawDone then
+        firstDrawDone = true
+        KrowiEVU.PluginsApi:CallPlugins('OnFirstDraw')
+    end
+
     local numRows, numColumns = addon.Options.db.profile.NumRows, addon.Options.db.profile.NumColumns
     local itemsPerPage = numRows * numColumns
+    local numPages = math.max(1, math.ceil(#indices / itemsPerPage))
+    if paging:GetPage() > numPages then -- The list got shorter or the pages larger
+        paging:SetPage(numPages)
+    end
     PlaceItemSlots(GetItemSlot, numRows, numColumns, merchantItemsContainer.OffsetX, merchantItemsContainer.OffsetMerchantInfoY, true)
     for i = itemsPerPage + 1, #itemSlots, 1 do
         itemSlots[i]:Hide()
@@ -141,7 +151,9 @@ local function DrawPage()
     KrowiEVU.PluginsApi:CallPlugins('OnItemSlotsUpdated')
 end
 
+local updatePending
 function merchantItemsContainer:Update()
+    updatePending = nil
     if MerchantFrame.selectedTab ~= 1 then
         return
     end
@@ -149,6 +161,20 @@ function merchantItemsContainer:Update()
     DrawPage()
     addon.Gui.MerchantFrame.SetMerchantFrameSize()
     addon.Gui.TokenBanner:RequestUpdate()
+end
+
+-- Updates on the next frame, once for any number of requests, and not at all when a Blizzard refresh updates first
+function merchantItemsContainer:RequestUpdate()
+    if updatePending then
+        return
+    end
+    updatePending = true
+    C_Timer.After(0, function()
+        if updatePending and MerchantFrame:IsShown() then
+            merchantItemsContainer:Update()
+        end
+        updatePending = nil
+    end)
 end
 
 -- For changes made outside a Blizzard refresh, like the options button
@@ -215,22 +241,12 @@ end
 addon.Filters:RegisterListener(function()
     paging:SetPage(1)
     if MerchantFrame:IsShown() then
-        merchantItemsContainer:Update()
+        merchantItemsContainer:RequestUpdate()
     end
 end)
 
-local redrawPending
 merchantItemSlot.OnItemInfoReceived = function()
-    if redrawPending then
-        return
-    end
-    redrawPending = true
-    C_Timer.After(0, function()
-        redrawPending = nil
-        if MerchantFrame:IsShown() then
-            merchantItemsContainer:Update()
-        end
-    end)
+    merchantItemsContainer:RequestUpdate()
 end
 
 MerchantFrame:HookScript('OnHide', function()
@@ -244,7 +260,7 @@ eventFrame:SetScript('OnEvent', function(_, event)
     if event == 'MERCHANT_SHOW' then
         paging:SetPage(1) -- Also when switching vendors with the window open
         if MerchantFrame:IsShown() then
-            merchantItemsContainer:Update()
+            merchantItemsContainer:RequestUpdate()
         end
     else
         merchantItemSlot.StopQualityUpdates()

@@ -32,6 +32,15 @@ Phase 2 (branch `feat/2026-10-18-merchant-skin-plugins`, from the phase 1 branch
 4. Phase 2 code, checks, PR.
 5. No release before both are merged and Plumber is settled.
 
+## Where it stands (2026-10-19, end of session)
+- Phase 1 and 2 are built and checked in game on Retail (Mirvedon), Mists (Bario Matalli) and Era against 22.2; Anniversary not checked (Krowi's choice). All four clients run the phase 2 build as it was before the last item below (commit `1b8b87f` on the phase 2 branch).
+- Final reviews done: `krowi:taint-reviewer` on phase 1, phase 2 and the ElvUI v16 change (no high or medium findings); `/code-review` on the whole diff found six points, being fixed:
+  1. Done, not yet deployed: `merchantItemsContainer:RequestUpdate()` queues addon-requested updates (filter change, `MERCHANT_SHOW`, item data) for the next frame and drops them when a Blizzard refresh updates first; the page is clamped to the last page when the list gets shorter (22.2 and Blizzard show an empty "Page 3 of 2"); the container calls a new plugin method `OnFirstDraw()` once, right before the first draw.
+  2. To do: document `OnFirstDraw` in `Api/PluginsApi.lua`; move the ElvUI plugin's `OnFirstShow` into `OnFirstDraw`, drop its Retail `SkinModernItemSlot` (fully repeated by `ElvSkinItemSlot`) and use `isModern` instead of ElvUI's `engine.Modern` (missing before ElvUI v16).
+  3. To do: CanIMogIt plugin also repaints the shown slots on CanIMogIt's own `OptionUpdate` and `ResetCache` messages, through `CanIMogIt:RegisterMessage` (CanIMogIt has its own message list, `core.lua:45-59`).
+  4. To do on the phase 2 branch (rebase it first): GW2_UI and EllesmereUI plugins use `OnFirstDraw` instead of their `OnShow` hooks and forced updates; `Plugins/EllesmereUI.lua` `SkinTile` merges into `slotData[button]` instead of replacing it (it lost the item-level text created before the skin, which then stayed on screen).
+  5. Then: spec requirement 12 and the changelog get the page clamp; syntax check, a short taint review of the changes, deploy Retail and Mists, a quick look by Krowi, set the work files to done, and ask Krowi before pushing the two branches and opening the PRs.
+
 ## Risks
 - The drawing copy differs from Blizzard's: the baseline comparison per client catches it; each copy names its source lines.
 - ElvUI's steps on the addon's page widgets must give today's combined anchors: screenshot comparison with ElvUI on (Mists, Era).
