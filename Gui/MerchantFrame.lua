@@ -46,12 +46,12 @@ do
 	MerchantFrameInset:SetPoint('RIGHT', MerchantFrame, 'RIGHT', -6, 0)
 	MerchantFrameInset:SetPoint('BOTTOM', buttonsInset, 'TOP', 0, 4)
 
-	MerchantPrevPageButton:ClearAllPoints()
-	MerchantPrevPageButton:SetPoint('BOTTOMLEFT', MerchantFrameInset, 5, 2)
-	MerchantNextPageButton:ClearAllPoints()
-	MerchantNextPageButton:SetPoint('BOTTOMRIGHT', MerchantFrameInset, -3, 2)
-	MerchantPageText:SetPoint('CENTER', MerchantFrameInset)
-	MerchantPageText:SetPoint('BOTTOM', buttonsInset, 'TOP', 0, 17)
+	KrowiEVU_MerchantPrevPageButton:ClearAllPoints()
+	KrowiEVU_MerchantPrevPageButton:SetPoint('BOTTOMLEFT', MerchantFrameInset, 5, 2)
+	KrowiEVU_MerchantNextPageButton:ClearAllPoints()
+	KrowiEVU_MerchantNextPageButton:SetPoint('BOTTOMRIGHT', MerchantFrameInset, -3, 2)
+	KrowiEVU_MerchantPageText:SetPoint('CENTER', MerchantFrameInset)
+	KrowiEVU_MerchantPageText:SetPoint('BOTTOM', buttonsInset, 'TOP', 0, 17)
 
 	BuybackBG:SetPoint('TOPLEFT', MerchantFrameInset)
 	BuybackBG:SetPoint('BOTTOMRIGHT', MerchantFrameInset)
@@ -73,7 +73,7 @@ function merchantFrame.SetMerchantFrameSize()
 		local itemHeight = merchantItemsContainer.OffsetMerchantInfoY + merchantItemsContainer.ItemHeight
 		local width = originalWidth + numExtraColumns * itemWidth
 		local height = originalHeight + numExtraRows * itemHeight + MerchantMoneyInset:GetHeight() - 23
-		if not MerchantPageText:IsShown() then
+		if not addon.Gui.Paging:IsShown() then
 			height = height - 36
 		end
 		MerchantFrame:SetSize(width, height)
@@ -82,7 +82,7 @@ function merchantFrame.SetMerchantFrameSize()
 	end
 end
 
-hooksecurefunc('MerchantFrame_UpdateMerchantInfo', function()
+function merchantFrame.UpdateMerchantInfoLayout()
 	merchantFrame.SetMerchantFrameSize()
 	if addon.Util.IsMainline then
 		MerchantFrame.FilterDropdown:Hide()
@@ -113,7 +113,8 @@ hooksecurefunc('MerchantFrame_UpdateMerchantInfo', function()
 		MerchantToken4:SetPoint('BOTTOMRIGHT', -185, 8)
 	end
 	MerchantFrameBottomLeftBorder:Hide()
-end)
+end
+hooksecurefunc('MerchantFrame_UpdateMerchantInfo', merchantFrame.UpdateMerchantInfoLayout)
 
 hooksecurefunc('MerchantFrame_UpdateBuybackInfo', function()
 	merchantFrame.SetMerchantFrameSize()
@@ -128,141 +129,3 @@ hooksecurefunc('MerchantFrame_UpdateBuybackInfo', function()
 	KrowiEVU_MerchantBuybackInset:Hide()
 	KrowiEVU_MerchantEmptyInset:Hide()
 end)
-
-addon.CachedItemIndices = {}
-
-local function GetCachedIndex(index)
-	return addon.CachedItemIndices[index] or 0
-end
-
-hooksecurefunc('MerchantFrame_UpdateAltCurrency', function(index, indexOnPage, canAfford)
-	local itemCount = GetMerchantItemCostInfo(index)
-	if itemCount <= 0 then
-		return
-	end
-
-	local frameName = 'MerchantItem' .. indexOnPage .. 'AltCurrencyFrame'
-	local usedCurrencies = 0
-	for i = 1, MAX_ITEM_COST do
-		local itemTexture = GetMerchantItemCostItem(index, i)
-		if itemTexture then
-			usedCurrencies = usedCurrencies + 1
-			local button = _G[frameName..'Item'..usedCurrencies]
-			button.index = GetCachedIndex(index)
-		end
-	end
-end)
-
-if not addon.Util.IsMainline then
-	local origGetMerchantItemInfo = GetMerchantItemInfo
-	GetMerchantItemInfo = function(index)
-		return origGetMerchantItemInfo(GetCachedIndex(index))
-	end
-	C_MerchantFrame = C_MerchantFrame or {}
-	C_MerchantFrame.GetItemInfo = function(index)
-		local name, texture, price, quantity, numAvailable, isPurchasable, isUsable, extendedCost, currencyID, spellID = GetMerchantItemInfo(index)
-		return {
-            name = name,
-            texture = texture,
-            price = price,
-            stackCount = quantity,
-            numAvailable = numAvailable,
-            isPurchasable = isPurchasable,
-            isUsable = isUsable,
-            hasExtendedCost = extendedCost,
-            currencyID = currencyID,
-            spellID = spellID,
-            isQuestStartItem = false -- This info isn't available in the old API
-        }
-	end
-end
-
-local origCanAffordMerchantItem = CanAffordMerchantItem
-CanAffordMerchantItem = function(index)
-	return origCanAffordMerchantItem(GetCachedIndex(index))
-end
-
-local origGetMerchantItemLink = GetMerchantItemLink
-GetMerchantItemLink = function(index)
-	return origGetMerchantItemLink(GetCachedIndex(index))
-end
-
-local origGetMerchantItemID = GetMerchantItemID
-GetMerchantItemID = function(index)
-	return origGetMerchantItemID(GetCachedIndex(index))
-end
-
-local origGetMerchantItemCostInfo = GetMerchantItemCostInfo
-GetMerchantItemCostInfo = function(index)
-	return origGetMerchantItemCostInfo(GetCachedIndex(index))
-end
-
-local origGetMerchantItemCostItem = GetMerchantItemCostItem
-GetMerchantItemCostItem = function(index, itemIndex)
-	return origGetMerchantItemCostItem(GetCachedIndex(index), itemIndex)
-end
-
-local origGetMerchantNumItems = GetMerchantNumItems
-GetMerchantNumItems = function()
-	wipe(addon.CachedItemIndices)
-
-	local lootFilter = GetMerchantFilter()
-	local numMerchantItems = origGetMerchantNumItems()
-	for i = 1, numMerchantItems, 1 do
-		local itemId = origGetMerchantItemID(i)
-		if itemId == nil or addon.Filters:Validate(lootFilter, itemId) then
-			tinsert(addon.CachedItemIndices, i)
-		end
-	end
-	return #addon.CachedItemIndices
-end
-
-local origBuyMerchantItem = BuyMerchantItem
-BuyMerchantItem = function(index, quantity)
-	origBuyMerchantItem(GetCachedIndex(index), quantity)
-end
-
-local origPickupMerchantItem = PickupMerchantItem
-PickupMerchantItem = function(index)
-	if index == 0 then
-		origPickupMerchantItem(0)
-		return
-	end
-	origPickupMerchantItem(GetCachedIndex(index))
-end
-
-local origGetMerchantItemMaxStack = GetMerchantItemMaxStack
-GetMerchantItemMaxStack = function(index)
-	return origGetMerchantItemMaxStack(GetCachedIndex(index))
-end
-
-local origMerchantFrame_GetProductInfo = MerchantFrame_GetProductInfo
-function MerchantFrame_GetProductInfo(itemButton)
-	local productInfo, specs = origMerchantFrame_GetProductInfo(itemButton)
-	productInfo.index = addon.CachedItemIndices[itemButton:GetID()]
-	return productInfo, specs
-end
-
-StaticPopupDialogs['CONFIRM_PURCHASE_TOKEN_ITEM'].OnAccept = function()
-	BuyMerchantItem(MerchantFrame.itemIndex, MerchantFrame.count)
-end
-
-StaticPopupDialogs['CONFIRM_PURCHASE_NONREFUNDABLE_ITEM'].OnAccept = function()
-	BuyMerchantItem(MerchantFrame.itemIndex, MerchantFrame.count)
-end
-
-if addon.Util.IsMainline then
-	StaticPopupDialogs['CONFIRM_PURCHASE_ITEM_DELAYED'].OnAccept = function()
-		BuyMerchantItem(MerchantFrame.itemIndex, MerchantFrame.count)
-	end
-end
-
-StaticPopupDialogs['CONFIRM_HIGH_COST_ITEM'].OnAccept = function()
-	BuyMerchantItem(MerchantFrame.itemIndex, MerchantFrame.count)
-end
-
--- 11.0.5 API changes
-local origC_MerchantFrame_GetItemInfo = C_MerchantFrame.GetItemInfo
-C_MerchantFrame.GetItemInfo = function(index)
-	return origC_MerchantFrame_GetItemInfo(GetCachedIndex(index))
-end

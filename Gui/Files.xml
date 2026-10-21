@@ -1,5 +1,7 @@
 <Ui>
     <Script file='Gui.lua'/>
+    <Script file='MerchantItemSlot.lua'/>
+    <Include file='Paging/Paging.xml'/>
     <Script file='MerchantItemsContainer.lua'/>
     <Script file='MerchantFrame.lua'/>
     <Include file='OptionsButton/OptionsButton.xml'/>

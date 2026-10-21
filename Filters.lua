@@ -102,15 +102,59 @@ for index, _ in next, filters.WeaponTypes do
 	defaults.profile.OnlyShow.Weapon[index] = true
 end
 
-if not addon.Util.IsMainline then
-	local merchantFilter = LE_LOOT_FILTER_ALL
-	function GetMerchantFilter()
-		return merchantFilter
-	end
+-- [[ Active filter ]] --
+-- The addon keeps the active filter itself. On Retail the server filter is set to the same value as well, so the server returns the same list as before.
+local currentFilter
+local listeners = {}
 
-	function SetMerchantFilter(newMerchantFilter)
-		merchantFilter = newMerchantFilter
+local function NotifyListeners(filter)
+	for _, listener in next, listeners do
+		listener(filter)
 	end
+end
+
+function filters:GetFilter()
+	if currentFilter then
+		return currentFilter
+	end
+	if addon.Util.IsMainline then
+		return GetMerchantFilter()
+	end
+	return LE_LOOT_FILTER_ALL
+end
+
+function filters:SetFilter(filter)
+	currentFilter = filter
+	if addon.Util.IsMainline then
+		SetMerchantFilter(filter)
+	end
+	if filter then
+		KrowiEVU_Filters = KrowiEVU_Filters or {}
+		KrowiEVU_Filters.LastFilter = filter
+	end
+	NotifyListeners(filter)
+end
+
+-- Takes over the filter Blizzard's ResetSetMerchantFilter just set on Retail, without remembering it or telling the listeners, as before
+function filters:SyncFilter()
+	currentFilter = addon.Util.IsMainline and GetMerchantFilter() or LE_LOOT_FILTER_ALL
+end
+
+function filters:RegisterListener(listener)
+	tinsert(listeners, listener)
+end
+
+-- The vendor's real indices that pass the active filter
+function filters:BuildList(list)
+	wipe(list)
+	local lootFilter = self:GetFilter()
+	for i = 1, GetMerchantNumItems() do
+		local itemId = GetMerchantItemID(i)
+		if itemId == nil or self:Validate(lootFilter, itemId) then
+			tinsert(list, i)
+		end
+	end
+	return list
 end
 
 function filters:RefreshFilters()

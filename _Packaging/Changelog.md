@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.3
+### Changed
+- Other addons that read the vendor's items, like Auctionator, Zygor and TSM, now see all of them, not only the ones the filter shows
+
+### Fixed
+- Auctionator's prices in an item's tooltip belong to that item again while a filter is active
+- The warning for non-refundable items now checks the item you clicked while a filter is active
+- The token banner's gold total is right again while a filter is active (Classic)
+- With Bulk Purchase on, shift-clicking an item into chat links it once and ctrl-clicking it opens the dressing room once
+- Can I Mog It icons now update after changing the filter, the search or the page
+- Slots added by raising the rows or columns now get Can I Mog It icons without a reload
+- The item grid now also updates where Blizzard turns its own merchant filter off (Retail)
+- The vendor no longer shows an empty page after adding rows or columns while on a later page
+
 ## 22.2 - 2026-10-16
 ### Changed
 - Support for WoW 12.1.5, TBC Anniversary 2.5.6 and Classic Era 1.15.9

@@ -11,86 +11,140 @@ end
 local doSkin, engine, skins
 local isModern = addon.Util.IsMainline
 
-local function QuestIcon_SetTexture(iconQuest, texture)
+-- This addon's own ElvUI slot skin for Classic, as in 22.2, applied when a slot is created. 22.2's Retail skin is gone:
+-- ElvSkinItemSlot below repeats every step of it.
+local function SkinClassicItemSlot(item)
+	local itemName = item:GetName()
+	local button = _G[itemName .. 'ItemButton']
+	local icon = _G[itemName .. 'ItemButtonIconTexture']
+	local money = _G[itemName .. 'MoneyFrame']
+	local nameFrame = _G[itemName .. 'NameFrame']
+	local name = _G[itemName .. 'Name']
+	local slot = _G[itemName .. 'SlotTexture']
+
+	item:StripTextures(true)
+	item:CreateBackdrop('Transparent')
+	item.backdrop:Point('TOPLEFT', -1, 3)
+	item.backdrop:Point('BOTTOMRIGHT', 2, -3)
+
+	button:StripTextures()
+	button:StyleButton()
+	button:SetTemplate(nil, true)
+	button:Size(40)
+	button:Point('TOPLEFT', item, 'TOPLEFT', 4, -2)
+
+	icon:SetTexCoords()
+	icon:SetInside()
+
+	nameFrame:Point('LEFT', slot, 'RIGHT', -6, -17)
+
+	name:Point('LEFT', slot, 'RIGHT', -4, 5)
+
+	money:ClearAllPoints()
+	money:Point('BOTTOMLEFT', button, 'BOTTOMRIGHT', 3, 0)
+end
+
+-- ElvUI v16's merchant skin (ElvUI/Game/Shared/Skins/Merchant.lua, one file for every client) skins MerchantItem1 up to
+-- MERCHANT_ITEMS_PER_PAGE on each merchant update, on top of the skin above; until 22.2 that included this addon's slots.
+-- The same steps, in the same order: on the first draw of each slot, after the skin above.
+local QUEST_ICON = [[Interface\ContainerFrame\UI-Icon-QuestBang]] -- Merchant.lua:14
+
+local function ElvQuestIcon_SetTexture(iconQuest, texture)
 	if texture == QUEST_ICON then
 		iconQuest:SetTexture(engine.Media.Textures.BagQuestIcon)
 	end
 end
 
-local function SkinModernMerchantItemButtons()
-	for i = 1, MERCHANT_ITEMS_PER_PAGE do
-		local item = _G['MerchantItem'..i]
-		item:Size(155, 45)
-		item:StripTextures(true)
-		item:CreateBackdrop('Transparent')
-		item.backdrop:Point('TOPLEFT', -3, 2)
-		item.backdrop:Point('BOTTOMRIGHT', 2, -3)
+-- Merchant.lua:70-114 (HandleMerchantItem)
+local elvSkinned = setmetatable({}, { __mode = 'k' })
+local function ElvSkinItemSlot(item)
+	if elvSkinned[item] then
+		return
+	end
+	elvSkinned[item] = true
 
-		local slot = _G['MerchantItem'..i..'SlotTexture']
-		item.Name:Point('LEFT', slot, 'RIGHT', -5, 5)
-		item.Name:Size(110, 30)
+	local itemName = item:GetName()
+	item:Size(155, 45)
+	item:StripTextures(true)
+	item:CreateBackdrop('Transparent')
+	item.backdrop:Point('TOPLEFT', -3, 2)
+	item.backdrop:Point('BOTTOMRIGHT', 2, -3)
 
-		local button = _G['MerchantItem'..i..'ItemButton']
-		button:StripTextures()
-		button:StyleButton()
-		button:SetTemplate(nil, true)
-		button:Point('TOPLEFT', item, 'TOPLEFT', 4, -4)
+	local slot = _G[itemName .. 'SlotTexture']
+	item.Name:Point('LEFT', slot, 'RIGHT', -5, 5)
+	item.Name:Size(110, 30)
 
-		local icon = button.icon
-		icon:SetTexCoords()
-		icon:ClearAllPoints()
-		icon:Point('TOPLEFT', 1, -1)
-		icon:Point('BOTTOMRIGHT', -1, 1)
+	local button = _G[itemName .. 'ItemButton']
+	button:StripTextures()
+	button:StyleButton()
+	button:SetTemplate(nil, true)
+	button:Point('TOPLEFT', item, 'TOPLEFT', 4, -4)
 
+	local icon = button.icon
+	icon:SetTexCoords()
+	icon:ClearAllPoints()
+	icon:Point('TOPLEFT', 1, -1)
+	icon:Point('BOTTOMRIGHT', -1, 1)
+
+	if isModern then -- engine.Modern in ElvUI v16, missing before it
 		local questIcon = button.IconQuestTexture
 		questIcon:SetTexCoord(0, 1, 0, 1)
 		questIcon:SetInside()
 
-		hooksecurefunc(questIcon, 'SetTexture', QuestIcon_SetTexture)
+		hooksecurefunc(questIcon, 'SetTexture', ElvQuestIcon_SetTexture)
+	end
 
-		skins:HandleIconBorder(button.IconBorder)
+	button.IconOverlay:SetInside(button, 1, 1) -- Decor items
+
+	skins:HandleIconBorder(button.IconBorder)
+
+	for j = 1, MAX_ITEM_COST do
+		_G[itemName .. 'AltCurrencyFrameItem' .. j .. 'Texture']:SetTexCoords()
 	end
 end
 
-local function SkinClassicMerchantItemButtons()
-	for i = 1, MERCHANT_ITEMS_PER_PAGE do
-		local item = _G['MerchantItem'..i]
-		local button = _G['MerchantItem'..i..'ItemButton']
-		local icon = _G['MerchantItem'..i..'ItemButtonIconTexture']
-		local money = _G['MerchantItem'..i..'MoneyFrame']
-		local nameFrame = _G['MerchantItem'..i..'NameFrame']
-		local name = _G['MerchantItem'..i..'Name']
-		local slot = _G['MerchantItem'..i..'SlotTexture']
-
-		item:StripTextures(true)
-		item:CreateBackdrop('Transparent')
-		item.backdrop:Point('TOPLEFT', -1, 3)
-		item.backdrop:Point('BOTTOMRIGHT', 2, -3)
-
-		button:StripTextures()
-		button:StyleButton()
-		button:SetTemplate(nil, true)
-		button:Size(40)
-		button:Point('TOPLEFT', item, 'TOPLEFT', 4, -2)
-
-		icon:SetTexCoords()
-		icon:SetInside()
-
-		nameFrame:Point('LEFT', slot, 'RIGHT', -6, -17)
-
-		name:Point('LEFT', slot, 'RIGHT', -4, 5)
-
-		money:ClearAllPoints()
-		money:Point('BOTTOMLEFT', button, 'BOTTOMRIGHT', 3, 0)
+-- Merchant.lua:47-57
+local function SetQualityColor(button, name, link)
+	local quality = link and C_Item.GetItemQualityByID(link)
+	if quality and quality > 1 then
+		local r, g, b = engine:GetItemQualityColor(quality)
+		button:SetBackdropBorderColor(r, g, b)
+		name:SetTextColor(r, g, b)
+	else
+		button:SetBackdropBorderColor(unpack(engine.media.bordercolor))
+		name:SetTextColor(1, 1, 1)
 	end
 end
 
-local function SkinMerchantItemButtons()
-    if isModern then
-        SkinModernMerchantItemButtons()
-    else
-        SkinClassicMerchantItemButtons()
-    end
+-- Merchant.lua:133-154 for one slot, after each draw since drawing anchors the prices again
+local function UpdateItemSlot(item, index)
+	local itemName = item:GetName()
+	local button = _G[itemName .. 'ItemButton']
+
+	if not isModern and index then -- Classic merchants have no quality borders; only filled slots
+		SetQualityColor(button, _G[itemName .. 'Name'], button.link)
+	end
+
+	local money = _G[itemName .. 'MoneyFrame']
+	money:ClearAllPoints()
+	money:Point('BOTTOMLEFT', button, 'BOTTOMRIGHT', 5, -3)
+
+	local currency = _G[itemName .. 'AltCurrencyFrame']
+	currency:ClearAllPoints()
+
+	if button.price and button.extendedCost then
+		currency:Point('LEFT', money, 'RIGHT', -8, 0)
+	else
+		currency:Point('BOTTOMLEFT', button, 'BOTTOMRIGHT', 5, -3)
+	end
+end
+
+-- Merchant.lua:228-231
+local function SkinPageControls()
+	skins:HandleNextPrevButton(KrowiEVU_MerchantNextPageButton, nil, nil, true, true)
+	skins:HandleNextPrevButton(KrowiEVU_MerchantPrevPageButton, nil, nil, true, true)
+	KrowiEVU_MerchantNextPageButton:ClearAllPoints()
+	KrowiEVU_MerchantNextPageButton:Point('LEFT', KrowiEVU_MerchantPageText, 'RIGHT', 100, 4)
 end
 
 local function AddInfo(localizationName, getFunction, hidden)
@@ -148,18 +202,9 @@ function elv:Load()
     doSkin.MiscFrames = blizzardSkins.enable and blizzardSkins.misc
     doSkin.Tooltip = blizzardSkins.enable and blizzardSkins.tooltip
 
-    for i = 1, 12, 1 do
-        _G['MerchantItem' .. i].PointXY = function() end
-    end
-
     if not doSkin.Merchant then
         return
     end
-
-    hooksecurefunc(addon.Gui.MerchantItemsContainer, 'LoadMaxNumItemSlots', function()
-        SkinMerchantItemButtons()
-        SkinMerchantItemButtons = function() end -- No need to run again
-    end)
 
     hooksecurefunc(addon.Gui.FilterButton, 'Load', function()
         skins:HandleDropDownBox(KrowiEVU_FilterButton)
@@ -192,4 +237,36 @@ function elv:Load()
         KrowiEVU_TokenBanner:StripTextures()
         KrowiEVU_TokenBanner:CreateBackdrop('Transparent')
     end)
+end
+
+-- ElvUI skins at PLAYER_LOGIN, after this addon loads, so the page controls and the buyback fix wait for the first draw
+function elv:OnFirstDraw()
+    if not (doSkin and doSkin.Merchant) then
+        return
+    end
+
+    SkinPageControls()
+
+    if not isModern then
+        -- ElvUI before v16 moved MerchantItem1-12 with PointXY in its Classic buyback hook (MerchantItemPoint); this hook comes after it
+        -- and puts them back. Harmless with v16, which no longer moves them.
+        hooksecurefunc('MerchantFrame_UpdateBuybackInfo', function()
+            addon.Gui.MerchantItemsContainer:PlaceBuybackItemSlots()
+        end)
+    end
+end
+
+function elv:OnItemSlotCreated(item)
+    if not (doSkin and doSkin.Merchant) or isModern then
+        return
+    end
+    SkinClassicItemSlot(item)
+end
+
+function elv:OnItemSlotUpdated(item, index)
+    if not (doSkin and doSkin.Merchant) then
+        return
+    end
+    ElvSkinItemSlot(item)
+    UpdateItemSlot(item, index)
 end

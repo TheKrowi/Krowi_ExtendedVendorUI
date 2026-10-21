@@ -10,12 +10,47 @@ function canIMogIt:InjectOptions()
     end)
 end
 
-function canIMogIt:Load()
-    if MerchantFrame_CIMIOnClick then
-        hooksecurefunc('MerchantFrame_SetFilter', function()
-            C_Timer.After(0.1, function()
-                MerchantFrame_CIMIOnClick()
-            end)
-        end)
+-- CanIMogIt puts its overlay only on Blizzard's MerchantItemN (CanIMogIt/Overlay/Merchant.lua), so the addon's slots get theirs here,
+-- through the same public functions, and are refreshed on every draw. The overlay reads the item button's link.
+local slots = {}
+
+-- CanIMogIt repaints Blizzard's slots on these messages of its own (Overlay/Merchant.lua:111-112). They come from CanIMogIt's
+-- code, outside the plugin error guard, so this guards itself; IsVisible skips the slots of a closed vendor window.
+local function UpdateShownSlots()
+    for _, slot in next, slots do
+        if slot:IsVisible() then
+            local ok, err = pcall(MerchantFrame_CIMIUpdateIcon, slot.ItemButton.CanIMogItOverlay)
+            if not ok then
+                geterrorhandler()(err)
+            end
+        end
+    end
+end
+
+local messagesRegistered
+local function RegisterMessages()
+    messagesRegistered = true
+    if CanIMogIt and type(CanIMogIt.RegisterMessage) == 'function' then
+        CanIMogIt:RegisterMessage('OptionUpdate', UpdateShownSlots)
+        CanIMogIt:RegisterMessage('ResetCache', UpdateShownSlots)
+    end
+end
+
+function canIMogIt:OnItemSlotUpdated(slot)
+    if not (CIMI_AddToFrame and MerchantFrame_CIMIUpdateIcon) then
+        return
+    end
+    local itemButton = slot.ItemButton
+    if not itemButton.CanIMogItOverlay then
+        CIMI_AddToFrame(itemButton, MerchantFrame_CIMIUpdateIcon)
+        if itemButton.CanIMogItOverlay then
+            slots[#slots + 1] = slot
+        end
+        if not messagesRegistered then
+            RegisterMessages()
+        end
+    end
+    if itemButton.CanIMogItOverlay then
+        MerchantFrame_CIMIUpdateIcon(itemButton.CanIMogItOverlay)
     end
 end
