@@ -43,7 +43,7 @@ end
 
 -- [[ Environment ]] --
 local ADDONS = { 'ElvUI', 'GW2_UI', 'EllesmereUI', 'EllesmereUIBlizzardSkin', 'CanIMogIt', 'Auctionator', 'Krowi_Vendorer', 'Plumber' }
-local PLUGINS = { 'ElvUI', 'GW2_UI', 'EllesmereUI', 'CanIMogIt' }
+local PLUGINS = { 'ElvUI', 'GW2_UI', 'EllesmereUI', 'EllesmereUIItemLevel', 'CanIMogIt' }
 
 -- Which plugin addons have their merchant skin or icons on, read the way the plugins read it
 local function GetSkinStates()
@@ -56,6 +56,8 @@ local function GetSkinStates()
     states.EllesmereUI = addon.Util.IsMainline and EllesmereUI and C_AddOns.IsAddOnLoaded('EllesmereUIBlizzardSkin')
         and type(EllesmereUI.GetBlizzWindowStyle) == 'function' and EllesmereUI.GetBlizzWindowStyle('merchant') ~= 'off'
         and not (EllesmereUIDB and EllesmereUIDB.merchantShowAsList) and true or false
+    states.EllesmereUIItemLevel = addon.Util.IsMainline and EllesmereUI and C_AddOns.IsAddOnLoaded('EllesmereUIBlizzardSkin')
+        and EllesmereUIDB and EllesmereUIDB.merchantShowItemLevel == true or false
     states.CanIMogIt = CIMI_AddToFrame and MerchantFrame_CIMIUpdateIcon and true or false
     return states
 end
@@ -174,16 +176,48 @@ local function CheckPaging()
     Add(ok and 'PASS' or 'FAIL', 'page controls ' .. (shouldShow and ('shown, "' .. tostring(text) .. '"') or 'hidden'))
 end
 
+-- Whether a weapon or armour slot shows its item level, as the EllesmereUI plugin writes it on the item button; nil when the
+-- slot's item has none to show
+local function ShowsItemLevel(button, link)
+    local classId = select(6, C_Item.GetItemInfoInstant(link))
+    if classId ~= Enum.ItemClass.Weapon and classId ~= Enum.ItemClass.Armor then
+        return nil
+    end
+    local itemLevel = C_Item.GetDetailedItemLevelInfo(link)
+    if not itemLevel or itemLevel <= 0 then
+        return nil
+    end
+    for _, region in ipairs({ button:GetRegions() }) do
+        if region:IsObjectType('FontString') and region:IsShown() and region:GetText() == tostring(itemLevel) then
+            return true
+        end
+    end
+    return false
+end
+
 local function CheckPlugins()
-    local _, perPage = GetGrid()
+    local indices, perPage, page = GetGrid()
+    local first = (page - 1) * perPage
     local missing = {}
     for _, name in ipairs(PLUGINS) do
         missing[name] = {}
     end
+    local itemLevelSlots = 0
     for i = 1, perPage do
         local itemSlot = GetItemSlot(i)
         if itemSlot and itemSlot:IsShown() then
             local button = itemSlot.ItemButton
+            local index = indices[first + i]
+            local link = index and GetMerchantItemLink(index)
+            if skins.EllesmereUIItemLevel and link then
+                local shows = ShowsItemLevel(button, link)
+                if shows ~= nil then
+                    itemLevelSlots = itemLevelSlots + 1
+                    if not shows then
+                        tinsert(missing.EllesmereUIItemLevel, i)
+                    end
+                end
+            end
             if skins.ElvUI and not itemSlot.backdrop then
                 tinsert(missing.ElvUI, i)
             end
@@ -199,7 +233,15 @@ local function CheckPlugins()
         end
     end
     for _, name in ipairs(PLUGINS) do
-        if skins[name] then
+        if name == 'EllesmereUIItemLevel' and skins[name] then
+            if itemLevelSlots == 0 then
+                Note('EllesmereUI item levels: no weapon or armour on this page')
+            elseif #missing[name] == 0 then
+                Add('PASS', ('EllesmereUI item level on all %d weapon and armour slots'):format(itemLevelSlots))
+            else
+                Add('FAIL', 'EllesmereUI item level missing on slots ' .. Join(missing[name]))
+            end
+        elseif skins[name] then
             if #missing[name] == 0 then
                 Add('PASS', name .. ' on every shown slot')
             else
