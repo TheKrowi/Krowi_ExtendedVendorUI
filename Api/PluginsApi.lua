@@ -5,12 +5,14 @@ A plugin is a table registered with KrowiEVU.PluginsApi:RegisterPlugin(name, plu
     plugin:LoadLocalization(L)              while the locale loads
     plugin:OnEvent(event, ...)              for events registered with KrowiEVU.PluginsApi:RegisterEvent(event)
     plugin:OnItemSlotCreated(slot)          when an item slot of the merchant tab is created
+    plugin:OnFirstDraw()                    once, right before the merchant tab is first drawn; addons that skin at
+                                            PLAYER_LOGIN or later are ready by then, and the page controls exist
     plugin:OnItemSlotUpdated(slot, index)   after an item slot of the merchant tab is drawn
     plugin:OnItemSlotsUpdated()             after the whole merchant page is drawn
 slot is the frame KrowiEVU_MerchantItem<N>, built from Blizzard's MerchantItemTemplate, so it has the same children as
 MerchantItemN (slot.ItemButton, slot.Name, <name>MoneyFrame, <name>AltCurrencyFrame) and slot.ItemButton carries the same
 fields Blizzard sets (link, price, extendedCost). index is the vendor's real index, as slot.ItemButton:GetID() returns,
-and nil for an empty slot. Errors in the three item slot methods are reported and do not stop the merchant window.
+and nil for an empty slot. Errors in these four methods are reported and do not stop the merchant window.
 ]]
 
 KrowiEVU.PluginsApi = {}

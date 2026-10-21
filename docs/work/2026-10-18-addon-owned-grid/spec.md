@@ -25,7 +25,7 @@ Players with only Extended Vendor UI, on every client:
 
 The only intended differences for those players:
 
-12. Retail: the non-refundable prompt checks the clicked item under a filter. Classic: the token banner's gold total matches the shown items under a filter. With Bulk Purchase on, a shift-click with chat open links once and a ctrl-click dresses up once, on both tabs. Retail under the `MerchantFilterDisabled` game rule: the grid updates. Classic: Bulk Purchase reads `isPurchasable` and `hasExtendedCost` from the right return values.
+12. Retail: the non-refundable prompt checks the clicked item under a filter. Classic: the token banner's gold total matches the shown items under a filter. With Bulk Purchase on, a shift-click with chat open links once and a ctrl-click dresses up once, on both tabs. Retail under the `MerchantFilterDisabled` game rule: the grid updates. Classic: Bulk Purchase reads `isPurchasable` and `hasExtendedCost` from the right return values. When the list gets shorter while a later page is shown (more rows or columns from the options button, an item that no longer passes the filter), the grid moves to the new last page; 22.2 and Blizzard show an empty "Page 3 of 2" (added 2026-10-20 from the code review).
 
 Taint:
 

@@ -11,38 +11,8 @@ end
 local doSkin, engine, skins
 local isModern = addon.Util.IsMainline
 
--- This addon's own ElvUI slot skin, as in 22.2, applied when a slot is created
-local function SkinModernItemSlot(item)
-	local itemName = item:GetName()
-	item:Size(155, 45)
-	item:StripTextures(true)
-	item:CreateBackdrop('Transparent')
-	item.backdrop:Point('TOPLEFT', -3, 2)
-	item.backdrop:Point('BOTTOMRIGHT', 2, -3)
-
-	local slot = _G[itemName .. 'SlotTexture']
-	item.Name:Point('LEFT', slot, 'RIGHT', -5, 5)
-	item.Name:Size(110, 30)
-
-	local button = _G[itemName .. 'ItemButton']
-	button:StripTextures()
-	button:StyleButton()
-	button:SetTemplate(nil, true)
-	button:Point('TOPLEFT', item, 'TOPLEFT', 4, -4)
-
-	local icon = button.icon
-	icon:SetTexCoords()
-	icon:ClearAllPoints()
-	icon:Point('TOPLEFT', 1, -1)
-	icon:Point('BOTTOMRIGHT', -1, 1)
-
-	local questIcon = button.IconQuestTexture
-	questIcon:SetTexCoord(0, 1, 0, 1)
-	questIcon:SetInside()
-
-	skins:HandleIconBorder(button.IconBorder)
-end
-
+-- This addon's own ElvUI slot skin for Classic, as in 22.2, applied when a slot is created. 22.2's Retail skin is gone:
+-- ElvSkinItemSlot below repeats every step of it.
 local function SkinClassicItemSlot(item)
 	local itemName = item:GetName()
 	local button = _G[itemName .. 'ItemButton']
@@ -116,7 +86,7 @@ local function ElvSkinItemSlot(item)
 	icon:Point('TOPLEFT', 1, -1)
 	icon:Point('BOTTOMRIGHT', -1, 1)
 
-	if engine.Modern then
+	if isModern then -- engine.Modern in ElvUI v16, missing before it
 		local questIcon = button.IconQuestTexture
 		questIcon:SetTexCoord(0, 1, 0, 1)
 		questIcon:SetInside()
@@ -151,7 +121,7 @@ local function UpdateItemSlot(item, index)
 	local itemName = item:GetName()
 	local button = _G[itemName .. 'ItemButton']
 
-	if not engine.Modern and index then -- Classic merchants have no quality borders; only filled slots
+	if not isModern and index then -- Classic merchants have no quality borders; only filled slots
 		SetQualityColor(button, _G[itemName .. 'Name'], button.link)
 	end
 
@@ -175,25 +145,6 @@ local function SkinPageControls()
 	skins:HandleNextPrevButton(KrowiEVU_MerchantPrevPageButton, nil, nil, true, true)
 	KrowiEVU_MerchantNextPageButton:ClearAllPoints()
 	KrowiEVU_MerchantNextPageButton:Point('LEFT', KrowiEVU_MerchantPageText, 'RIGHT', 100, 4)
-end
-
--- ElvUI skins at PLAYER_LOGIN, after this addon loads, so the page controls and the buyback fix wait for the first merchant window
-local initialized
-local function OnFirstShow()
-	if initialized then
-		return
-	end
-	initialized = true
-
-	SkinPageControls()
-
-	if not isModern then
-		-- ElvUI before v16 moved MerchantItem1-12 with PointXY in its Classic buyback hook (MerchantItemPoint); this hook comes after it
-		-- and puts them back. Harmless with v16, which no longer moves them.
-		hooksecurefunc('MerchantFrame_UpdateBuybackInfo', function()
-			addon.Gui.MerchantItemsContainer:PlaceBuybackItemSlots()
-		end)
-	end
 end
 
 local function AddInfo(localizationName, getFunction, hidden)
@@ -255,8 +206,6 @@ function elv:Load()
         return
     end
 
-    MerchantFrame:HookScript('OnShow', OnFirstShow)
-
     hooksecurefunc(addon.Gui.FilterButton, 'Load', function()
         skins:HandleDropDownBox(KrowiEVU_FilterButton)
     end)
@@ -290,15 +239,28 @@ function elv:Load()
     end)
 end
 
-function elv:OnItemSlotCreated(item)
+-- ElvUI skins at PLAYER_LOGIN, after this addon loads, so the page controls and the buyback fix wait for the first draw
+function elv:OnFirstDraw()
     if not (doSkin and doSkin.Merchant) then
         return
     end
-    if isModern then
-        SkinModernItemSlot(item)
-    else
-        SkinClassicItemSlot(item)
+
+    SkinPageControls()
+
+    if not isModern then
+        -- ElvUI before v16 moved MerchantItem1-12 with PointXY in its Classic buyback hook (MerchantItemPoint); this hook comes after it
+        -- and puts them back. Harmless with v16, which no longer moves them.
+        hooksecurefunc('MerchantFrame_UpdateBuybackInfo', function()
+            addon.Gui.MerchantItemsContainer:PlaceBuybackItemSlots()
+        end)
     end
+end
+
+function elv:OnItemSlotCreated(item)
+    if not (doSkin and doSkin.Merchant) or isModern then
+        return
+    end
+    SkinClassicItemSlot(item)
 end
 
 function elv:OnItemSlotUpdated(item, index)
