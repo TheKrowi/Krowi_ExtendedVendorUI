@@ -22,7 +22,7 @@ local merchantItemSlot = addon.Gui.MerchantItemSlot
 local paging = addon.Gui.Paging
 local filters = addon.Filters
 
-local running, run, current, counts, saved, skins, banner, waitingFor, waitTimer, hovered
+local running, armed, run, current, counts, saved, skins, banner, waitingFor, waitTimer, hovered
 local steps
 
 -- [[ Results ]] --
@@ -559,7 +559,11 @@ local function GetBanner()
     banner.Text = banner:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
     banner.Text:SetPoint('CENTER')
     banner:SetScript('OnEvent', function(_, event)
-        if event == 'MERCHANT_CLOSED' then
+        if event == 'MERCHANT_SHOW' then
+            banner:UnregisterEvent('MERCHANT_SHOW')
+            armed = nil
+            C_Timer.After(SETTLE, tests.Start) -- After the window's first draw
+        elseif event == 'MERCHANT_CLOSED' then
             Stop('the vendor window closed')
         elseif event == 'PLAYER_REGEN_DISABLED' then
             Stop('combat started')
@@ -608,8 +612,14 @@ function tests.Start()
         print(prefix .. 'not in combat')
         return
     end
-    if not (MerchantFrame:IsShown() and MerchantFrame.selectedTab == 1) then
-        print(prefix .. 'open a vendor first, on its Merchant tab')
+    if not MerchantFrame:IsShown() then
+        armed = true
+        GetBanner():RegisterEvent('MERCHANT_SHOW')
+        print(prefix .. 'starts when you open a vendor; /kevutest again cancels')
+        return
+    end
+    if MerchantFrame.selectedTab ~= 1 then
+        print(prefix .. 'switch to the Merchant tab, then /kevutest again')
         return
     end
     if GetMerchantNumItems() == 0 then
@@ -629,7 +639,7 @@ function tests.Start()
         Columns = profile.NumColumns,
     }
 
-    run ={ Time = date('%Y-%m-%d %H:%M:%S'), Steps = {} }
+    run = { Time = date('%Y-%m-%d %H:%M:%S'), Steps = {} }
     RecordEnvironment()
     KrowiEVU_Debug = KrowiEVU_Debug or {}
     KrowiEVU_Debug.Tests = KrowiEVU_Debug.Tests or {}
@@ -649,6 +659,10 @@ SLASH_KEVUTEST1 = '/kevutest'
 SlashCmdList.KEVUTEST = function()
     if running then
         Stop('stopped with /kevutest')
+    elseif armed then
+        armed = nil
+        banner:UnregisterEvent('MERCHANT_SHOW')
+        print(prefix .. 'cancelled')
     else
         tests.Start()
     end
