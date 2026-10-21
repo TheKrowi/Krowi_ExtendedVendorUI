@@ -23,7 +23,8 @@ local merchantItemSlot = addon.Gui.MerchantItemSlot
 local paging = addon.Gui.Paging
 local filters = addon.Filters
 
-local running, armed, run, current, counts, saved, skins, banner, waitingFor, waitTimer, restTimer
+local running, armed, startPending, run, current, counts, saved, skins, banner, waitingFor, waitTimer, restTimer
+local runToken = 0 -- Bumped by every start, so a stopped run's timers do nothing in the next one
 local hookedButtons = {} -- The addon's item buttons, hooked for the tooltip step
 local steps
 
@@ -365,11 +366,9 @@ local function PickSearchWord()
 end
 
 -- [[ Settings ]] --
--- What the options button does after a grid change
+-- What the options button runs after a grid change
 local function ApplyGrid()
-    container:LoadMaxNumItemSlots()
-    container:Refresh()
-    addon.Gui.TokenBanner:Update()
+    addon.Gui.OptionsButton.UpdateView()
 end
 
 local function RestoreGrid()
@@ -477,6 +476,16 @@ steps = {
 -- [[ Runner ]] --
 local RunStep, Stop
 
+-- C_Timer.After for the current run only
+local function After(seconds, func)
+    local token = runToken
+    C_Timer.After(seconds, function()
+        if running and token == runToken then
+            func()
+        end
+    end)
+end
+
 local function NextStep()
     RunStep(current.Step + 1)
 end
@@ -492,7 +501,7 @@ local function Capture()
     end
     current.Time = date('%H:%M:%S')
     Screenshot()
-    C_Timer.After(AFTER_SHOT, NextStep)
+    After(AFTER_SHOT, NextStep)
 end
 
 local function Continue(delay)
@@ -501,13 +510,13 @@ local function Continue(delay)
         waitTimer:Cancel()
         waitTimer = nil
     end
-    C_Timer.After(delay or MOUSE_SETTLE, Capture)
+    After(delay or MOUSE_SETTLE, Capture)
 end
 
 local function Wait(what)
     if what == 'merchant' and MerchantFrame.selectedTab == 1 then
         Note('already on the Merchant tab')
-        C_Timer.After(SETTLE, Capture)
+        After(SETTLE, Capture)
         return
     end
     waitingFor = what
@@ -594,14 +603,14 @@ RunStep = function(n)
         if ok then
             Add('SKIP', skip)
         end
-        C_Timer.After(0, NextStep)
+        After(0, NextStep)
     elseif step.Wait then
         if step.Wait == 'hover' then
             HookItemSlots()
         end
         Wait(step.Wait)
     else
-        C_Timer.After(SETTLE, Capture)
+        After(SETTLE, Capture)
     end
 end
 
@@ -622,7 +631,13 @@ local function GetBanner()
         if event == 'MERCHANT_SHOW' then
             banner:UnregisterEvent('MERCHANT_SHOW')
             armed = nil
-            C_Timer.After(SETTLE, tests.Start) -- After the window's first draw
+            startPending = true -- /kevutest still cancels until the start
+            C_Timer.After(SETTLE, function() -- After the window's first draw
+                if startPending then
+                    startPending = nil
+                    tests.Start()
+                end
+            end)
         elseif event == 'MERCHANT_CLOSED' then
             Stop('the vendor window closed')
         elseif event == 'PLAYER_REGEN_DISABLED' then
@@ -672,6 +687,9 @@ Stop = function(reason)
 end
 
 function tests.Start()
+    if running then
+        return
+    end
     if InCombatLockdown() then
         print(prefix .. 'not in combat')
         return
@@ -722,6 +740,7 @@ function tests.Start()
     banner:RegisterEvent('SCREENSHOT_SUCCEEDED')
     banner:RegisterEvent('SCREENSHOT_FAILED')
     running = true
+    runToken = runToken + 1
     print(prefix .. ('%d steps, about 15 s, then three that need the mouse; /kevutest again stops it'):format(#steps))
     RunStep(1)
 end
@@ -730,8 +749,8 @@ SLASH_KEVUTEST1 = '/kevutest'
 SlashCmdList.KEVUTEST = function()
     if running then
         Stop('stopped with /kevutest')
-    elseif armed then
-        armed = nil
+    elseif armed or startPending then
+        armed, startPending = nil, nil
         banner:UnregisterEvent('MERCHANT_SHOW')
         print(prefix .. 'cancelled')
     else

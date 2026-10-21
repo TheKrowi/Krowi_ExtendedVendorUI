@@ -58,7 +58,14 @@ $age = (Get-Date) - $file.LastWriteTime
 "  last written $($file.LastWriteTime) ($([int]$age.TotalMinutes) min ago; the game writes it on /reload or logout only)"
 ""
 
-$records = @(& $Lua (Join-Path $PSScriptRoot 'read-tests.lua') $file.FullName)
+# The saved variables are UTF-8 (vendor names, search words, tooltip titles on non-English clients)
+$consoleEncoding = [Console]::OutputEncoding
+[Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
+try {
+    $records = @(& $Lua (Join-Path $PSScriptRoot 'read-tests.lua') $file.FullName)
+} finally {
+    [Console]::OutputEncoding = $consoleEncoding
+}
 if ($LASTEXITCODE -ne 0) { throw "Could not read $($file.FullName)" }
 if ($records.Count -eq 1 -and $records[0] -eq 'NONE') {
     "No /kevutest run in this file yet."
@@ -107,8 +114,10 @@ foreach ($record in $records) {
             if ($fields[4] -and $runStart) {
                 $stepTime = [datetime]::ParseExact($runStart.ToString('yyyy-MM-dd', $invariant) + ' ' + $fields[4], 'yyyy-MM-dd HH:mm:ss', $invariant)
                 if ($stepTime -lt $runStart.AddMinutes(-1)) { $stepTime = $stepTime.AddDays(1) }   # past midnight
-                $shot = $shots | Where-Object { ($_.Time - $stepTime).TotalSeconds -ge -1 -and ($_.Time - $stepTime).TotalSeconds -le 3 } |
-                    Sort-Object Time | Select-Object -First 1
+                # The game takes the screenshot on the next frame, so its name is the same second or the next; the next step's
+                # screenshot comes 2.5 s later at the earliest
+                $shot = $shots | Where-Object { [Math]::Abs(($_.Time - $stepTime).TotalSeconds) -le 1 } |
+                    Sort-Object { [Math]::Abs(($_.Time - $stepTime).TotalSeconds) } | Select-Object -First 1
                 $taken = if ($fields[5] -eq 'failed') { ' (the game reported the screenshot failed)' } else { '' }
                 '   screenshot at {0}: {1}{2}' -f $fields[4], $(if ($shot) { $shot.Path } else { 'none found' }), $taken
             }

@@ -121,12 +121,34 @@ function merchantItemsContainer:DrawMerchantBuyBackItem(show)
 end
 
 -- [[ Merchant tab ]] --
+local function GetStackSplitOwner()
+    if StackSplitFrame and StackSplitFrame:IsShown() and isOwnItemButton[StackSplitFrame.owner] then
+        return StackSplitFrame.owner
+    end
+end
+
+local function CloseStackSplit()
+    if not GetStackSplitOwner() then
+        return
+    end
+    if StackSplitCancelButton_OnClick then
+        StackSplitCancelButton_OnClick()
+    elseif StackSplitFrameCancel_Click then
+        StackSplitFrameCancel_Click()
+    else
+        StackSplitFrame:Hide()
+    end
+end
+
 local firstDrawDone
 local function DrawPage()
     if not firstDrawDone then
         firstDrawDone = true
         KrowiEVU.PluginsApi:CallPlugins('OnFirstDraw')
     end
+    -- A split window stays only while its slot keeps its item: page changes, the page clamp and a filter change all move items
+    local splitOwner = GetStackSplitOwner()
+    local splitIndex = splitOwner and splitOwner:GetID()
 
     local numRows, numColumns = addon.Options.db.profile.NumRows, addon.Options.db.profile.NumColumns
     local itemsPerPage = numRows * numColumns
@@ -146,6 +168,9 @@ local function DrawPage()
         merchantItemSlot.Draw(itemSlot, index)
         KrowiEVU.PluginsApi:CallPlugins('OnItemSlotUpdated', itemSlot, index)
     end
+    if splitOwner and splitOwner:GetID() ~= splitIndex then
+        CloseStackSplit()
+    end
 
     paging:Update(#indices, itemsPerPage)
     KrowiEVU.PluginsApi:CallPlugins('OnItemSlotsUpdated')
@@ -163,17 +188,20 @@ function merchantItemsContainer:Update()
     addon.Gui.TokenBanner:RequestUpdate()
 end
 
--- Updates on the next frame, once for any number of requests, and not at all when a Blizzard refresh updates first
+-- Updates on the next frame, once for any number of requests (item data arriving), and not at all when an update runs first
 function merchantItemsContainer:RequestUpdate()
     if updatePending then
         return
     end
     updatePending = true
     C_Timer.After(0, function()
-        if updatePending and MerchantFrame:IsShown() then
+        if not updatePending then
+            return
+        end
+        updatePending = nil -- Before the update, so a request made during it gets its own
+        if MerchantFrame:IsShown() then
             merchantItemsContainer:Update()
         end
-        updatePending = nil
     end)
 end
 
@@ -221,27 +249,15 @@ hooksecurefunc('MerchantFrame_UpdateBuybackInfo', function()
 end)
 
 -- [[ Page, filter and item data changes ]] --
-local function CloseStackSplit()
-    if StackSplitFrame and StackSplitFrame:IsShown() and isOwnItemButton[StackSplitFrame.owner] then
-        if StackSplitCancelButton_OnClick then
-            StackSplitCancelButton_OnClick()
-        elseif StackSplitFrameCancel_Click then
-            StackSplitFrameCancel_Click()
-        else
-            StackSplitFrame:Hide()
-        end
-    end
-end
-
 paging.OnPageChanged = function()
-    CloseStackSplit()
     DrawPage()
 end
 
+-- At once, so a filter set while the window opens (Classic's RememberFilter in an OnShow hook) shows in its first frame
 addon.Filters:RegisterListener(function()
     paging:SetPage(1)
     if MerchantFrame:IsShown() then
-        merchantItemsContainer:RequestUpdate()
+        merchantItemsContainer:Update()
     end
 end)
 
@@ -258,9 +274,13 @@ eventFrame:RegisterEvent('MERCHANT_SHOW')
 eventFrame:RegisterEvent('MERCHANT_CLOSED')
 eventFrame:SetScript('OnEvent', function(_, event)
     if event == 'MERCHANT_SHOW' then
-        paging:SetPage(1) -- Also when switching vendors with the window open
-        if MerchantFrame:IsShown() then
-            merchantItemsContainer:RequestUpdate()
+        -- Closing the window already went back to page 1 (OnHide above); this is for switching vendors with it open, where
+        -- Blizzard's refresh for the new vendor may already have drawn the old page
+        if paging:GetPage() ~= 1 then
+            paging:SetPage(1)
+            if MerchantFrame:IsShown() then
+                merchantItemsContainer:Update()
+            end
         end
     else
         merchantItemSlot.StopQualityUpdates()

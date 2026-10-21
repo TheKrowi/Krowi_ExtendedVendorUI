@@ -11,6 +11,7 @@ local function UpdateView()
 	merchantItemsContainer:Refresh()
 	addon.Gui.TokenBanner:Update()
 end
+addon.Gui.OptionsButton.UpdateView = UpdateView -- Also what /kevutest runs after changing the grid size
 
 function KrowiEVU_OptionsButtonMixin:OnLoad()
 	menuBuilder = addon.MenuBuilder:New({
