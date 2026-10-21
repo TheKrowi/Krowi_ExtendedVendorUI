@@ -79,6 +79,10 @@ foreach ($record in $records) {
         'HEAD' {
             if ($fields[1] -eq 'Time') { $runStart = [datetime]::ParseExact($fields[2], 'yyyy-MM-dd HH:mm:ss', $invariant) }
             '{0,-9} {1}' -f ($fields[1] + ':'), $fields[2]
+            # The routine only records screenshotQuality: setting a CVar from addon code taints Blizzard's CVAR_UPDATE handlers
+            if ($fields[1] -eq 'Quality' -and [int]$fields[2] -lt 8) {
+                '          screenshots below quality 8 lose small text when read scaled down; Krowi can type /console screenshotQuality 10 once in game'
+            }
         }
         'STEP' {
             ''

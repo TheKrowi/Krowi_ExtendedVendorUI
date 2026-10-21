@@ -64,9 +64,11 @@ local function RecordEnvironment()
     run.Version = addon.Metadata.Version
     run.Locale = GetLocale()
     local npcName = UnitName('npc')
-    if npcName and not (issecretvalue and issecretvalue(npcName)) then
+    if not (issecretvalue and issecretvalue(npcName)) and npcName then
         run.Vendor = npcName
     end
+    -- Only recorded: setting a CVar from addon code runs every CVAR_UPDATE handler tainted, Blizzard's status bars included
+    run.ScreenshotQuality = C_CVar.GetCVar('screenshotQuality')
     run.Items = GetMerchantNumItems()
     local profile = addon.Options.db.profile
     run.Options = ('%dx%d, %s, Bulk Purchase %s'):format(profile.NumRows, profile.NumColumns, profile.Direction, profile.BulkPurchase.Enabled and 'on' or 'off')
@@ -335,9 +337,6 @@ local function Restore()
     end
     KrowiEVU_FilterButton:SetFilter(saved.Filter)
     KrowiEVU_Filters.LastFilter = saved.LastFilter
-    if saved.ScreenshotQuality then
-        C_CVar.SetCVar('screenshotQuality', saved.ScreenshotQuality)
-    end
 end
 
 -- [[ Steps ]] --
@@ -629,14 +628,8 @@ function tests.Start()
         Rows = profile.NumRows,
         Columns = profile.NumColumns,
     }
-    -- The screenshots are read back at a reduced scale, where the default jpeg quality loses small text
-    local quality = C_CVar.GetCVar('screenshotQuality')
-    if quality and quality ~= '10' then
-        saved.ScreenshotQuality = quality
-        C_CVar.SetCVar('screenshotQuality', '10')
-    end
 
-    run = { Time = date('%Y-%m-%d %H:%M:%S'), Steps = {} }
+    run ={ Time = date('%Y-%m-%d %H:%M:%S'), Steps = {} }
     RecordEnvironment()
     KrowiEVU_Debug = KrowiEVU_Debug or {}
     KrowiEVU_Debug.Tests = KrowiEVU_Debug.Tests or {}

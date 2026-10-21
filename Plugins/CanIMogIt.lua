@@ -14,11 +14,15 @@ end
 -- through the same public functions, and are refreshed on every draw. The overlay reads the item button's link.
 local slots = {}
 
--- CanIMogIt repaints Blizzard's slots on these messages of its own (Overlay/Merchant.lua:111-112)
+-- CanIMogIt repaints Blizzard's slots on these messages of its own (Overlay/Merchant.lua:111-112). They come from CanIMogIt's
+-- code, outside the plugin error guard, so this guards itself; IsVisible skips the slots of a closed vendor window.
 local function UpdateShownSlots()
     for _, slot in next, slots do
-        if slot:IsShown() then
-            MerchantFrame_CIMIUpdateIcon(slot.ItemButton.CanIMogItOverlay)
+        if slot:IsVisible() then
+            local ok, err = pcall(MerchantFrame_CIMIUpdateIcon, slot.ItemButton.CanIMogItOverlay)
+            if not ok then
+                geterrorhandler()(err)
+            end
         end
     end
 end
