@@ -7,8 +7,8 @@ local tests = addon.Tests
 -- what the frames show (the slots and their items, the page controls, Blizzard's hidden slots, the skins and icons of the
 -- plugin addons that are on) and takes a screenshot of each state, with the step named in a banner above the window.
 -- Steps that need the mouse (a tooltip, the tabs) wait for the player: the routine never clicks or hovers by itself.
--- The filter, search and grid size are put back at the end; /kevutest again stops early. The results go to
--- KrowiEVU_Debug.Tests.LastRun, which the game writes on the next /reload or logout; .claude/tools/Read-GameTests.ps1
+-- The filter, search and grid size are put back at the end; /kevutest again stops early. The last 10 runs are kept in
+-- KrowiEVU_Debug.Tests.Runs, which the game writes on the next /reload or logout; .claude/tools/Read-GameTests.ps1
 -- prints them with the screenshot of each step.
 
 local prefix = '|cFF1D92C2KEVU test:|r '
@@ -16,6 +16,7 @@ local SETTLE = 1.5 -- Seconds from a state change to its screenshot, for item da
 local AFTER_SHOT = 1 -- Seconds from a screenshot to the next step
 local MOUSE_WAIT = 30 -- Seconds a step that needs the mouse waits
 local MOUSE_SETTLE = 0.8 -- Seconds from the mouse action to its screenshot
+local KEEP_RUNS = 10
 
 local container = addon.Gui.MerchantItemsContainer
 local merchantItemSlot = addon.Gui.MerchantItemSlot
@@ -645,9 +646,16 @@ function tests.Start()
 
     run = { Time = date('%Y-%m-%d %H:%M:%S'), Steps = {} }
     RecordEnvironment()
+    -- Kept as a history: Krowi runs several in a row (one per skin addon, a reload between each) before they are read
     KrowiEVU_Debug = KrowiEVU_Debug or {}
     KrowiEVU_Debug.Tests = KrowiEVU_Debug.Tests or {}
-    KrowiEVU_Debug.Tests.LastRun = run
+    KrowiEVU_Debug.Tests.LastRun = nil -- Before Runs
+    local runs = KrowiEVU_Debug.Tests.Runs or {}
+    KrowiEVU_Debug.Tests.Runs = runs
+    tinsert(runs, run)
+    while #runs > KEEP_RUNS do
+        tremove(runs, 1)
+    end
 
     GetBanner():Show()
     banner:RegisterEvent('MERCHANT_CLOSED')
