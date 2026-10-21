@@ -59,6 +59,13 @@ local function GetSkinStates()
         and not (EllesmereUIDB and EllesmereUIDB.merchantShowAsList) and true or false
     states.EllesmereUIItemLevel = addon.Util.IsMainline and EllesmereUI and C_AddOns.IsAddOnLoaded('EllesmereUIBlizzardSkin')
         and EllesmereUIDB and EllesmereUIDB.merchantShowItemLevel == true or false
+    -- EllesmereUI's list mode replaces the grid with its own list, and the grid steps aside
+    states.EllesmereUIListMode = addon.Util.IsMainline and EllesmereUI and C_AddOns.IsAddOnLoaded('EllesmereUIBlizzardSkin')
+        and type(EllesmereUI.GetBlizzWindowStyle) == 'function' and EllesmereUI.GetBlizzWindowStyle('merchant') ~= 'off'
+        and EllesmereUIDB and EllesmereUIDB.merchantShowAsList == true or false
+    if states.EllesmereUIListMode then
+        states.EllesmereUIItemLevel = false -- Drawn on EllesmereUI's own rows then
+    end
     states.CanIMogIt = CIMI_AddToFrame and MerchantFrame_CIMIUpdateIcon and true or false
     return states
 end
@@ -88,6 +95,9 @@ local function RecordEnvironment()
         if skins[name] then
             tinsert(run.Plugins, name)
         end
+    end
+    if skins.EllesmereUIListMode then
+        tinsert(run.Plugins, 'EllesmereUIListMode')
     end
 end
 
@@ -256,7 +266,29 @@ local function CheckPlugins()
     end
 end
 
+local function CheckGridSteppedAside()
+    local shown = {}
+    local i = 1
+    while GetItemSlot(i) do
+        if GetItemSlot(i):IsShown() then
+            tinsert(shown, i)
+        end
+        i = i + 1
+    end
+    if #shown == 0 and not paging:IsShown() then
+        Add('PASS', 'the grid and page controls step aside for EllesmereUI\'s list mode')
+    else
+        Add('FAIL', 'EllesmereUI\'s list mode, yet shown: slots ' .. (#shown > 0 and Join(shown) or 'none') .. (paging:IsShown() and ', page controls' or ''))
+    end
+end
+
 local function CheckMerchantTab()
+    if skins.EllesmereUIListMode then
+        Note(('%d of %d items in the filtered list, which EllesmereUI\'s list does not use'):format(#container:GetIndices(), GetMerchantNumItems()))
+        CheckGridSteppedAside()
+        CheckBlizzardHidden()
+        return
+    end
     CheckGrid()
     CheckBlizzardHidden()
     CheckPaging()
@@ -320,6 +352,10 @@ local function CheckBuyback()
         Add('PASS', 'the addon\'s slots and page controls hidden')
     else
         Add('FAIL', 'the addon\'s widgets shown: slots ' .. (#shown > 0 and Join(shown) or 'none') .. (paging:IsShown() and ', page controls' or ''))
+    end
+    if skins.EllesmereUIListMode then
+        Note('EllesmereUI\'s list mode shows the buyback items in its own rows')
+        return
     end
 
     local hidden = {}
@@ -424,6 +460,9 @@ steps = {
         Name = 'page-2',
         Text = 'filter All, page 2',
         Run = function()
+            if skins.EllesmereUIListMode then
+                return 'EllesmereUI\'s list mode has no pages'
+            end
             if not (KrowiEVU_MerchantNextPageButton:IsShown() and KrowiEVU_MerchantNextPageButton:IsEnabled()) then
                 return 'the list fits on one page'
             end
@@ -480,6 +519,11 @@ steps = {
     {
         Name = 'tooltip',
         Text = 'hover over an item and keep the mouse still',
+        Run = function()
+            if skins.EllesmereUIListMode then
+                return 'the items are EllesmereUI\'s own rows in its list mode'
+            end
+        end,
         Wait = 'hover',
         Check = CheckTooltip,
     },

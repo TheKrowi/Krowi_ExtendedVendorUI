@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Can I Mog It icons now update after changing the filter, the search or the page
 - Slots added by raising the rows or columns now get Can I Mog It icons without a reload
 - EllesmereUI's merchant skin and item levels now show on every item, not only the first 12 (Retail)
+- EllesmereUI's list mode is no longer covered by the item grid (Retail)
 - The item grid now also updates where Blizzard turns its own merchant filter off (Retail)
 - The vendor no longer shows an empty page after adding rows or columns while on a later page
 
