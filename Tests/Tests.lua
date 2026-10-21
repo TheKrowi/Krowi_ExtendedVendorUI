@@ -224,13 +224,17 @@ local function CheckTooltip()
         return
     end
     local _, link = GameTooltip:GetItem()
-    if issecretvalue and issecretvalue(link) then
+    local title = GameTooltipTextLeft1 and GameTooltipTextLeft1:GetText()
+    if issecretvalue and (issecretvalue(link) or issecretvalue(title)) then
         Add('SKIP', 'tooltip: its item is a secret value here')
         return
     end
     local tooltipItemId = link and tonumber(link:match('item:(%d+)'))
     local slotItemId = GetMerchantItemID(hovered:GetID())
-    Add(tooltipItemId and tooltipItemId == slotItemId and 'PASS' or 'FAIL', ('tooltip shows item %s, the slot holds item %s'):format(tostring(tooltipItemId), tostring(slotItemId)))
+    local slotName = hovered:GetParent().Name:GetText()
+    -- A recipe's tooltip reports the item it teaches through GetItem, so the title counts as well
+    local matches = (tooltipItemId and tooltipItemId == slotItemId) or (title and title == slotName)
+    Add(matches and 'PASS' or 'FAIL', ('tooltip "%s" (item %s) for the slot "%s" (item %s)'):format(tostring(title), tostring(tooltipItemId), tostring(slotName), tostring(slotItemId)))
 end
 
 local function CheckBuyback()
