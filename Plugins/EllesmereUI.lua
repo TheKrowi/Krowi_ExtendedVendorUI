@@ -38,7 +38,7 @@ local function IsItemLevelOn()
 end
 
 local loaded -- Set at Load
-local tileSkinOn -- nil until the first merchant window, then true or false
+local tileSkinOn -- nil until the first draw, then true or false
 local pendingItemSlots = {}
 local slotData = setmetatable({}, { __mode = 'k' })
 
@@ -138,7 +138,9 @@ local function SkinTile(itemSlot)
         qualityBorder:SetPoint('BOTTOMRIGHT', icon, 'BOTTOMRIGHT', 1, -1)
         qualityBorder:SetFrameLevel(button:GetFrameLevel() + 6)
         borderApi.CreateBorder(qualityBorder, 0, 0, 0, 1, 1, 'OVERLAY', 7)
-        slotData[button] = { qualityBorder = qualityBorder }
+        local buttonData = slotData[button] or {} -- May already hold the item level text
+        buttonData.qualityBorder = qualityBorder
+        slotData[button] = buttonData
         PaintQualityBorder(button) -- And after every draw, from OnItemSlotUpdated
     end
 
@@ -196,27 +198,11 @@ local function UpdateItemLevel(itemSlot, index)
 end
 
 -- [[ Plugin ]] --
--- EllesmereUI skins at PLAYER_LOGIN, after this addon loads, so the tile skin waits for the first merchant window
+-- EllesmereUI skins at PLAYER_LOGIN, after this addon loads, so the tile skin waits for the first draw
 local function SkinPending()
     for _, itemSlot in ipairs(pendingItemSlots) do
         SkinTile(itemSlot)
     end
-end
-
-local function OnFirstShow()
-    if tileSkinOn ~= nil then
-        return
-    end
-    tileSkinOn = IsTileSkinOn() and true or false
-    if tileSkinOn then
-        local ok, err = pcall(SkinPending)
-        if not ok then
-            tileSkinOn = false -- EllesmereUI changed under the plugin: leave the slots unskinned instead of erroring on every draw
-            geterrorhandler()(err)
-        end
-    end
-    wipe(pendingItemSlots)
-    addon.Gui.MerchantItemsContainer:Update()
 end
 
 function ellesmere:InjectOptions()
@@ -228,15 +214,26 @@ function ellesmere:Load()
     if not loaded then
         return
     end
-    MerchantFrame:HookScript('OnShow', OnFirstShow)
     if type(EllesmereUI._Merchant_RefreshItemLevels) == 'function' then
         -- EllesmereUI's item level option, toggled while a merchant window is open
         hooksecurefunc(EllesmereUI, '_Merchant_RefreshItemLevels', function()
             if MerchantFrame:IsShown() then
-                addon.Gui.MerchantItemsContainer:Update()
+                addon.Gui.MerchantItemsContainer:RequestUpdate()
             end
         end)
     end
+end
+
+function ellesmere:OnFirstDraw()
+    tileSkinOn = loaded and IsTileSkinOn() and true or false
+    if tileSkinOn then
+        local ok, err = pcall(SkinPending)
+        if not ok then
+            tileSkinOn = false -- EllesmereUI changed under the plugin: leave the slots unskinned instead of erroring on every draw
+            geterrorhandler()(err)
+        end
+    end
+    wipe(pendingItemSlots)
 end
 
 function ellesmere:OnItemSlotCreated(itemSlot)

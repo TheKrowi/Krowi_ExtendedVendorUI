@@ -27,7 +27,7 @@ local function GetSkin()
     return gw
 end
 
-local skin -- nil until the first merchant window, then GW2_ADDON or false
+local skin -- nil until the first draw, then GW2_ADDON or false
 local pendingItemSlots = {}
 
 -- merchant.lua:17-22
@@ -101,7 +101,7 @@ local function SkinPageControls()
     KrowiEVU_MerchantNextPageButton:SetPoint('LEFT', KrowiEVU_MerchantPageText, 'RIGHT', 100, 4)
 end
 
--- GW2_UI skins from a timer after PLAYER_LOGIN, after this addon loads, so everything waits for the first merchant window
+-- GW2_UI skins from a timer after PLAYER_LOGIN, after this addon loads, so everything waits for the first draw
 local function SkinPending()
     SkinPageControls()
     for _, itemSlot in ipairs(pendingItemSlots) do
@@ -109,35 +109,20 @@ local function SkinPending()
     end
 end
 
-local function OnFirstShow()
-    if skin ~= nil then
-        return
-    end
-    skin = GetSkin() or false
-    if not skin then
-        wipe(pendingItemSlots)
-        return
-    end
-
-    local ok, err = pcall(SkinPending)
-    wipe(pendingItemSlots)
-    if not ok then
-        skin = false -- GW2_UI changed under the plugin: leave the slots unskinned instead of erroring on every draw
-        geterrorhandler()(err)
-        return
-    end
-    addon.Gui.MerchantItemsContainer:Update()
-end
-
 function gw2:InjectOptions()
     addon.InjectOptions:AddPluginTable(pluginName, addon.L[L_Prefix .. 'Name'], addon.L[L_Prefix .. 'Desc'], IsLoaded)
 end
 
-function gw2:Load()
-    if not IsLoaded() then
-        return
+function gw2:OnFirstDraw()
+    skin = IsLoaded() and GetSkin() or false
+    if skin then
+        local ok, err = pcall(SkinPending)
+        if not ok then
+            skin = false -- GW2_UI changed under the plugin: leave the slots unskinned instead of erroring on every draw
+            geterrorhandler()(err)
+        end
     end
-    MerchantFrame:HookScript('OnShow', OnFirstShow)
+    wipe(pendingItemSlots)
 end
 
 function gw2:OnItemSlotCreated(itemSlot)
