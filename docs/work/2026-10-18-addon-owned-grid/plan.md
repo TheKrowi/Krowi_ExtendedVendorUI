@@ -1,5 +1,5 @@
 # Plan: Filter the vendor without replacing Blizzard's merchant API
-Spec: [spec.md](spec.md). Status: accepted
+Spec: [spec.md](spec.md). Status: done
 
 Non-routine (hooks on Blizzard frames, the taint-sensitive files in `CLAUDE.md`): approved by Krowi on 2026-10-19.
 
@@ -41,7 +41,9 @@ Phase 2 (branch `feat/2026-10-18-merchant-skin-plugins`, from the phase 1 branch
   4. Done 2026-10-21 on the phase 2 branch (`9081e0f`, rebased): GW2_UI and EllesmereUI plugins use `OnFirstDraw` instead of their `OnShow` hooks and forced updates; `Plugins/EllesmereUI.lua` `SkinTile` merges into `slotData[button]` instead of replacing it (it lost the item-level text created before the skin, which then stayed on screen).
   5. Done 2026-10-21: spec requirement 12 and the changelog have the page clamp.
 - Added 2026-10-21 at Krowi's request (`4671e90`, phase 1 branch): `/kevutest`, one checked and screenshotted pass over the merchant window per client, read back with `.claude/tools/Read-GameTests.ps1` (repo `CLAUDE.md`, Testing in game).
-- Next: a short taint review of the 2026-10-21 changes, deploy the phase 2 branch to the four clients, one `/kevutest` per client by Krowi, then set the work files to done and ask Krowi before pushing the two branches and opening the PRs.
+- Done 2026-10-21: taint reviews of each 2026-10-21 change (nothing high; the medium and low findings fixed or written into `CLAUDE.md`). EllesmereUI's list mode, found in game: the addon loads nothing and shows a notice (requirement 21, Krowi's decision after a hide-only-the-grid version).
+- In game on 2026-10-21, `/kevutest` per client by Krowi, every run without a failed check: Retail at Mirvedon and Captain Dawnrunner (no skin addon 32 passed; EllesmereUI 38 passed and 1 skipped, then 46 passed with item levels; GW2 UI checked by screenshot only, before runs were kept as a history; list mode checked by hand), Mists at Bario Matalli (ElvUI 34 passed and 1 skipped, none 22 and 1), Era at Janos Hammerknuckle (ElvUI 37, none 25), Anniversary at Shara Sunwing (none 19 passed, 2 skipped: a 4-item vendor). No Extended Vendor UI row in BugGrabber on Retail and Mists; Era has it disabled and Anniversary has none installed.
+- Next: `/code-review` of the changes since the 2026-10-19 review, then Krowi's go to push both branches and open the PRs (phase 1 into `main`, phase 2 on top of it).
 
 ## Risks
 - The drawing copy differs from Blizzard's: the baseline comparison per client catches it; each copy names its source lines.

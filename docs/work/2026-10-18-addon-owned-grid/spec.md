@@ -1,5 +1,5 @@
 # Spec: Filter the vendor without replacing Blizzard's merchant API
-Intent: [intent.md](intent.md). Status: accepted
+Intent: [intent.md](intent.md). Status: done
 
 "22.2" below means the current build (`main` at `d0e8771`), the baseline every "as today" is measured against.
 

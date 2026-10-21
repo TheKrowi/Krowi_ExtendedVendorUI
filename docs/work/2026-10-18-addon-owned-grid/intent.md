@@ -1,5 +1,5 @@
 # Intent: Filter the vendor without replacing Blizzard's merchant API
-Author: Krowi (maintainer). Source: idea, from the 2026-10-15 taint review and the 2026-10-16/18 exploration of other addons on the merchant window. Status: accepted
+Author: Krowi (maintainer). Source: idea, from the 2026-10-15 taint review and the 2026-10-16/18 exploration of other addons on the merchant window. Status: done
 
 ## Problem
 Nothing is reported broken by players, and no taint error has been reproduced in game. But Extended Vendor UI filters the vendor by replacing ten of Blizzard's merchant API functions and the items-per-page constant, so that Blizzard's own merchant window pages through the filtered list. That design:
