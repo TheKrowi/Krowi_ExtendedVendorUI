@@ -23,7 +23,7 @@ L["Other"] = "Autre"
 L["Pets"] = "Mascottes"
 L["Plugin_CanIMogIt_Desc"] = [=[Ce plugin corrige les icônes de superposition sur les articles des marchands lorsque différents filtres sont appliqués.
 Il n'y a pas d'options.]=]
-L["Plugin_CanIMogIt_Name"] = true
+L["Plugin_CanIMogIt_Name"] = "Can I Mog It"
 L["Rows"] = "Lignes"
 L["Rows first"] = "Lignes d'abord"
 L["Select All"] = "Tout sélectionner"

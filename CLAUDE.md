@@ -46,7 +46,7 @@ Match the file you are editing; this repo's style is not Krowi_AchievementFilter
 - Line 1 is `local _, addon = ...` (or `local addonName, addon = ...`); older files put `-- [[ Namespaces ]] --` above it. No copyright banner. Section comments are `-- [[ Name ]] --`.
 - Module tables on `addon.*` (`addon.Gui.FilterButton`, `addon.Filters`) with a camelCase local alias; functions PascalCase, locals camelCase; globals, frames, mixins and templates `KrowiEVU_<Name>`, `KrowiEVU_<Name>Mixin`, `KrowiEVU_<Name>_Template`.
 - CRLF on disk (LF in git, `core.autocrlf=true`), no BOM, no final newline (except `Localization/Files.xml`, which git stores with CRLF, and the bundled Ace libs). There is no `.editorconfig`.
-- `.vscode/settings.json` lists the globals the Lua language server accepts (still with `KrowiV_*` names from Krowi_Vendorer). The Ketho WoW API extension writes the `Lua.runtime.*` and `Lua.workspace.library` keys there and prunes WoW API globals itself, so add only addon and library globals by hand.
+- `.vscode/settings.json` lists the globals the Lua language server accepts (still with `KrowiV_*` names from Krowi_Vendorer). The Ketho WoW API extension writes the `Lua.runtime.*` and `Lua.workspace.library` keys there, removes WoW API functions from `Lua.diagnostics.globals` and appends every other known Blizzard global it sees flagged (see `WowAddons.md`, "Extension-grown globals"), so add only addon and library globals by hand. The 737 it had appended by 2026-10-21, many from GW2_UI and EllesmereUI files opened during the skin work, stay on Krowi's word (2026-10-21) and are committed with 23.0.
 - Do not restyle lines you are not otherwise changing.
 
 ## Testing in game
@@ -59,6 +59,7 @@ For one pass per client, ask Krowi to type `/kevutest` and open a vendor with mo
 
 - `main` is the only long-lived branch and the release branch. Releases used to be cut on `dev` and merged to `main` through a "Dev" pull request (#84, #86); `dev` was merged into `main` and removed on 2026-10-18. Branch new work from `main` and open PRs against it.
 - Release only with the plugin's `krowi:release` skill. Versions are `major.minor` (22.1) and ship as stable, `--stability stable`: no GitHub release has ever been a pre-release.
+- `/kevutest` is part of the release (Krowi, 2026-10-21). The preflight runs `.claude/release-gate.ps1`, which needs every client the TOC claims to have this checkout installed and a completed `/kevutest` run of the TOC version without failed checks since the last change to a shipped file, per skin setup. The preflight's library update counts as such a change, so the order is: preflight (libraries), deploy to every client, Krowi runs `/kevutest` on each and `/reload`s, preflight again until READY, then the dry run.
 - `origin` still points at the repo's old name, `TheKrowi/Krowi_MerchantFrameExtended` (GitHub redirects it to `TheKrowi/Krowi_ExtendedVendorUI`); the `StefanoVe` remote is a contributor's fork. Branches `cata-classic-test`, `cata-classic-test-2` and `shopping-list` are old and unmerged; `filters` is merged.
 - `raw/` and `wiki/` hold LLM-wiki notes from 2026-06-03 (a codebase analysis and six articles), not a GitHub wiki. They are stale (version 21.3, Cataclysm and Wrath clients, no Bulk Purchase): trust the code over them. Neither `Deploy.ps1` nor the addon manager's zip ships them.
 
@@ -76,6 +77,5 @@ Other bugs and drift:
 - `Gui/BulkPurchase/BulkPurchaseMixin.lua:54` calls `GetInventorySlotInfo`, deprecated on Retail 12.1.5 for `C_PaperDollInfo.GetInventorySlotInfo` (`Find-DeprecatedApi.ps1`, 2026-10-19).
 - `.vscode/settings.json` still lists `MerchantFrame_SetFilter`, which no longer exists, and not `KrowiEVU_MerchantPrevPageButton`, `KrowiEVU_MerchantNextPageButton` or `KrowiEVU_MerchantPageText` (left alone in the redesign because the main checkout had an uncommitted change to the file).
 - `Gui/OptionsButton/OptionsButtonMixin.lua:47` points at `Interface\AddOns\Krowi_MerchantFrameExtended\Media\`, the old folder name, so the arrow texture in the hide-options-button text never shows.
-- `Plugin_CanIMogIt_Name` is `= true` in the deDE, frFR, itIT and ruRU exports, so those clients show the raw key as the plugin name.
 - `README.md` and `_Packaging/Description.md` do not mention Bulk Purchase.
 - Unused: `addon.IsWrathClassic` and `addon.IsDragonflightRetail` (`Krowi_ExtendedVendorUI.lua:7-8`), the empty `filters:RefreshFilters`, `Gui/TokenBanner/TokenBannerMixin.lua` and `Options/Options.lua`.
