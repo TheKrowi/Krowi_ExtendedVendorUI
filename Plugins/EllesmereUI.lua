@@ -264,8 +264,9 @@ function ellesmere:OnItemSlotUpdated(itemSlot, index)
     UpdateItemLevel(itemSlot, index)
 end
 
--- In list mode the grid steps aside, the way it does for Krowi_Vendorer's tabs: EllesmereUI's list reads every item itself, so
--- the filter and search do not reach it (Krowi, 2026-10-21: hide only the grid, keep the window, buttons and token banner)
+-- In list mode the grid steps aside, the way it does for Krowi_Vendorer's tabs: EllesmereUI's list reads the merchant API itself,
+-- so only Blizzard's server-side filters (class, specialization) reach it, not this addon's own filters or the search
+-- (Krowi, 2026-10-21: hide only the grid, keep the window, buttons and token banner)
 function ellesmere:OnItemSlotsUpdated()
     if listModeOn then
         addon.Gui.MerchantItemsContainer:HideAll()
