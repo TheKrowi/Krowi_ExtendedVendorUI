@@ -28,17 +28,10 @@ local function GetBorderApi()
     end
 end
 
-local function IsWindowSkinOn()
-    return type(EllesmereUI.GetBlizzWindowStyle) == 'function' and EllesmereUI.GetBlizzWindowStyle('merchant') ~= 'off'
-end
-
--- EllesmereUI's list mode shows every item in its own scroll list over the merchant window; switching it takes a reload
-local function IsListModeOn()
-    return IsWindowSkinOn() and EllesmereUIDB and EllesmereUIDB.merchantShowAsList == true
-end
-
+-- With EllesmereUI's list mode on, the addon does not load at all (Krowi_ExtendedVendorUI.lua)
 local function IsTileSkinOn()
-    return IsWindowSkinOn() and not (EllesmereUIDB and EllesmereUIDB.merchantShowAsList) and GetBorderApi() ~= nil
+    return type(EllesmereUI.GetBlizzWindowStyle) == 'function' and EllesmereUI.GetBlizzWindowStyle('merchant') ~= 'off'
+        and not (EllesmereUIDB and EllesmereUIDB.merchantShowAsList) and GetBorderApi() ~= nil
 end
 
 local function IsItemLevelOn()
@@ -46,7 +39,7 @@ local function IsItemLevelOn()
 end
 
 local loaded -- Set at Load
-local tileSkinOn, listModeOn -- nil until the first draw, then true or false
+local tileSkinOn -- nil until the first draw, then true or false
 local pendingItemSlots = {}
 local slotData = setmetatable({}, { __mode = 'k' })
 
@@ -233,7 +226,6 @@ function ellesmere:Load()
 end
 
 function ellesmere:OnFirstDraw()
-    listModeOn = loaded and IsListModeOn() and true or false
     tileSkinOn = loaded and IsTileSkinOn() and true or false
     if tileSkinOn then
         local ok, err = pcall(SkinPending)
@@ -254,7 +246,7 @@ function ellesmere:OnItemSlotCreated(itemSlot)
 end
 
 function ellesmere:OnItemSlotUpdated(itemSlot, index)
-    if not loaded or listModeOn then
+    if not loaded then
         return
     end
     if tileSkinOn then
@@ -262,13 +254,4 @@ function ellesmere:OnItemSlotUpdated(itemSlot, index)
         PaintQualityBorder(itemSlot.ItemButton)
     end
     UpdateItemLevel(itemSlot, index)
-end
-
--- In list mode the grid steps aside, the way it does for Krowi_Vendorer's tabs: EllesmereUI's list reads the merchant API itself,
--- so only Blizzard's server-side filters (class, specialization) reach it, not this addon's own filters or the search
--- (Krowi, 2026-10-21: hide only the grid, keep the window, buttons and token banner)
-function ellesmere:OnItemSlotsUpdated()
-    if listModeOn then
-        addon.Gui.MerchantItemsContainer:HideAll()
-    end
 end

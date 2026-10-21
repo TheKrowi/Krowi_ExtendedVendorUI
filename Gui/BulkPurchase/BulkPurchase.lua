@@ -1,5 +1,6 @@
 -- [[ Namespaces ]] --
 local _, addon = ...
+if addon.NotLoaded then return end
 
 addon.Gui.BulkPurchase = {}
 local bulkPurchase = addon.Gui.BulkPurchase

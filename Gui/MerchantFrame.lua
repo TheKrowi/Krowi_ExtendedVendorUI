@@ -1,4 +1,5 @@
 local _, addon = ...
+if addon.NotLoaded then return end
 local merchantItemsContainer = addon.Gui.MerchantItemsContainer
 local originalWidth, originalHeight = MerchantFrame:GetSize()
 originalHeight = originalHeight + 12

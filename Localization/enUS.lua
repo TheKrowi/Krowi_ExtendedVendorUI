@@ -91,3 +91,6 @@ L["Plugin_EllesmereUI_Name"] = "EllesmereUI"
 L["Plugin_EllesmereUI_Desc"] = [=[This plugin gives the vendor items EllesmereUI's merchant skin and item levels.
 
 There are no options.]=]
+L["Plugin_EllesmereUI_ListModeNotLoaded"] = [=[Extended Vendor UI does not work with EllesmereUI's merchant list mode, so it is not loaded.
+
+To use Extended Vendor UI, turn off Show As List in EllesmereUI's merchant options.]=]

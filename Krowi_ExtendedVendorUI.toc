@@ -5,6 +5,7 @@
 ## Version: 22.2
 ## Author: Krowi-Frostmane EU
 ## LoadWith: Blizzard_MerchantFrame
+## OptionalDeps: EllesmereUI, EllesmereUIBlizzardSkin
 ## SavedVariables: KrowiEVU_Options, KrowiEVU_Filters, KrowiEVU_Debug
 ## Notes: Extends the size of your Merchant Frame.
 ## Notes-zhCN: 扩展商人商品界面，自定义筛选显示商品。
