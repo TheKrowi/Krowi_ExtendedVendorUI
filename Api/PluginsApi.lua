@@ -15,6 +15,7 @@ fields Blizzard sets (link, price, extendedCost). index is the vendor's real ind
 and nil for an empty slot. Errors in these four methods are reported and do not stop the merchant window.
 ]]
 
+local _, addon = ...
 KrowiEVU.PluginsApi = {}
 local pluginsApi = KrowiEVU.PluginsApi
 pluginsApi.Plugins = {}
@@ -25,6 +26,9 @@ end
 
 local loadHelper = CreateFrame('Frame')
 function loadHelper:OnEvent(event, arg1, arg2)
+    if addon.NotLoaded then -- Plugins of an addon that did not load (Krowi_ExtendedVendorUI.lua) get no events
+        return
+    end
     for _, plugin in next, pluginsApi.Plugins do
         if type(plugin.OnEvent) == 'function' then
             plugin:OnEvent(event, arg1, arg2)
@@ -34,6 +38,9 @@ end
 loadHelper:SetScript('OnEvent', loadHelper.OnEvent)
 
 function pluginsApi:RegisterEvent(event)
+    if addon.NotLoaded then
+        return
+    end
     loadHelper:RegisterEvent(event)
 end
 
