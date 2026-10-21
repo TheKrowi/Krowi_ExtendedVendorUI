@@ -1,4 +1,5 @@
 local _, addon = ...
+if addon.NotLoaded then return end
 addon.Filters = {}
 local filters = addon.Filters
 

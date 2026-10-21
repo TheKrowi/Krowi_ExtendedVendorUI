@@ -1,5 +1,6 @@
 -- [[ Namespaces ]] --
 local _, addon = ...
+if addon.NotLoaded then return end
 addon.Gui.MerchantItemsContainer = {}
 local merchantItemsContainer = addon.Gui.MerchantItemsContainer
 local merchantItemSlot = addon.Gui.MerchantItemSlot

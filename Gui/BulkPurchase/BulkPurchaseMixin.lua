@@ -1,5 +1,6 @@
 -- [[ Namespaces ]] --
 local _, addon = ...
+if addon.NotLoaded then return end
 
 KrowiEVU_BulkPurchaseMixin = {}
 local mixin = KrowiEVU_BulkPurchaseMixin

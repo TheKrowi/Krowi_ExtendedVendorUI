@@ -1,4 +1,5 @@
 local addonName, addon = ...
+if addon.NotLoaded then return end
 addon.Tests = {}
 local tests = addon.Tests
 

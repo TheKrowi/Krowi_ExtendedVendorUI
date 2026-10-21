@@ -1,4 +1,5 @@
 local _, addon = ...
+if addon.NotLoaded then return end
 addon.Gui.Paging = {}
 local paging = addon.Gui.Paging
 

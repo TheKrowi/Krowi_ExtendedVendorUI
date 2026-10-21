@@ -1,5 +1,6 @@
 -- [[ Namespaces ]] --
 local _, addon = ...
+if addon.NotLoaded then return end
 local merchantItemsContainer = addon.Gui.MerchantItemsContainer
 
 KrowiEVU_OptionsButtonMixin = {}

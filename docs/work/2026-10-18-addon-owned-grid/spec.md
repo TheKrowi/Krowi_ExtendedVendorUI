@@ -1,5 +1,5 @@
 # Spec: Filter the vendor without replacing Blizzard's merchant API
-Intent: [intent.md](intent.md). Status: accepted
+Intent: [intent.md](intent.md). Status: done
 
 "22.2" below means the current build (`main` at `d0e8771`), the baseline every "as today" is measured against.
 
@@ -43,6 +43,7 @@ Phase 2:
 18. GW2_UI with its merchant skin on, on every client it supports (Retail, Mists, Anniversary, Era): every slot carries GW2_UI's slot skin as in 22.2, where GW2_UI skins the `MerchantItemN` frames Extended Vendor UI creates; prices sit where GW2_UI places them; on Mists, names and borders are coloured by quality as GW2_UI does there. Slots added this session are skinned too.
 19. EllesmereUI with its merchant window skin on in grid mode (Retail): every slot looks like EllesmereUI's merchant tile in 22.2 (dark card fill, border, faded slot art, square rarity border on the icon, icon centred in the row, names on up to two lines), on every slot (22.2: slots 1-12 only), and follows EllesmereUI's skin style setting.
 20. EllesmereUI's merchant item levels on (Retail): weapon and armour slots show their item level top left in EllesmereUI's font and colour, on every slot (22.2: slots 1-12 only), refreshed with the grid and when the option is toggled.
+21. EllesmereUI's merchant list mode on (Retail; added 2026-10-21 after Krowi's in-game check, where the grid covered EllesmereUI's list): Extended Vendor UI loads nothing, so the vendor window is EllesmereUI's alone, and the first vendor window of a session shows a notice that the two do not work together and how to turn list mode off; the addon compartment entry says the same. Krowi's decision, after a first version that hid only the grid left a filter, search, token banner and window size that did not match EllesmereUI's list, which reads the merchant API itself. 22.2 most likely had the same overlap, since EllesmereUI hides only `MerchantItem1-12` (inferred from both addons' code, not run).
 
 ## Root cause
 This is a redesign, not a single bug; the mechanism behind the known debt (`CLAUDE.md`, Known debt):

@@ -83,3 +83,14 @@ L["Toys"] = true
 L["Vendor has"] = true
 L["You can afford"] = true
 L["You can fit"] = true
+L["Plugin_GW2UI_Name"] = "GW2 UI"
+L["Plugin_GW2UI_Desc"] = [=[This plugin gives the vendor items GW2 UI's merchant skin.
+
+There are no options.]=]
+L["Plugin_EllesmereUI_Name"] = "EllesmereUI"
+L["Plugin_EllesmereUI_Desc"] = [=[This plugin gives the vendor items EllesmereUI's merchant skin and item levels.
+
+There are no options.]=]
+L["Plugin_EllesmereUI_ListModeNotLoaded"] = [=[Extended Vendor UI does not work with EllesmereUI's merchant list mode, so it is not loaded.
+
+To use Extended Vendor UI, turn off Show As List in EllesmereUI's merchant options.]=]

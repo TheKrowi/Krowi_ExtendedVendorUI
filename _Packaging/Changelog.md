@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 22.3
+## 22.3 - 2026-10-21
 ### Changed
 - Other addons that read the vendor's items, like Auctionator, Zygor and TSM, now see all of them, not only the ones the filter shows
 
@@ -10,8 +10,10 @@ All notable changes to this project will be documented in this file.
 - The warning for non-refundable items now checks the item you clicked while a filter is active
 - The token banner's gold total is right again while a filter is active (Classic)
 - With Bulk Purchase on, shift-clicking an item into chat links it once and ctrl-clicking it opens the dressing room once
-- Can I Mog It icons now update after changing the filter, the search or the page
+- Can I Mog It icons now update after changing the filter, the search, the page or Can I Mog It's own options
 - Slots added by raising the rows or columns now get Can I Mog It icons without a reload
+- EllesmereUI's merchant skin and item levels now show on every item, not only the first 12 (Retail)
+- With EllesmereUI's merchant list mode on, Extended Vendor UI no longer covers EllesmereUI's list: it stays off and says why (Retail)
 - The item grid now also updates where Blizzard turns its own merchant filter off (Retail)
 - The vendor no longer shows an empty page after adding rows or columns while on a later page
 

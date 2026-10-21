@@ -1,5 +1,5 @@
 # Plan: Filter the vendor without replacing Blizzard's merchant API
-Spec: [spec.md](spec.md). Status: accepted
+Spec: [spec.md](spec.md). Status: done
 
 Non-routine (hooks on Blizzard frames, the taint-sensitive files in `CLAUDE.md`): approved by Krowi on 2026-10-19.
 
@@ -23,7 +23,7 @@ Phase 1 (branch `refactor/2026-10-18-addon-owned-grid`):
 - `CLAUDE.md`: Architecture, Taint-sensitive areas, Known debt. `_Packaging/Changelog.md`: a `## 22.3` entry (Krowi sets the number).
 - Not changed: `.vscode/settings.json`, which has an uncommitted change in the main checkout.
 
-Phase 2 (branch `feat/2026-10-18-merchant-skin-plugins`, from the phase 1 branch): `Plugins/GW2_UI.lua`, `Plugins/EllesmereUI.lua`, `Plugins/Files.xml`, plugin strings in `Localization/enUS.lua`, a changelog line.
+Phase 2 (branch `feat/2026-10-18-merchant-skin-plugins`, from the phase 1 branch): `Plugins/GW2_UI.lua`, `Plugins/EllesmereUI.lua`, `Plugins/Files.xml`, plugin strings in `Localization/enUS.lua`, a changelog line. The four new strings (`Plugin_GW2UI_Name`, `_Desc`, `Plugin_EllesmereUI_Name`, `_Desc`) also go onto the CurseForge localization page (Krowi, 2026-10-19): after phase 2 is merged into `main`, through the addon manager's Export Localization for Base Namespace, enUS (it uploads the whole `enUS.lua` and deletes phrases missing from it), a step for Krowi since the addon manager is not driven outside the release skill.
 
 ## Order of work
 1. Baseline: 22.2 (this worktree before any code change) deployed to Retail, Classic, Anniversary and Era on 2026-10-19; Krowi takes the steps under Proof, baseline; results go into `spec.md`, Reproduction. Code is written meanwhile and deployed only after the baseline is recorded (approved with this plan).
@@ -32,14 +32,20 @@ Phase 2 (branch `feat/2026-10-18-merchant-skin-plugins`, from the phase 1 branch
 4. Phase 2 code, checks, PR.
 5. No release before both are merged and Plumber is settled.
 
-## Where it stands (2026-10-19, end of session)
+## Where it stands (2026-10-19, updated 2026-10-21)
 - Phase 1 and 2 are built and checked in game on Retail (Mirvedon), Mists (Bario Matalli) and Era against 22.2; Anniversary not checked (Krowi's choice). All four clients run the phase 2 build as it was before the last item below (commit `1b8b87f` on the phase 2 branch).
 - Final reviews done: `krowi:taint-reviewer` on phase 1, phase 2 and the ElvUI v16 change (no high or medium findings); `/code-review` on the whole diff found six points, being fixed:
   1. Done, not yet deployed: `merchantItemsContainer:RequestUpdate()` queues addon-requested updates (filter change, `MERCHANT_SHOW`, item data) for the next frame and drops them when a Blizzard refresh updates first; the page is clamped to the last page when the list gets shorter (22.2 and Blizzard show an empty "Page 3 of 2"); the container calls a new plugin method `OnFirstDraw()` once, right before the first draw.
-  2. To do: document `OnFirstDraw` in `Api/PluginsApi.lua`; move the ElvUI plugin's `OnFirstShow` into `OnFirstDraw`, drop its Retail `SkinModernItemSlot` (fully repeated by `ElvSkinItemSlot`) and use `isModern` instead of ElvUI's `engine.Modern` (missing before ElvUI v16).
-  3. To do: CanIMogIt plugin also repaints the shown slots on CanIMogIt's own `OptionUpdate` and `ResetCache` messages, through `CanIMogIt:RegisterMessage` (CanIMogIt has its own message list, `core.lua:45-59`).
-  4. To do on the phase 2 branch (rebase it first): GW2_UI and EllesmereUI plugins use `OnFirstDraw` instead of their `OnShow` hooks and forced updates; `Plugins/EllesmereUI.lua` `SkinTile` merges into `slotData[button]` instead of replacing it (it lost the item-level text created before the skin, which then stayed on screen).
-  5. Then: spec requirement 12 and the changelog get the page clamp; syntax check, a short taint review of the changes, deploy Retail and Mists, a quick look by Krowi, set the work files to done, and ask Krowi before pushing the two branches and opening the PRs.
+  2. Done 2026-10-21 (`b0ed50c`): `OnFirstDraw` documented in `Api/PluginsApi.lua`; the ElvUI plugin's first-open work moved into `OnFirstDraw`, its Retail `SkinModernItemSlot` dropped (fully repeated by `ElvSkinItemSlot`), `isModern` instead of ElvUI's `engine.Modern` (missing before ElvUI v16).
+  3. Done 2026-10-21 (`b0ed50c`): the CanIMogIt plugin also repaints the shown slots on CanIMogIt's own `OptionUpdate` and `ResetCache` messages, through `CanIMogIt:RegisterMessage` (CanIMogIt has its own message list, `core.lua:45-59`).
+  4. Done 2026-10-21 on the phase 2 branch (`9081e0f`, rebased): GW2_UI and EllesmereUI plugins use `OnFirstDraw` instead of their `OnShow` hooks and forced updates; `Plugins/EllesmereUI.lua` `SkinTile` merges into `slotData[button]` instead of replacing it (it lost the item-level text created before the skin, which then stayed on screen).
+  5. Done 2026-10-21: spec requirement 12 and the changelog have the page clamp.
+- Added 2026-10-21 at Krowi's request (`4671e90`, phase 1 branch): `/kevutest`, one checked and screenshotted pass over the merchant window per client, read back with `.claude/tools/Read-GameTests.ps1` (repo `CLAUDE.md`, Testing in game).
+- Done 2026-10-21: taint reviews of each 2026-10-21 change (nothing high; the medium and low findings fixed or written into `CLAUDE.md`). EllesmereUI's list mode, found in game: the addon loads nothing and shows a notice (requirement 21, Krowi's decision after a hide-only-the-grid version).
+- In game on 2026-10-21, `/kevutest` per client by Krowi, every run without a failed check: Retail at Mirvedon and Captain Dawnrunner (no skin addon 32 passed; EllesmereUI 38 passed and 1 skipped, then 46 passed with item levels; GW2 UI checked by screenshot only, before runs were kept as a history; list mode checked by hand), Mists at Bario Matalli (ElvUI 34 passed and 1 skipped, none 22 and 1), Era at Janos Hammerknuckle (ElvUI 37, none 25), Anniversary at Shara Sunwing (none 19 passed, 2 skipped: a 4-item vendor). No Extended Vendor UI row in BugGrabber on Retail and Mists; Era has it disabled and Anniversary has none installed.
+- Done 2026-10-21: `/code-review` of the changes since the 2026-10-19 review (15 findings: 12 fixed, 3 left as design points for the PR) and a taint review of its fixes; Retail and Mists ran `/kevutest` again without a failed check, and the run's new errors step caught and then cleared an EllesmereUI plugin error the fixes had brought in. Version 22.3, dated 2026-10-21 (`chore: 22.3`).
+- Krowi, 2026-10-21: the notice string `Plugin_EllesmereUI_ListModeNotLoaded` goes onto the CurseForge localization page with the four plugin strings; the dead `fsdeploy.*` keys in the repos' `.vscode/settings.json` stay.
+- Next: Krowi merges PR 1 and then PR 2 (merge commits); the CurseForge localization export (Krowi's step); the release with `krowi:release` from the main checkout on `main`, which a session isolated in these worktrees cannot reach.
 
 ## Risks
 - The drawing copy differs from Blizzard's: the baseline comparison per client catches it; each copy names its source lines.

@@ -1,4 +1,5 @@
 local _, addon = ...
+if addon.NotLoaded then return end
 
 local TEXTURE_SIZE = 14
 local currency = KROWI_LIBMAN:GetLibrary('Krowi_Currency_2')
