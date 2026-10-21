@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 22.3 - 2026-10-21
+## 23.0 - 2026-10-21
 ### Changed
 - Other addons that read the vendor's items, like Auctionator, Zygor and TSM, now see all of them, not only the ones the filter shows
 
