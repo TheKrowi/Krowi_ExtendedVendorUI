@@ -242,6 +242,7 @@ function merchantItemsContainer:PlaceBuybackItemSlots(show)
 end
 
 hooksecurefunc('MerchantFrame_UpdateBuybackInfo', function()
+    CloseStackSplit() -- Blizzard's MerchantFrame_CloseStackSplitFrame only knows its own MerchantItemN; Okay would still buy
     HideItemSlots()
     paging:Hide()
     merchantItemsContainer:PlaceBuybackItemSlots(true)
