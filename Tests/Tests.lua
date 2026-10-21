@@ -23,7 +23,8 @@ local merchantItemSlot = addon.Gui.MerchantItemSlot
 local paging = addon.Gui.Paging
 local filters = addon.Filters
 
-local running, armed, run, current, counts, saved, skins, banner, waitingFor, waitTimer, hovered
+local running, armed, run, current, counts, saved, skins, banner, waitingFor, waitTimer, restTimer
+local hookedButtons = {} -- The addon's item buttons, hooked for the tooltip step
 local steps
 
 -- [[ Results ]] --
@@ -220,8 +221,10 @@ local function CheckMerchantTab()
 end
 
 local function CheckTooltip()
-    if not (hovered and GameTooltip:IsShown() and GameTooltip:GetOwner() == hovered) then
-        Add('SKIP', 'tooltip: the mouse left the item before the screenshot')
+    -- The item under the mouse at the screenshot, whichever slot the mouse entered first
+    local hovered = GameTooltip:IsShown() and GameTooltip:GetOwner()
+    if not (hovered and hookedButtons[hovered]) then
+        Add('SKIP', 'tooltip: no item tooltip under the mouse at the screenshot')
         return
     end
     local _, link = GameTooltip:GetItem()
@@ -450,13 +453,13 @@ local function Capture()
     C_Timer.After(AFTER_SHOT, NextStep)
 end
 
-local function Continue()
+local function Continue(delay)
     waitingFor = nil
     if waitTimer then
         waitTimer:Cancel()
         waitTimer = nil
     end
-    C_Timer.After(MOUSE_SETTLE, Capture)
+    C_Timer.After(delay or MOUSE_SETTLE, Capture)
 end
 
 local function Wait(what)
@@ -474,19 +477,29 @@ local function Wait(what)
     end)
 end
 
-local hookedButtons = {}
+-- The screenshot waits until the mouse has rested on one item: on its way there it enters other slots first
+local function OnItemButtonEnter(self)
+    if waitingFor ~= 'hover' or not self.link then
+        return
+    end
+    if restTimer then
+        restTimer:Cancel()
+    end
+    restTimer = C_Timer.NewTimer(MOUSE_SETTLE, function()
+        restTimer = nil
+        if waitingFor == 'hover' then
+            Continue(0)
+        end
+    end)
+end
+
 local function HookItemSlots()
     local i = 1
     while GetItemSlot(i) do
         local button = GetItemSlot(i).ItemButton
         if not hookedButtons[button] then
             hookedButtons[button] = true
-            button:HookScript('OnEnter', function(self)
-                if waitingFor == 'hover' and self.link then
-                    hovered = self
-                    Continue()
-                end
-            end)
+            button:HookScript('OnEnter', OnItemButtonEnter)
         end
         i = i + 1
     end
@@ -592,6 +605,10 @@ Stop = function(reason)
         waitTimer:Cancel()
         waitTimer = nil
     end
+    if restTimer then
+        restTimer:Cancel()
+        restTimer = nil
+    end
     banner:UnregisterAllEvents()
     banner:Hide()
     run.Stopped = reason
@@ -649,8 +666,8 @@ function tests.Start()
     -- Kept as a history: Krowi runs several in a row (one per skin addon, a reload between each) before they are read
     KrowiEVU_Debug = KrowiEVU_Debug or {}
     KrowiEVU_Debug.Tests = KrowiEVU_Debug.Tests or {}
-    KrowiEVU_Debug.Tests.LastRun = nil -- Before Runs
-    local runs = KrowiEVU_Debug.Tests.Runs or {}
+    local runs = KrowiEVU_Debug.Tests.Runs or { KrowiEVU_Debug.Tests.LastRun } -- LastRun: the one run kept before Runs
+    KrowiEVU_Debug.Tests.LastRun = nil
     KrowiEVU_Debug.Tests.Runs = runs
     tinsert(runs, run)
     while #runs > KEEP_RUNS do
