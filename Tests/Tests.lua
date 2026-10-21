@@ -1,4 +1,4 @@
-local _, addon = ...
+local addonName, addon = ...
 addon.Tests = {}
 local tests = addon.Tests
 
@@ -282,6 +282,29 @@ local function CheckTooltip()
     -- A recipe's tooltip reports the item it teaches through GetItem, so the title counts as well
     local matches = (tooltipItemId and tooltipItemId == slotItemId) or (title and title == slotName)
     Add(matches and 'PASS' or 'FAIL', ('tooltip "%s" (item %s) for the slot "%s" (item %s)'):format(tostring(title), tostring(tooltipItemId), tostring(slotName), tostring(slotItemId)))
+end
+
+-- This addon's Lua errors in this session, also from before the run (the first draw, a plugin), as BugGrabber caught them
+local function CheckErrors()
+    if not (BugGrabber and type(BugGrabber.GetDB) == 'function' and type(BugGrabber.GetSessionId) == 'function') then
+        Note('no BugGrabber, so Lua errors are not checked')
+        return
+    end
+    local session = BugGrabber:GetSessionId()
+    local found = {}
+    for _, err in ipairs(BugGrabber:GetDB()) do
+        if err.session == session and ((type(err.message) == 'string' and err.message:find(addonName, 1, true))
+            or (type(err.stack) == 'string' and err.stack:find(addonName, 1, true))) then
+            tinsert(found, err)
+        end
+    end
+    if #found == 0 then
+        Add('PASS', 'no Lua error from this addon this session (BugGrabber)')
+        return
+    end
+    for _, err in ipairs(found) do
+        Add('FAIL', ('Lua error x%d: %s'):format(err.counter or 1, tostring(err.message):sub(1, 300)))
+    end
 end
 
 local function CheckBuyback()
@@ -673,6 +696,12 @@ Stop = function(reason)
     if not ok then
         run.RestoreError = tostring(err)
         print(prefix .. '|cFFFF0000could not put the settings back:|r ' .. tostring(err))
+    end
+    current = { Step = #run.Steps + 1, Name = 'errors', Text = 'Lua errors this session', Lines = {} }
+    tinsert(run.Steps, current)
+    ok, err = pcall(CheckErrors)
+    if not ok then
+        Add('FAIL', 'test error: ' .. tostring(err))
     end
     run.Passed, run.Failed, run.Skipped = counts.PASS, counts.FAIL, counts.SKIP
 
