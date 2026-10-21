@@ -2,7 +2,7 @@
 ## Title: Krowi's |cFF1D92C2Extended Vendor UI|r
 ## X-Prefix: KrowiEVU
 ## X-Acronym: KEVU
-## Version: 22.2
+## Version: 22.3
 ## Author: Krowi-Frostmane EU
 ## LoadWith: Blizzard_MerchantFrame
 ## OptionalDeps: EllesmereUI, EllesmereUIBlizzardSkin
