@@ -226,11 +226,14 @@ function ellesmere:Load()
 end
 
 function ellesmere:OnFirstDraw()
-    local styleOk, on = pcall(IsTileSkinOn)
-    if not styleOk then
-        geterrorhandler()(on)
+    local styleOk, on = true, false
+    if loaded then
+        styleOk, on = pcall(IsTileSkinOn)
+        if not styleOk then
+            geterrorhandler()(on)
+        end
     end
-    tileSkinOn = loaded and styleOk and on and true or false -- Decided once, also when EllesmereUI errors, so no slot waits forever
+    tileSkinOn = styleOk and on and true or false -- Decided once, also when EllesmereUI errors, so no slot waits forever
     if tileSkinOn then
         local ok, err = pcall(SkinPending)
         if not ok then
