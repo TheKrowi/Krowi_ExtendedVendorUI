@@ -18,7 +18,7 @@ L["Options Desc"] = "Apri le opzioni che sono visibili dal pulsante opzioni nell
 L["Plugin_CanIMogIt_Desc"] = [=[Questo plugin corregge la sovrapposizione di icone negli oggetti dei mercanti quando sono applicati diversi filtri.
 
 Non ci sono opzioni.]=]
-L["Plugin_CanIMogIt_Name"] = true
+L["Plugin_CanIMogIt_Name"] = "Can I Mog It"
 L["Rows"] = "Righe"
 L["Rows first"] = "Prima righe"
 L["Show options button"] = "Mostra il pulsante opzioni"

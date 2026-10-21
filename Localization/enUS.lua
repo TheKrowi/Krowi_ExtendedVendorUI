@@ -5,7 +5,7 @@ KrowiEVU.PluginsApi:LoadPluginLocalization(L)
 
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2026-06-28 15-11-03 ]] --
+-- [[ Exported at 2026-10-21 20-08-49 ]] --
 L["Are you sure you want to hide the options button?"] = [=[Are you sure you want to hide the options button?
 The options button can be shown again via {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options}]=]
 L["Arsenals"] = true
@@ -46,6 +46,13 @@ L["Plugin_CanIMogIt_Desc"] = [=[This plugin fixes the overlay icons on vendor it
 
 There are no options.]=]
 L["Plugin_CanIMogIt_Name"] = "Can I Mog It"
+L["Plugin_EllesmereUI_Desc"] = [=[This plugin gives the vendor items EllesmereUI's merchant skin and item levels.
+
+There are no options.]=]
+L["Plugin_EllesmereUI_ListModeNotLoaded"] = [=[Extended Vendor UI does not work with EllesmereUI's merchant list mode, so it is not loaded.
+
+To use Extended Vendor UI, turn off Show As List in EllesmereUI's merchant options.]=]
+L["Plugin_EllesmereUI_Name"] = "EllesmereUI"
 L["Plugin_ElvUI_Desc"] = [=[Each of the options below is controlled by ElvUI and is purely informational.
 
 To change these, go to Game Menu -> ElvUI -> Skins and check the desired options. See each option below for what to check.
@@ -60,6 +67,10 @@ L["Plugin_ElvUI_SkinMiscFrames_Desc"] = [=[Applies the ElvUI skin to the Filter 
 L["Plugin_ElvUI_SkinTooltip"] = "Skin Tooltip"
 L["Plugin_ElvUI_SkinTooltip_Desc"] = [=[Applies the ElvUI skin to the Tooltips.
 -> Blizzard + Tooltip]=]
+L["Plugin_GW2UI_Desc"] = [=[This plugin gives the vendor items GW2 UI's merchant skin.
+
+There are no options.]=]
+L["Plugin_GW2UI_Name"] = "GW2 UI"
 L["Recipes"] = true
 L["RememberFilter"] = "Remember filter"
 L["RememberSearch"] = "Remember search"
@@ -83,14 +94,3 @@ L["Toys"] = true
 L["Vendor has"] = true
 L["You can afford"] = true
 L["You can fit"] = true
-L["Plugin_GW2UI_Name"] = "GW2 UI"
-L["Plugin_GW2UI_Desc"] = [=[This plugin gives the vendor items GW2 UI's merchant skin.
-
-There are no options.]=]
-L["Plugin_EllesmereUI_Name"] = "EllesmereUI"
-L["Plugin_EllesmereUI_Desc"] = [=[This plugin gives the vendor items EllesmereUI's merchant skin and item levels.
-
-There are no options.]=]
-L["Plugin_EllesmereUI_ListModeNotLoaded"] = [=[Extended Vendor UI does not work with EllesmereUI's merchant list mode, so it is not loaded.
-
-To use Extended Vendor UI, turn off Show As List in EllesmereUI's merchant options.]=]
