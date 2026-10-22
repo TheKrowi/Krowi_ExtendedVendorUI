@@ -1,5 +1,5 @@
 # Plan: Extended Vendor UI on WoW Forever
-Spec: [spec.md](spec.md). Status: draft
+Spec: [spec.md](spec.md). Status: accepted
 
 ## Files that change
 Krowi_Util (`Krowi_Libraries\Krowi_Util`, a branch of its own, released as 2.8):
@@ -7,7 +7,7 @@ Krowi_Util (`Krowi_Libraries\Krowi_Util`, a branch of its own, released as 2.8):
 - `Krowi_Util.toc`: add 16001. `_Packaging/Changelog.md` (2.8: the two new flags, `IsClassicEra` still true on Forever, "Library version 4 → 5"), `_Packaging/Description.md` (the flags table, which also lacks `IsClassicEra`, `IsWrathClassic`, `IsCataClassic`), `CLAUDE.md` (flags, consumers' pins).
 
 Krowi_Menu (`Krowi_Libraries\Krowi_Menu`, a branch of its own, released as 2.2):
-- `Krowi_MenuBuilder.lua`: before the client split (line 275), keep the Retail methods as their own class; `New(config)` uses that class when `config.blizzardMenu` is true, on any client. Without the field nothing changes anywhere. MenuBuilder minor 1 to 2.
+- `Krowi_MenuBuilder.lua`: at the client split (line 275), copy the Retail methods into their own class before the Classic ones overwrite them; `New(config)` uses that class when `config.modern` is true, on any client (Retail ignores it). Without the field nothing changes anywhere. MenuBuilder minor 1 to 2; `Krowi_Menu_2` stays 1.
 - `Krowi_Menu.toc` (the live numbers plus 16001), `_Packaging/Changelog.md`, `_Packaging/Description.md` (the new field), `CLAUDE.md`.
 
 This addon (this branch):
@@ -18,7 +18,7 @@ This addon (this branch):
   - `Gui/MerchantFrame.lua` 36, 60, 88, 109, 122.
   - `Gui/MerchantItemSlot.lua` 14, 84, 352.
   - `Gui/Paging/Paging.lua:54`, `Gui/SearchBox/SearchBox.lua:20`.
-  - `Gui/FilterButton/FilterButton.lua:19`, `FilterButtonMixin.lua:4`, and `blizzardMenu = addon.Util.IsModern` in its builder config.
+  - `Gui/FilterButton/FilterButton.lua:19`, `FilterButtonMixin.lua:4`, and `modern = addon.Util.IsModern` in its builder config.
   - `Gui/OptionsButton/OptionsButton.lua:20`, `OptionsButtonMixin.lua` 36 and 213, and the same builder field.
   - `Gui/TokenBanner/TokenBanner.lua` 30, 45.
   - `Gui/BulkPurchase/BulkPurchaseMixin.lua` 17, 64, 76, 95, 149, 166, 227.
@@ -61,6 +61,6 @@ This addon (this branch):
 - The release gate (`.claude/release-gate.ps1`) reports READY for all five clients.
 
 ## Gate decisions
-1. Gamepad interface style on Forever (intent, open question 2). Proposed: hide the page-turn indicators on every merchant update, and accept that switching input style with a vendor open shows Blizzard's page buttons until the next update. Moving through the grid with a gamepad is a separate item. Open: Krowi checks it in game first (2026-10-21). The switch is Options, Gameplay, Gamepad, first checkbox (`Blizzard_SettingsDefinitions_Shared\Gamepad.lua:276-290`, CVar `InputDeviceInterfaceStyle`, default off on PC).
+1. Gamepad interface style on Forever (intent, open question 2). Proposed: hide the page-turn indicators on every merchant update, and accept that switching input style with a vendor open shows Blizzard's page buttons until the next update. Moving through the grid with a gamepad is a separate item. Krowi checked it in game (screenshot in the spec) and chose, on 2026-10-22, to also have gamepad navigation; as that option said, it becomes its own work item after this one, and this item hides the arrows. The switch is Options, Gameplay, Gamepad, first checkbox (`Blizzard_SettingsDefinitions_Shared\Gamepad.lua:276-290`, CVar `InputDeviceInterfaceStyle`, default off on PC).
 2. Skin plugins on Forever. Decided by Krowi, 2026-10-21: ElvUI and GW2_UI do nothing there, so a Forever player with either sees an unskinned grid. Skins on Forever become their own item.
-3. The plan as a whole: Krowi, 2026-10-21, "draft, end of day". No library or addon code before Krowi's go.
+3. The plan as a whole: Krowi, 2026-10-21, "draft, end of day"; on 2026-10-22, after the Krowi_Util and Krowi_Menu changes were shown as diffs, "Go ahead".
