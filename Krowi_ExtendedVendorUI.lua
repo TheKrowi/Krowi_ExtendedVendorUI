@@ -12,7 +12,7 @@ addon.IsDragonflightRetail = major == '10'
 -- Then the addon loads nothing: every later file returns at its top, and a notice says why when a vendor opens (Krowi, 2026-10-21).
 -- EllesmereUI switches the mode only with a reload, and the TOC's OptionalDeps load it first, so its settings are known here.
 local function IsEllesmereUIListModeOn()
-    if not (addon.Util.IsMainline and EllesmereUI and not EUI_CLIENT_BLOCKED and C_AddOns.IsAddOnLoaded('EllesmereUIBlizzardSkin')
+    if not (addon.Util.IsModern and EllesmereUI and not EUI_CLIENT_BLOCKED and C_AddOns.IsAddOnLoaded('EllesmereUIBlizzardSkin')
         and EllesmereUIDB and EllesmereUIDB.merchantShowAsList == true) then
         return false
     end

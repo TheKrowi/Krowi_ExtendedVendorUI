@@ -27,7 +27,7 @@ local function DrawTokenQuick(index)
     local token = GetPoolToken(index)
     if index == 1 then
         tokenLines = 1
-        token:SetPoint('TOPRIGHT', KrowiEVU_TokenBanner, 'TOPRIGHT', -10, addon.Util.IsMainline and -5 or -4)
+        token:SetPoint('TOPRIGHT', KrowiEVU_TokenBanner, 'TOPRIGHT', -10, addon.Util.IsModern and -5 or -4)
     else
         token:SetPoint('TOPRIGHT', _G['KrowiEVU_TokenBannerToken' .. (index - 1)], 'TOPLEFT', -10, 0)
     end
@@ -42,7 +42,7 @@ local function DrawToken(index)
 
     if token:GetLeft() < KrowiEVU_TokenBanner:GetLeft() + 10 then
         local offset = 5 + (token:GetHeight() + 3) * tokenLines
-        token:SetPoint('TOPRIGHT', KrowiEVU_TokenBanner, 'TOPRIGHT', -10, addon.Util.IsMainline and -offset or -offset + 1)
+        token:SetPoint('TOPRIGHT', KrowiEVU_TokenBanner, 'TOPRIGHT', -10, addon.Util.IsModern and -offset or -offset + 1)
         tokenLines = tokenLines + 1
     end
 end

@@ -11,7 +11,7 @@ local merchantItemSlot = addon.Gui.MerchantItemSlot
 local MAX_MONEY_DISPLAY_WIDTH = 120 -- A local in Blizzard's MerchantFrame.lua
 
 -- [[ Item info ]] --
-if addon.Util.IsMainline then
+if addon.Util.IsModern then
     function merchantItemSlot.GetItemInfo(index)
         return C_MerchantFrame.GetItemInfo(index)
     end
@@ -81,7 +81,7 @@ qualityEventFrame:SetScript('OnEvent', function(self)
 end)
 
 local UpdateQuality
-if addon.Util.IsMainline then
+if addon.Util.IsModern then
     -- Mirrors MerchantFrameItem_UpdateQuality (live MerchantFrame.lua:212-228), which registers its event on MerchantFrame
     function UpdateQuality(slot, link, isBound)
         local quality = link and select(3, C_Item.GetItemInfo(link)) or nil
@@ -349,4 +349,4 @@ local function DrawClassic(slot, index)
 end
 
 -- index is the vendor's real index, or nil for an empty slot
-merchantItemSlot.Draw = addon.Util.IsMainline and DrawMainline or DrawClassic
+merchantItemSlot.Draw = addon.Util.IsModern and DrawMainline or DrawClassic

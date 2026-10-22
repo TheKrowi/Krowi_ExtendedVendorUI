@@ -51,7 +51,7 @@ end)
 
 -- Blizzard's rules (live MerchantFrame.lua:273 and 431-450, classic TBC MerchantFrame.lua:193 and 351-370) with the filtered count
 function paging:Update(numItems, itemsPerPage)
-    if addon.Util.IsMainline then
+    if addon.Util.IsModern then
         pageText:SetFormattedText(MERCHANT_PAGE_NUMBER, page, math.ceil(numItems / itemsPerPage))
     else
         pageText:SetFormattedText(PAGE_NUMBER, page)

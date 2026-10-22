@@ -179,6 +179,9 @@ local function CheckBlizzardHidden()
     if MerchantPrevPageButton:IsShown() or MerchantNextPageButton:IsShown() or MerchantPageText:IsShown() then
         tinsert(shown, 'page controls')
     end
+    if MerchantPageTurnIndicatorLeft and (MerchantPageTurnIndicatorLeft:IsShown() or MerchantPageTurnIndicatorRight:IsShown()) then
+        tinsert(shown, 'gamepad page arrows') -- WoW Forever's gamepad interface style
+    end
     if #shown == 0 then
         Add('PASS', 'Blizzard\'s merchant slots and page controls hidden')
     else
@@ -193,7 +196,7 @@ local function CheckPaging()
     local ok = pageText:IsShown() == shouldShow and prevButton:IsShown() == shouldShow and nextButton:IsShown() == shouldShow
     local text = pageText:GetText()
     if ok and shouldShow then
-        local expectedText = addon.Util.IsMainline and MERCHANT_PAGE_NUMBER:format(page, numPages) or PAGE_NUMBER:format(page)
+        local expectedText = addon.Util.IsModern and MERCHANT_PAGE_NUMBER:format(page, numPages) or PAGE_NUMBER:format(page)
         ok = text == expectedText and (not not prevButton:IsEnabled()) == (page > 1) and (not not nextButton:IsEnabled()) == (page < numPages)
     end
     Add(ok and 'PASS' or 'FAIL', 'page controls ' .. (shouldShow and ('shown, "' .. tostring(text) .. '"') or 'hidden'))
