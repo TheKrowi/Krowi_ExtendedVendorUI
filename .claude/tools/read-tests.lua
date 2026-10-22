@@ -37,6 +37,7 @@ for n, run in ipairs(runs) do
     Head('Quality', run.ScreenshotQuality)
     Head('Addons', table.concat(run.Addons or {}, ', '))
     Head('Plugins', table.concat(run.Plugins or {}, ', '))
+    Head('Flags', run.Flags and table.concat(run.Flags, ', ') or nil)
     Head('Stopped', run.Stopped)
     Head('Restore', run.RestoreError)
     Head('Passed', run.Passed)

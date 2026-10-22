@@ -47,6 +47,19 @@ end
 local ADDONS = { 'ElvUI', 'GW2_UI', 'EllesmereUI', 'EllesmereUIBlizzardSkin', 'CanIMogIt', 'Auctionator', 'Krowi_Vendorer', 'Plumber' }
 local PLUGINS = { 'ElvUI', 'GW2_UI', 'EllesmereUI', 'EllesmereUIItemLevel', 'CanIMogIt' }
 
+-- The Krowi_Util client flags and the ones each client's WOW_PROJECT_ID should make true; the expansion flags follow the
+-- Retail patch, so they are recorded but not checked
+local CLIENT_FLAGS = { 'IsMainline', 'IsForever', 'IsModern', 'IsMistsClassic', 'IsCataClassic', 'IsWrathClassic', 'IsBCCClassic', 'IsClassicEra', 'IsClassicWithAchievements' }
+local EXPANSION_FLAGS = { 'IsTheWarWithin', 'IsMidnight' }
+local EXPECTED_FLAGS = {
+    [1] = { IsMainline = true, IsModern = true }, -- Retail
+    [19] = { IsMistsClassic = true, IsClassicWithAchievements = true }, -- Mists Classic
+    [11] = { IsWrathClassic = true, IsClassicWithAchievements = true }, -- Titan Reforged
+    [5] = { IsBCCClassic = true }, -- TBC Anniversary
+    [2] = { IsClassicEra = true }, -- Classic Era
+    [18] = { IsClassicEra = true, IsForever = true, IsModern = true }, -- WoW Forever: a 1.x build that runs Retail's interface
+}
+
 -- Which plugin addons have their merchant skin or icons on, read the way the plugins read it
 local function GetSkinStates()
     local states = {}
@@ -88,6 +101,14 @@ local function RecordEnvironment()
     for _, name in ipairs(PLUGINS) do
         if skins[name] then
             tinsert(run.Plugins, name)
+        end
+    end
+    run.Flags = {}
+    for _, list in ipairs({ CLIENT_FLAGS, EXPANSION_FLAGS }) do
+        for _, name in ipairs(list) do
+            if addon.Util[name] then
+                tinsert(run.Flags, name)
+            end
         end
     end
 end
@@ -283,6 +304,28 @@ local function CheckTooltip()
     -- A recipe's tooltip reports the item it teaches through GetItem, so the title counts as well
     local matches = (tooltipItemId and tooltipItemId == slotItemId) or (title and title == slotName)
     Add(matches and 'PASS' or 'FAIL', ('tooltip "%s" (item %s) for the slot "%s" (item %s)'):format(tostring(title), tostring(tooltipItemId), tostring(slotName), tostring(slotItemId)))
+end
+
+-- Krowi_Util's client flags against the ones this client's project id should give, so every client's run shows that a
+-- Krowi_Util change kept the flags other addons read
+local function CheckClientFlags()
+    local expected = EXPECTED_FLAGS[WOW_PROJECT_ID]
+    if not expected then
+        Note(('no expected client flags for project %s'):format(tostring(WOW_PROJECT_ID)))
+        return
+    end
+    local wrong = {}
+    for _, name in ipairs(CLIENT_FLAGS) do
+        local value = addon.Util[name]
+        if (value and true or false) ~= (expected[name] or false) then
+            tinsert(wrong, name .. '=' .. tostring(value))
+        end
+    end
+    if #wrong == 0 then
+        Add('PASS', ('client flags for project %d: %s'):format(WOW_PROJECT_ID, Join(run.Flags)))
+    else
+        Add('FAIL', ('client flags for project %d wrong: %s'):format(WOW_PROJECT_ID, Join(wrong)))
+    end
 end
 
 -- This addon's Lua errors in this session, also from before the run (the first draw, a plugin), as BugGrabber caught them
@@ -697,6 +740,12 @@ Stop = function(reason)
     if not ok then
         run.RestoreError = tostring(err)
         print(prefix .. '|cFFFF0000could not put the settings back:|r ' .. tostring(err))
+    end
+    current = { Step = #run.Steps + 1, Name = 'client', Text = 'Krowi_Util client flags', Lines = {} }
+    tinsert(run.Steps, current)
+    ok, err = pcall(CheckClientFlags)
+    if not ok then
+        Add('FAIL', 'test error: ' .. tostring(err))
     end
     current = { Step = #run.Steps + 1, Name = 'errors', Text = 'Lua errors this session', Lines = {} }
     tinsert(run.Steps, current)
