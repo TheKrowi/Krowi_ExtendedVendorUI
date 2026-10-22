@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 23.1
+## 24.0
 ### Added
 - WoW Forever support
 - With WoW Forever's gamepad interface on, Extended Vendor UI stays off and says why in the chat

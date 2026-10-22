@@ -32,7 +32,7 @@ This addon (this branch):
   - A check compares the flags with what `WOW_PROJECT_ID` should give.
   - `CheckBlizzardHidden` also checks the page-turn indicators where they exist and the gamepad interface style is on.
 - `.claude/tools/read-tests.lua`: prints the new header field.
-- `_Packaging/Changelog.md`: "WoW Forever support" under the next version (23.1 unless Krowi says otherwise).
+- `_Packaging/Changelog.md`: "WoW Forever support" under the next version, 24.0 (Krowi, 2026-10-22).
 - `CLAUDE.md`: clients (five, `IsModern`), Forever's gamepad notes, the plugins on Forever.
 
 ## Order of work
