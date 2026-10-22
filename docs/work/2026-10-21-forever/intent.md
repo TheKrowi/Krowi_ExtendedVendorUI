@@ -1,5 +1,5 @@
 # Intent: Extended Vendor UI on WoW Forever
-Author: Krowi (maintainer). Source: idea. Status: accepted
+Author: Krowi (maintainer). Source: idea. Status: done
 
 ## Problem
 WoW Forever (1.60.x, the `_classic_beta_` install) does not load the addon: the TOC had no 1.60 interface number, so the client lists it as out of date. With the number added (16001, on this branch) the addon loads and breaks. Forever reports itself as project 18 (Camelot) with a 1.x build, so Krowi_Util's flags say "Classic Era, not Retail" and the addon takes its Classic path, while Forever runs Retail's interface, Retail's merchant frame included. That path errors as the addon loads (`Gui/MerchantFrame.lua:61`, a Classic-only frame) and again on every item slot (`GetMerchantItemInfo`, not loaded on Forever).

@@ -1,5 +1,5 @@
 # Spec: Extended Vendor UI on WoW Forever
-Intent: [intent.md](intent.md). Status: accepted
+Intent: [intent.md](intent.md). Status: done
 
 ## Requirements
 1. The TOC lists Forever's interface number, 16001 (done on this branch).

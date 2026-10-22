@@ -1,5 +1,5 @@
 # Plan: Extended Vendor UI on WoW Forever
-Spec: [spec.md](spec.md). Status: accepted
+Spec: [spec.md](spec.md). Status: done
 
 ## Files that change
 Krowi_Util (`Krowi_Libraries\Krowi_Util`, a branch of its own, released as 2.8):
