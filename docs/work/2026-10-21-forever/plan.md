@@ -3,8 +3,8 @@ Spec: [spec.md](spec.md). Status: draft
 
 ## Files that change
 Krowi_Util (`Krowi_Libraries\Krowi_Util`, a branch of its own, released as 2.8):
-- `Krowi_Util.lua`: the flags from the project id as in the spec (`IsClassicEra` keeps Forever, with the 2027-10-21 note), new `IsForever` and `IsModern`; `Krowi_Util_2` minor 4 to 5.
-- `Krowi_Util.toc`: add 16001. `_Packaging/Changelog.md` (2.8: the new flags, the unchanged values, "Library version 4 → 5"), `_Packaging/Description.md` (the flags table, which also lacks `IsClassicEra`, `IsWrathClassic`, `IsCataClassic`), `CLAUDE.md` (flags, consumers' pins).
+- `Krowi_Util.lua`: `IsForever` and `IsModern` below `IsMainline`, as in the spec, and nothing else; `Krowi_Util_2` minor 4 to 5.
+- `Krowi_Util.toc`: add 16001. `_Packaging/Changelog.md` (2.8: the two new flags, `IsClassicEra` still true on Forever, "Library version 4 → 5"), `_Packaging/Description.md` (the flags table, which also lacks `IsClassicEra`, `IsWrathClassic`, `IsCataClassic`), `CLAUDE.md` (flags, consumers' pins).
 
 Krowi_Menu (`Krowi_Libraries\Krowi_Menu`, a branch of its own, released as 2.2):
 - `Krowi_MenuBuilder.lua`: before the client split (line 275), keep the Retail methods as their own class; `New(config)` uses that class when `config.blizzardMenu` is true, on any client. Without the field nothing changes anywhere. MenuBuilder minor 1 to 2.
@@ -36,7 +36,7 @@ This addon (this branch):
 - `CLAUDE.md`: clients (five, `IsModern`), Forever's gamepad notes, the plugins on Forever.
 
 ## Order of work
-1. Reproduction: Krowi `/reload`s Forever with this branch (deployed), opens a vendor, `/reload`s; `Read-GameErrors.ps1 -Client Forever` goes into the spec.
+1. Reproduction: recorded in the spec (2026-10-22).
 2. Krowi_Util branch: flags and minor, docs. Krowi_Menu branch: the builder field and minor, docs. Both through a worktree of each library.
 3. Here, the test first: point `Libs/Krowi_Util` and `Libs/Krowi_Menu` at those branches (fetch from the local library checkouts, as Krowi_Menu's CLAUDE.md describes), add the flag check to `/kevutest`, deploy to Retail and Forever. Retail stays green; Forever fails at load as recorded.
 4. The addon edits above, in the order listed.

@@ -8,7 +8,7 @@ Intent: [intent.md](intent.md). Status: accepted
 4. What has no content on Forever is not built there: the Housing filter, the Housing Quantity option and the housing catalog searcher at boot.
 5. Bulk Purchase on Forever counts extended costs as on Retail.
 6. In Forever's gamepad interface style no Blizzard paging control shows over the grid or pages Blizzard's hidden list.
-7. Until 2027-10-21 at the earliest, every existing Krowi_Util flag keeps its name and its current value on every client, Forever included, and Krowi_Menu behaves on every client as it does now for a consumer that does not ask for more. On Retail, Mists Classic, TBC Anniversary and Classic Era `/kevutest` passes as before.
+7. Every existing Krowi_Util flag keeps its name, how it is computed and its value on every client, Forever included; Krowi_Util only gains `IsForever` and `IsModern`. Krowi_Menu behaves on every client as it does now for a consumer that does not ask for more. On Retail, Mists Classic, TBC Anniversary and Classic Era `/kevutest` passes as before.
 8. `/kevutest` runs on Forever without failed checks and no Lua error from this addon.
 
 ## Root cause
@@ -19,7 +19,12 @@ Intent: [intent.md](intent.md). Status: accepted
   - `Gui/MerchantFrame.lua:61` errors at load: `MerchantFrameBtnCornerLeft` exists in no Forever file.
   - `Gui/MerchantItemSlot.lua` would draw every slot with `GetMerchantItemInfo`, whose only caller on Forever is `Vanilla\MerchantFrame.lua`, a file camelot does not load.
 - Krowi_Menu checks `WOW_PROJECT_ID == WOW_PROJECT_MAINLINE` itself (`Krowi_Menu.lua:228`, `Krowi_MenuUtil.lua:40`, `Krowi_MenuBuilder.lua:275`), so it would build UIDropDownMenu menus. If only the addon moved to its Retail path, the dropdowns would open empty.
-- Reproduction: to record after Krowi's `/reload` on Forever with this branch deployed (`Read-GameErrors.ps1 -Client Forever`).
+- Reproduction (Forever 1.60.1 with this branch at b65d78c, one session on 2026-10-22, `Read-GameErrors.ps1 -Client Forever`):
+  - `Gui/MerchantFrame.lua:61`: attempt to index global `MerchantFrameBtnCornerLeft` (a nil value), once, at load. The rest of the file never runs, so `SetMerchantFrameSize` (line 69) is never defined.
+  - `Gui/MerchantFrame.lua:40`: attempt to index global `MerchantRepairText` (a nil value), x8, in the `MerchantFrame_UpdateRepairButtons` post-hook.
+  - `Gui/MerchantItemsContainer.lua:188` (x5) and `Gui/TokenBanner/TokenBanner.lua:100` (x1): attempt to call a nil value, `addon.Gui.MerchantFrame.SetMerchantFrameSize()`.
+  - `Gui/MerchantItemSlot.lua:270`: attempt to call a nil value, `GetMerchantItemInfo`, x4, from the `MerchantFrame_UpdateMerchantInfo` post-hook.
+  - Screenshot `H:\World of Warcraft\_classic_beta_\Screenshots\WoWScrnShot_102226_192008.jpg` (gamepad interface style on): Blizzard's own ten items and no grid, with Blizzard's gamepad page-turn arrows either side of "Page 1 of 2".
 
 ## Design
 How the code tells clients apart is the decision of this stage (Krowi, 2026-10-21); the library and addon changes wait for it.
@@ -44,23 +49,15 @@ Ways to decide:
 - **Feature detection** (`if MenuUtil then`, Krowi_WorldMapButtons' `WorldMapTrackingPinButtonMixin ~= nil`). It is exact for one feature but says nothing about the client, and an API can exist without content (`C_HousingCatalog` is documented on Forever, yet no housing UI loads for camelot).
 - **`C_GameRules.GetActiveGameMode`** tells only Standard from Plunderstorm. Game rules (`IsGameRuleActive`, e.g. `HousingDashboardDisabled` in Forever's micro menu) are per-feature switches, a form of feature detection.
 
-Chosen (option A in Options considered, with Krowi's backwards-compatibility rule, see Decision): Krowi_Util reads every client flag from the project id, keeps every existing name and value and adds two flags.
+Chosen (see Decision): Krowi_Util adds two flags below `IsMainline` and changes nothing else.
 
 ```lua
--- One project id per client. Of Blizzard's WOW_PROJECT_* names only MAINLINE and CLASSIC exist on every client, so compare the ids
-local projectId = WOW_PROJECT_ID
-lib.IsClassicEra = projectId == 2 or projectId == 18 -- also Forever (1.x build), kept for compatibility until 2027-10-21 at the earliest; test IsForever first
-lib.IsBCCClassic = projectId == 5 -- also TBC Anniversary
-lib.IsWrathClassic = projectId == 11 -- also Titan Reforged
-lib.IsCataClassic = projectId == 14
-lib.IsMistsClassic = projectId == 19
-lib.IsMainline = projectId == 1
-lib.IsForever = projectId == 18 -- WoW Forever (Camelot): a 1.x build that runs Retail's interface
-lib.IsModern = lib.IsMainline or lib.IsForever -- runs Retail's interface
+lib.IsForever = WOW_PROJECT_ID == WOW_PROJECT_CAMELOT -- WoW Forever; WOW_PROJECT_CAMELOT exists only there, so this is false elsewhere
+lib.IsModern = lib.IsMainline or lib.IsForever -- runs Retail's interface: Retail and Forever
 ```
 
-- `IsClassicWithAchievements`, `IsTheWarWithin` and `IsMidnight` stay as they are (the last two name a Retail expansion by build major, which is what they mean).
-- Every existing flag keeps its value on every client in the table, Forever included: the project ids give the same answers as the build majors, and `IsClassicEra` keeps Forever until the compatibility year ends, when dropping it is its own change. `IsForever` and `IsModern` stay nil in a session where no loaded addon ships the new minor, which only matters to code that reads them.
+- Every existing flag stays as it is, how it is computed included. Forever's 1.x build keeps `IsClassicEra` true there, so code that means Classic Era alone tests `IsForever` first.
+- `IsForever` and `IsModern` stay nil in a session where no loaded addon ships the new minor, which only matters to code that reads them.
 - `lib.IsX =` lines keep the form Krowi_AchievementFilter's `util-flags` check parses.
 - Krowi_Menu: this addon gets Blizzard's menus on Forever without changing what Krowi_Menu does there for consumers that do not ask for it (requirement 7); the plan says how.
 - This addon reads `IsModern` where it branches on Blizzard's interface and `IsMainline` where it branches on Retail-only content (Housing); Bulk Purchase's extended-cost check stops reading `IsClassicEra`. The plan classifies each of the 42 `IsMainline` sites and the `IsClassicEra` one.
@@ -76,7 +73,7 @@ All three look the same to a player on every client: on Forever the window works
 ## Areas of concern
 - Taint and secret values: the flags are plain booleans computed at load; no Blizzard global, frame or function is touched. The later addon branches sit in taint-sensitive files (`Gui/MerchantFrame.lua`, `Gui/MerchantItemSlot.lua`, `Gui/Paging/`): `krowi:taint-reviewer` runs on them, on the Classic and the Retail branch.
 - Clients: the table above. Retail, Mists, Anniversary and Era keep every value; Titan is not in this TOC and keeps its values too.
-- Blizzard API changes: `WOW_PROJECT_CAMELOT` exists only on Forever and the Classic project names do not exist on Retail, so the library compares numbers. `Find-DeprecatedApi.ps1 -Branch forever` runs on the changed files.
+- Blizzard API changes: `WOW_PROJECT_CAMELOT` exists only on Forever (`Blizzard_ProjectConstants\Camelot\ProjectConstants.lua:1`); on every other client it is nil and `WOW_PROJECT_ID` is a number, so `IsForever` is false there. `Find-DeprecatedApi.ps1 -Branch forever` runs on the changed files.
 - Other addons, plugins and skins: Krowi_Util_2 is one LibStub table per session, written by its highest minor, so a flag's value reaches every Krowi addon loaded beside this one, including those that embed older copies (Brokers 2.0, Vendorer 2.2). Skins are out of scope on Forever.
 - Saved variables and migrations: none.
 - Localization: none.
@@ -93,3 +90,5 @@ All three look the same to a player on every client: on Forever the window works
 
 ## Decision
 Option A, by Krowi on 2026-10-21: "A, but make sure we keep the backwards compatibility for at least a year". Read as requirement 7: until 2027-10-21 at the earliest no existing Krowi_Util flag is removed, renamed or changes its value on any client, Forever included, and Krowi_Menu keeps its current behaviour for consumers that do not ask for more; Forever's new behaviour comes only through additions (`IsForever`, `IsModern`, and whatever Krowi_Menu adds). So `IsClassicEra` stays true on Forever until then. The gamepad scope (open question 2) is decided at the plan gate.
+
+Narrowed by Krowi on 2026-10-22, after the flags were laid out side by side: "only add new flags, old unchanged". Krowi_Util gains `IsForever` and `IsModern`; every existing flag keeps how it is computed (build major, or project id for `IsMainline`) and its value, with no later cleanup planned. Moving the existing flags to the project id would have changed no value on any live client; it is not done.

@@ -15,7 +15,7 @@ On Forever the vendor window works as on Retail: the grid of rows and columns, p
 
 ## Constraints
 - The repo's taint rules hold unchanged.
-- No flag changes its value on Retail, Mists, Anniversary or Era, and for at least a year no existing Krowi_Util flag or Krowi_Menu behaviour changes for other addons on any client (Krowi, 2026-10-21).
+- No flag changes its value on Retail, Mists, Anniversary or Era, and no existing Krowi_Util flag or Krowi_Menu behaviour changes for other addons on any client (Krowi, 2026-10-21 and 2026-10-22).
 - A Krowi_Util flag means the same thing to every Krowi addon that reads it.
 - ElvUI, GW2_UI, EllesmereUI and CanIMogIt are not supported on Forever in this item.
 
