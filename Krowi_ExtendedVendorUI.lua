@@ -12,7 +12,7 @@ addon.IsDragonflightRetail = major == '10'
 -- Then the addon loads nothing: every later file returns at its top, and a notice says why when a vendor opens (Krowi, 2026-10-21).
 -- EllesmereUI switches the mode only with a reload, and the TOC's OptionalDeps load it first, so its settings are known here.
 local function IsEllesmereUIListModeOn()
-    if not (addon.Util.IsMainline and EllesmereUI and not EUI_CLIENT_BLOCKED and C_AddOns.IsAddOnLoaded('EllesmereUIBlizzardSkin')
+    if not (addon.Util.IsModern and EllesmereUI and not EUI_CLIENT_BLOCKED and C_AddOns.IsAddOnLoaded('EllesmereUIBlizzardSkin')
         and EllesmereUIDB and EllesmereUIDB.merchantShowAsList == true) then
         return false
     end
@@ -23,11 +23,36 @@ local function IsEllesmereUIListModeOn()
     return not ok or style ~= 'off'
 end
 
+-- [[ WoW Forever's gamepad interface ]] --
+-- Forever's gamepad navigation picks up every button in the vendor window, this addon's item slots too, reads the fields the
+-- addon's code gave them (buttonContext, count) and rebuilds the gamepad bindings from them, which then run tainted: blocked
+-- actions in combat, and after Buyback the Buy button on Blizzard's hidden first slot (taint review of 2026-10-22). With that
+-- style on the addon loads nothing and Blizzard's window stays (Krowi, 2026-10-22). The style changes without a reload, so a
+-- switch to it is announced at the next vendor and takes effect with the next reload.
+local function IsForeverGamepadStyleOn()
+    if not (addon.Util.IsForever and InputUtil and InputUtil.IsGamepadUIEnabled) then
+        return false
+    end
+    local ok, isOn = pcall(InputUtil.IsGamepadUIEnabled) -- Read at load on a beta client; a failure must not stop the addon
+    return ok and isOn and true or false
+end
+
 if IsEllesmereUIListModeOn() then
     addon.NotLoaded = 'EllesmereUIListMode'
+    addon.NotLoadedText = addon.L['Plugin_EllesmereUI_ListModeNotLoaded']
+elseif IsForeverGamepadStyleOn() then
+    addon.NotLoaded = 'ForeverGamepad'
+    addon.NotLoadedText = addon.L['ForeverGamepadNotLoaded']
+end
 
+if addon.NotLoaded then
     local notice
+    -- At the first vendor and from the addon compartment (Icon.lua)
     function addon.ShowNotLoadedNotice()
+        if addon.NotLoaded == 'ForeverGamepad' then
+            print(addon.NotLoadedText) -- A window could need the mouse to close; the text names the addon
+            return
+        end
         if not notice then
             notice = CreateFrame('Frame', 'KrowiEVU_NotLoadedNotice', UIParent, 'BasicFrameTemplateWithInset')
             notice:SetWidth(420)
@@ -39,7 +64,7 @@ if IsEllesmereUIListModeOn() then
             local text = notice:CreateFontString(nil, 'ARTWORK', 'GameFontHighlight')
             text:SetPoint('TOP', 0, -40)
             text:SetWidth(380)
-            text:SetText(addon.L['Plugin_EllesmereUI_ListModeNotLoaded'])
+            text:SetText(addon.NotLoadedText)
             local okay = CreateFrame('Button', nil, notice, 'UIPanelButtonTemplate')
             okay:SetSize(120, 22)
             okay:SetPoint('BOTTOM', 0, 14)
@@ -59,6 +84,17 @@ if IsEllesmereUIListModeOn() then
         addon.ShowNotLoadedNotice()
     end)
     return
+end
+
+if addon.Util.IsForever then
+    local styleHelper = CreateFrame('Frame')
+    styleHelper:RegisterEvent('MERCHANT_SHOW')
+    styleHelper:SetScript('OnEvent', function(self)
+        if IsForeverGamepadStyleOn() then
+            self:UnregisterEvent('MERCHANT_SHOW') -- Once a session
+            print(addon.L['ForeverGamepadReload']) -- The text names the addon
+        end
+    end)
 end
 
 -- [[ Load addon ]] --

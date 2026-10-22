@@ -118,7 +118,7 @@ function filters:GetFilter()
 	if currentFilter then
 		return currentFilter
 	end
-	if addon.Util.IsMainline then
+	if addon.Util.IsModern then
 		return GetMerchantFilter()
 	end
 	return LE_LOOT_FILTER_ALL
@@ -126,7 +126,7 @@ end
 
 function filters:SetFilter(filter)
 	currentFilter = filter
-	if addon.Util.IsMainline then
+	if addon.Util.IsModern then
 		SetMerchantFilter(filter)
 	end
 	if filter then
@@ -138,7 +138,7 @@ end
 
 -- Takes over the filter Blizzard's ResetSetMerchantFilter just set on Retail, without remembering it or telling the listeners, as before
 function filters:SyncFilter()
-	currentFilter = addon.Util.IsMainline and GetMerchantFilter() or LE_LOOT_FILTER_ALL
+	currentFilter = addon.Util.IsModern and GetMerchantFilter() or LE_LOOT_FILTER_ALL
 end
 
 function filters:RegisterListener(listener)
@@ -229,7 +229,7 @@ function filters:Validate(lootFilter, itemId)
 	return true
 end
 
-if addon.Util.IsMainline then -- Pets
+if addon.Util.IsModern then -- Pets
 	function filters:ValidatePetsOnly(itemId)
 		if not self.IsPet(itemId) then
 			return false
@@ -341,7 +341,7 @@ do -- Transmog
 	end
 end
 
-if addon.Util.IsMainline then -- Transmog Set
+if addon.Util.IsModern then -- Transmog Set
 	function filters:ValidateTransmogSetOnly(itemId)
 		if not self.IsTransmogSet(itemId) then
 			return false
@@ -380,7 +380,7 @@ else
 	end
 end
 
-if addon.Util.IsMainline then -- Illusion
+if addon.Util.IsModern then -- Illusion
 	function filters:ValidateIllusionOnly(itemId)
 		if not self.IsIllusion(itemId) then
 			return false
@@ -415,7 +415,7 @@ else
 	end
 end
 
-if addon.Util.IsMainline then -- Recipes
+if addon.Util.IsModern then -- Recipes
 	function filters:ValidateRecipesOnly(itemId)
 		if not self.IsRecipe(itemId) then
 			return false

@@ -17,6 +17,7 @@ addon.Gui.OptionsButton.UpdateView = UpdateView -- Also what /kevutest runs afte
 function KrowiEVU_OptionsButtonMixin:OnLoad()
 	menuBuilder = addon.MenuBuilder:New({
 		uniqueTag = 'KEVU_OPTIONS',
+		modern = addon.Util.IsModern, -- Blizzard's menus on WoW Forever too
 		callbacks = {
 			OnRadioSelect = function(filters, keys, value)
 				addon.Util.WriteNestedKeys(filters, keys, value)
@@ -33,7 +34,7 @@ function KrowiEVU_OptionsButtonMixin:OnLoad()
 		self:CreateMenu(mb:GetMenu())
 	end
 
-	if addon.Util.IsMainline then
+	if addon.Util.IsModern then
 		menuBuilder:SetupMenuForModern(self)
 	end
 end
@@ -210,7 +211,7 @@ function KrowiEVU_OptionsButtonMixin:ShowPopup()
 	menuBuilder:ShowPopup()
 end
 
-if not addon.Util.IsMainline then
+if not addon.Util.IsModern then
 	function KrowiEVU_OptionsButtonMixin:OnMouseDown()
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 		UIMenuButtonStretchMixin.OnMouseDown(self)

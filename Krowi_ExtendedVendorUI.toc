@@ -1,8 +1,8 @@
-## Interface: 120105, 50504, 20506, 11509
+## Interface: 120105, 50504, 20506, 16001, 11509
 ## Title: Krowi's |cFF1D92C2Extended Vendor UI|r
 ## X-Prefix: KrowiEVU
 ## X-Acronym: KEVU
-## Version: 23.0
+## Version: 24.0
 ## Author: Krowi-Frostmane EU
 ## LoadWith: Blizzard_MerchantFrame
 ## OptionalDeps: EllesmereUI, EllesmereUIBlizzardSkin

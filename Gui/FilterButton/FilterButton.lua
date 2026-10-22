@@ -16,7 +16,7 @@ local function CreateClassic()
 end
 
 function filterButton:Load()
-	if addon.Util.IsMainline then
+	if addon.Util.IsModern then
         CreateModern()
     else
         CreateClassic()

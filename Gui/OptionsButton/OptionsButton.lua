@@ -17,7 +17,7 @@ local function CreateClassic(self)
 end
 
 function optionsButton:Load()
-	if addon.Util.IsMainline then
+	if addon.Util.IsModern then
         CreateModern(self)
     else
         CreateClassic(self)

@@ -1,7 +1,7 @@
 local _, addon = ...
 if addon.NotLoaded then return end
 
-local isModern = addon.Util.IsMainline
+local isModern = addon.Util.IsModern
 
 KrowiEVU_FilterButtonMixin = {}
 
@@ -43,6 +43,7 @@ function KrowiEVU_FilterButtonMixin:OnLoad()
 
 	local config = {
 		uniqueTag = 'KEVU_FILTERS',
+		modern = isModern, -- Blizzard's menus on WoW Forever too
 		callbacks = addon.MenuBuilder.BindCallbacks(self, {
 			OnCheckboxSelect = 'OnCheckboxSelect',
 			KeyEqualsText = 'KeyEqualsText',
@@ -198,7 +199,9 @@ function KrowiEVU_FilterButtonMixin:CreateMenu(menu)
 		self:CreateRadio(menu, addon.L['Appearance Sets'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_TRANSMOG_SETS'])
 		self:CreateRadio(menu, addon.L['Illusions'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_ILLUSIONS'])
 		self:CreateRadio(menu, addon.L['Recipes'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_RECIPES'])
-		self:CreateRadio(menu, addon.L['Housing'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_HOUSING'])
+		if addon.Util.IsMainline then -- No housing on WoW Forever
+			self:CreateRadio(menu, addon.L['Housing'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_HOUSING'])
+		end
 	end
 
 	-- Custom filter section
@@ -232,7 +235,9 @@ function KrowiEVU_FilterButtonMixin:CreateMenu(menu)
 		self:CreateCheckbox(custom, addon.L['Appearance Sets'], {'Custom', 'TransmogSets'})
 		self:CreateCheckbox(custom, addon.L['Illusions'], {'Custom', 'Illusions'})
 		self:CreateCheckbox(custom, addon.L['Recipes'], {'Custom', 'Recipes'})
-		self:CreateCheckbox(custom, addon.L['Housing'], {'Custom', 'Housing'})
+		if addon.Util.IsMainline then
+			self:CreateCheckbox(custom, addon.L['Housing'], {'Custom', 'Housing'})
+		end
 	end
 	self:CreateCheckbox(custom, addon.L['Other'], {'Custom', 'Other'})
 	mb:AddChildMenu(menu, custom)
@@ -251,7 +256,9 @@ function KrowiEVU_FilterButtonMixin:CreateMenu(menu)
 		self:CreateCheckbox(menu, addon.L['Appearance Sets'], {'HideCollected', 'TransmogSets'})
 		self:CreateCheckbox(menu, addon.L['Illusions'], {'HideCollected', 'Illusions'})
 		self:CreateCheckbox(menu, addon.L['Recipes'], {'HideCollected', 'Recipes'})
-		self:CreateCheckbox(menu, addon.L['Housing'], {'HideCollected', 'Housing'})
+		if addon.Util.IsMainline then
+			self:CreateCheckbox(menu, addon.L['Housing'], {'HideCollected', 'Housing'})
+		end
 	end
 end
 

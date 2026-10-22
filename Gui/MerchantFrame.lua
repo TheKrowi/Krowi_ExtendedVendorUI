@@ -33,7 +33,7 @@ do
 		MerchantRepairAllButton:SetPoint('LEFT', buttonsInset, 52, -1) -- Start with this to not trigger Default Blizzard errors
 		MerchantGuildBankRepairButton:ClearAllPoints()
 		MerchantGuildBankRepairButton:SetPoint('LEFT', MerchantRepairAllButton, 'RIGHT', 8, 0)
-		if addon.Util.IsMainline then
+		if addon.Util.IsModern then
 			MerchantSellAllJunkButton:ClearAllPoints()
 			MerchantSellAllJunkButton:SetPoint('LEFT', MerchantGuildBankRepairButton, 'RIGHT', 8, 0)
 		else
@@ -57,7 +57,7 @@ do
 	BuybackBG:SetPoint('TOPLEFT', MerchantFrameInset)
 	BuybackBG:SetPoint('BOTTOMRIGHT', MerchantFrameInset)
 
-	if not addon.Util.IsMainline then
+	if not addon.Util.IsModern then
 		MerchantFrameBtnCornerLeft:Hide()
 		MerchantFrameBtnCornerRight:Hide()
 
@@ -85,7 +85,7 @@ end
 
 function merchantFrame.UpdateMerchantInfoLayout()
 	merchantFrame.SetMerchantFrameSize()
-	if addon.Util.IsMainline then
+	if addon.Util.IsModern then
 		MerchantFrame.FilterDropdown:Hide()
 	end
 	KrowiEVU_FilterButton:Show()
@@ -106,7 +106,7 @@ function merchantFrame.UpdateMerchantInfoLayout()
 	MerchantFrameInset:SetPoint('BOTTOM', KrowiEVU_MerchantButtonsInset, 'TOP', 0, 4)
 	KrowiEVU_MerchantButtonsInset:Show()
 	KrowiEVU_MerchantBuybackInset:Show()
-	if not addon.Util.IsMainline then
+	if not addon.Util.IsModern then
 		MerchantFrameBottomRightBorder:Hide()
 	end
 	if MerchantToken4 then
@@ -119,7 +119,7 @@ hooksecurefunc('MerchantFrame_UpdateMerchantInfo', merchantFrame.UpdateMerchantI
 
 hooksecurefunc('MerchantFrame_UpdateBuybackInfo', function()
 	merchantFrame.SetMerchantFrameSize()
-	if addon.Util.IsMainline then
+	if addon.Util.IsModern then
 		MerchantFrame.FilterDropdown:Hide()
 	end
 	KrowiEVU_OptionsButton:Hide()

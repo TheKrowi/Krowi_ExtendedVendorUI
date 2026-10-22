@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 24.0
+### Added
+- WoW Forever support
+- With WoW Forever's gamepad interface on, Extended Vendor UI stays off and says why in the chat
+
+### Changed
+- Krowi_Util library updated to 2.8 and Krowi_Menu to 2.2
+
 ## 23.0 - 2026-10-21
 ### Changed
 - Other addons that read the vendor's items, like Auctionator, Zygor and TSM, now see all of them, not only the ones the filter shows

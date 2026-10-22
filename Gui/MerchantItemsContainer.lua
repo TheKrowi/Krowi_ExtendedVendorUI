@@ -225,6 +225,12 @@ local function HideBlizzardMerchantInfo()
     MerchantPrevPageButton:Hide()
     MerchantNextPageButton:Hide()
     MerchantPageText:Hide()
+    -- WoW Forever's gamepad interface style shows these on every update; they page Blizzard's own list, as its mouse wheel does
+    -- while they show (forever MerchantFrame.lua:461-470, 605-609)
+    if MerchantPageTurnIndicatorLeft then
+        MerchantPageTurnIndicatorLeft:Hide()
+        MerchantPageTurnIndicatorRight:Hide()
+    end
 end
 
 hooksecurefunc('MerchantFrame_UpdateMerchantInfo', function()

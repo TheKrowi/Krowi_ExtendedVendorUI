@@ -1,4 +1,7 @@
 local _, addon = ...
+if addon.Util.IsForever then
+    return -- Skins on WoW Forever are not supported yet: the grid stays unskinned there (Krowi, 2026-10-21)
+end
 local gw2 = {}
 local pluginName = 'GW2_UI'
 local L_Prefix = 'Plugin_GW2UI_'

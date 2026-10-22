@@ -6,7 +6,7 @@ if addon.NotLoaded then
         Krowi_Tooltip:SetOwner(menuButtonFrame, 'ANCHOR_NONE')
         Krowi_Tooltip:SetPoint('TOPRIGHT', menuButtonFrame, 'BOTTOMRIGHT', 0, 0)
         Krowi_Tooltip:SetText(addon.Metadata.Title)
-        Krowi_Tooltip:AddLine(addon.L['Plugin_EllesmereUI_ListModeNotLoaded'], 1, 1, 1, true)
+        Krowi_Tooltip:AddLine(addon.NotLoadedText, 1, 1, 1, true)
         Krowi_Tooltip:Show()
     end
     _G[addon.Metadata.Prefix .. '_OnAddonCompartmentLeave'] = function()

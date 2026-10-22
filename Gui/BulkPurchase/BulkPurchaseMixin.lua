@@ -14,7 +14,7 @@ local GetItemCount_   = C_Item.GetItemCount
 local function GetMerchantItemInfoNormalized(index)
     local info = addon.Gui.MerchantItemSlot.GetItemInfo(index)
     if not info then return nil end
-    if not addon.Util.IsMainline and not info.name then return nil end
+    if not addon.Util.IsModern and not info.name then return nil end
     return info
 end
 
@@ -61,7 +61,7 @@ function mixin:GetFreeBagSpace(itemID)
     local itemType = GetItemFamily_(itemID) or 0
     local stackSize = GetMerchantItemMaxStack(self.itemIndex) or 1
 
-    local maxBag = addon.Util.IsMainline and 5 or 4
+    local maxBag = addon.Util.IsModern and 5 or 4
     for bag = 0, maxBag do
         local freeSpace, bagType = ContainerGetNumFreeSlots(bag)
         if freeSpace and bagType then
@@ -73,7 +73,7 @@ function mixin:GetFreeBagSpace(itemID)
 
                 local totalSlots = ContainerGetNumSlots(bag)
                 for slot = 1, totalSlots do
-                    if addon.Util.IsMainline then
+                    if addon.Util.IsModern then
                         local itemInfo = ContainerGetItemInfo(bag, slot)
                         if itemInfo and itemInfo.itemID == itemID then
                             canFit = canFit + (stackSize - (itemInfo.stackCount or 0))
@@ -92,7 +92,7 @@ function mixin:GetFreeBagSpace(itemID)
 end
 
 local function IsItemUnique(itemID)
-    if not addon.Util.IsMainline then return false end
+    if not addon.Util.IsModern then return false end
     if not C_TooltipInfo then return false end
     local tooltipData = C_TooltipInfo.GetItemByID(itemID)
     if not tooltipData then return false end
@@ -146,7 +146,7 @@ function mixin:OnModifiedClick(frame, button)
         return
     end
 
-    if addon.Util.IsMainline and strmatch(self.itemLink, 'currency') and (not self.price or self.price <= 0) then
+    if addon.Util.IsModern and strmatch(self.itemLink, 'currency') and (not self.price or self.price <= 0) then
         local currInfo = C_CurrencyInfo.GetCurrencyInfoFromLink(self.itemLink)
         if currInfo then
             local totalMax = currInfo.maxQuantity
@@ -163,7 +163,7 @@ function mixin:OnModifiedClick(frame, button)
         self.stack      = stack
         self.fit        = bagMax
         self.partialFit = bagMax % stack
-    elseif addon.Util.IsMainline and strmatch(self.itemLink, 'currency') then
+    elseif addon.Util.IsModern and strmatch(self.itemLink, 'currency') then
         self.stack = self.preset
         local currInfo = C_CurrencyInfo.GetCurrencyInfoFromLink(self.itemLink)
         if currInfo then
@@ -175,7 +175,8 @@ function mixin:OnModifiedClick(frame, button)
         self.partialFit = 0
     end
 
-    if not addon.Util.IsClassicEra and info.hasExtendedCost and (not self.price or self.price <= 0) then
+    -- IsClassicEra is also true on WoW Forever, which runs Retail's interface
+    if (addon.Util.IsForever or not addon.Util.IsClassicEra) and info.hasExtendedCost and (not self.price or self.price <= 0) then
         self:AltCurrencyHandling(self.itemIndex, frame)
         return
     end
@@ -224,7 +225,7 @@ function mixin:AltCurrencyHandling(itemIndex, frame)
             self.altCurrTex[i]   = tex
             self.altCurrPrice[i] = price
 
-            if link and strmatch(link, 'currency') and addon.Util.IsMainline then
+            if link and strmatch(link, 'currency') and addon.Util.IsModern then
                 local currInfo = C_CurrencyInfo.GetCurrencyInfoFromLink(link)
                 self.altCurrAfford[i] = currInfo
                     and floor(currInfo.quantity / price) * self.preset

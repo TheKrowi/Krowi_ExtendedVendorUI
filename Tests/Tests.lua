@@ -47,13 +47,27 @@ end
 local ADDONS = { 'ElvUI', 'GW2_UI', 'EllesmereUI', 'EllesmereUIBlizzardSkin', 'CanIMogIt', 'Auctionator', 'Krowi_Vendorer', 'Plumber' }
 local PLUGINS = { 'ElvUI', 'GW2_UI', 'EllesmereUI', 'EllesmereUIItemLevel', 'CanIMogIt' }
 
+-- The Krowi_Util client flags and the ones each client's WOW_PROJECT_ID should make true; the expansion flags follow the
+-- Retail patch, so they are recorded but not checked
+local CLIENT_FLAGS = { 'IsMainline', 'IsForever', 'IsModern', 'IsMistsClassic', 'IsCataClassic', 'IsWrathClassic', 'IsBCCClassic', 'IsClassicEra', 'IsClassicWithAchievements' }
+local EXPANSION_FLAGS = { 'IsTheWarWithin', 'IsMidnight' }
+local EXPECTED_FLAGS = {
+    [1] = { IsMainline = true, IsModern = true }, -- Retail
+    [19] = { IsMistsClassic = true, IsClassicWithAchievements = true }, -- Mists Classic
+    [11] = { IsWrathClassic = true, IsClassicWithAchievements = true }, -- Titan Reforged
+    [5] = { IsBCCClassic = true }, -- TBC Anniversary
+    [2] = { IsClassicEra = true }, -- Classic Era
+    [18] = { IsClassicEra = true, IsForever = true, IsModern = true }, -- WoW Forever: a 1.x build that runs Retail's interface
+}
+
 -- Which plugin addons have their merchant skin or icons on, read the way the plugins read it
 local function GetSkinStates()
     local states = {}
-    local elv = ElvUI and ElvUI[1]
+    -- The ElvUI and GW2_UI plugins do nothing on WoW Forever (Plugins/ElvUI.lua, GW2_UI.lua), so no skin is expected there
+    local elv = not addon.Util.IsForever and ElvUI and ElvUI[1]
     local elvBlizzard = elv and elv.private and elv.private.skins and elv.private.skins.blizzard
     states.ElvUI = elvBlizzard and elvBlizzard.enable and elvBlizzard.merchant and true or false
-    local gw = GW2_ADDON
+    local gw = not addon.Util.IsForever and GW2_ADDON
     states.GW2_UI = gw and gw.settings and gw.settings.skins and gw.settings.skins.merchant and gw.settings.skins.merchant.enabled and true or false
     states.EllesmereUI = addon.Util.IsMainline and EllesmereUI and C_AddOns.IsAddOnLoaded('EllesmereUIBlizzardSkin')
         and type(EllesmereUI.GetBlizzWindowStyle) == 'function' and EllesmereUI.GetBlizzWindowStyle('merchant') ~= 'off'
@@ -88,6 +102,14 @@ local function RecordEnvironment()
     for _, name in ipairs(PLUGINS) do
         if skins[name] then
             tinsert(run.Plugins, name)
+        end
+    end
+    run.Flags = {}
+    for _, list in ipairs({ CLIENT_FLAGS, EXPANSION_FLAGS }) do
+        for _, name in ipairs(list) do
+            if addon.Util[name] then
+                tinsert(run.Flags, name)
+            end
         end
     end
 end
@@ -158,6 +180,9 @@ local function CheckBlizzardHidden()
     if MerchantPrevPageButton:IsShown() or MerchantNextPageButton:IsShown() or MerchantPageText:IsShown() then
         tinsert(shown, 'page controls')
     end
+    if MerchantPageTurnIndicatorLeft and (MerchantPageTurnIndicatorLeft:IsShown() or MerchantPageTurnIndicatorRight:IsShown()) then
+        tinsert(shown, 'gamepad page arrows') -- WoW Forever's gamepad interface style
+    end
     if #shown == 0 then
         Add('PASS', 'Blizzard\'s merchant slots and page controls hidden')
     else
@@ -172,7 +197,7 @@ local function CheckPaging()
     local ok = pageText:IsShown() == shouldShow and prevButton:IsShown() == shouldShow and nextButton:IsShown() == shouldShow
     local text = pageText:GetText()
     if ok and shouldShow then
-        local expectedText = addon.Util.IsMainline and MERCHANT_PAGE_NUMBER:format(page, numPages) or PAGE_NUMBER:format(page)
+        local expectedText = addon.Util.IsModern and MERCHANT_PAGE_NUMBER:format(page, numPages) or PAGE_NUMBER:format(page)
         ok = text == expectedText and (not not prevButton:IsEnabled()) == (page > 1) and (not not nextButton:IsEnabled()) == (page < numPages)
     end
     Add(ok and 'PASS' or 'FAIL', 'page controls ' .. (shouldShow and ('shown, "' .. tostring(text) .. '"') or 'hidden'))
@@ -283,6 +308,28 @@ local function CheckTooltip()
     -- A recipe's tooltip reports the item it teaches through GetItem, so the title counts as well
     local matches = (tooltipItemId and tooltipItemId == slotItemId) or (title and title == slotName)
     Add(matches and 'PASS' or 'FAIL', ('tooltip "%s" (item %s) for the slot "%s" (item %s)'):format(tostring(title), tostring(tooltipItemId), tostring(slotName), tostring(slotItemId)))
+end
+
+-- Krowi_Util's client flags against the ones this client's project id should give, so every client's run shows that a
+-- Krowi_Util change kept the flags other addons read
+local function CheckClientFlags()
+    local expected = EXPECTED_FLAGS[WOW_PROJECT_ID]
+    if not expected then
+        Note(('no expected client flags for project %s'):format(tostring(WOW_PROJECT_ID)))
+        return
+    end
+    local wrong = {}
+    for _, name in ipairs(CLIENT_FLAGS) do
+        local value = addon.Util[name]
+        if (value and true or false) ~= (expected[name] or false) then
+            tinsert(wrong, name .. '=' .. tostring(value))
+        end
+    end
+    if #wrong == 0 then
+        Add('PASS', ('client flags for project %d: %s'):format(WOW_PROJECT_ID, table.concat(run.Flags, ', ')))
+    else
+        Add('FAIL', ('client flags for project %d wrong: %s'):format(WOW_PROJECT_ID, Join(wrong)))
+    end
 end
 
 -- This addon's Lua errors in this session, also from before the run (the first draw, a plugin), as BugGrabber caught them
@@ -697,6 +744,12 @@ Stop = function(reason)
     if not ok then
         run.RestoreError = tostring(err)
         print(prefix .. '|cFFFF0000could not put the settings back:|r ' .. tostring(err))
+    end
+    current = { Step = #run.Steps + 1, Name = 'client', Text = 'Krowi_Util client flags', Lines = {} }
+    tinsert(run.Steps, current)
+    ok, err = pcall(CheckClientFlags)
+    if not ok then
+        Add('FAIL', 'test error: ' .. tostring(err))
     end
     current = { Step = #run.Steps + 1, Name = 'errors', Text = 'Lua errors this session', Lines = {} }
     tinsert(run.Steps, current)
