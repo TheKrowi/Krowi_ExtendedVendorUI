@@ -38,7 +38,7 @@ local function IsForeverGamepadStyleOn()
 end
 
 local function Print(text)
-    print(addon.Metadata.Title .. ': ' .. text)
+    print(text) -- The text names the addon itself
 end
 
 if IsEllesmereUIListModeOn() then
