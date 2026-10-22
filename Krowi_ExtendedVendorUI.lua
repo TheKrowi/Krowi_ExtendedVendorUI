@@ -23,9 +23,33 @@ local function IsEllesmereUIListModeOn()
     return not ok or style ~= 'off'
 end
 
+-- [[ WoW Forever's gamepad interface ]] --
+-- Forever's gamepad navigation picks up every button in the vendor window, this addon's item slots too, reads the fields the
+-- addon's code gave them (buttonContext, count) and rebuilds the gamepad bindings from them, which then run tainted: blocked
+-- actions in combat, and after Buyback the Buy button on Blizzard's hidden first slot (taint review of 2026-10-22). With that
+-- style on the addon loads nothing and Blizzard's window stays (Krowi, 2026-10-22). The style changes without a reload, so a
+-- switch to it is announced at the next vendor and takes effect with the next reload.
+local function IsForeverGamepadStyleOn()
+    if not (addon.Util.IsForever and InputUtil and InputUtil.IsGamepadUIEnabled) then
+        return false
+    end
+    local ok, isOn = pcall(InputUtil.IsGamepadUIEnabled) -- Read at load on a beta client; a failure must not stop the addon
+    return ok and isOn and true or false
+end
+
+local function Print(text)
+    print(addon.Metadata.Title .. ': ' .. text)
+end
+
 if IsEllesmereUIListModeOn() then
     addon.NotLoaded = 'EllesmereUIListMode'
+    addon.NotLoadedText = addon.L['Plugin_EllesmereUI_ListModeNotLoaded']
+elseif IsForeverGamepadStyleOn() then
+    addon.NotLoaded = 'ForeverGamepad'
+    addon.NotLoadedText = addon.L['ForeverGamepadNotLoaded']
+end
 
+if addon.NotLoaded then
     local notice
     function addon.ShowNotLoadedNotice()
         if not notice then
@@ -39,7 +63,7 @@ if IsEllesmereUIListModeOn() then
             local text = notice:CreateFontString(nil, 'ARTWORK', 'GameFontHighlight')
             text:SetPoint('TOP', 0, -40)
             text:SetWidth(380)
-            text:SetText(addon.L['Plugin_EllesmereUI_ListModeNotLoaded'])
+            text:SetText(addon.NotLoadedText)
             local okay = CreateFrame('Button', nil, notice, 'UIPanelButtonTemplate')
             okay:SetSize(120, 22)
             okay:SetPoint('BOTTOM', 0, 14)
@@ -56,9 +80,24 @@ if IsEllesmereUIListModeOn() then
     noticeHelper:RegisterEvent('MERCHANT_SHOW')
     noticeHelper:SetScript('OnEvent', function(self)
         self:UnregisterEvent('MERCHANT_SHOW') -- Once a session
-        addon.ShowNotLoadedNotice()
+        if addon.NotLoaded == 'ForeverGamepad' then
+            Print(addon.NotLoadedText) -- A window could need the mouse to close
+        else
+            addon.ShowNotLoadedNotice()
+        end
     end)
     return
+end
+
+if addon.Util.IsForever then
+    local styleHelper = CreateFrame('Frame')
+    styleHelper:RegisterEvent('MERCHANT_SHOW')
+    styleHelper:SetScript('OnEvent', function(self)
+        if IsForeverGamepadStyleOn() then
+            self:UnregisterEvent('MERCHANT_SHOW') -- Once a session
+            Print(addon.L['ForeverGamepadReload'])
+        end
+    end)
 end
 
 -- [[ Load addon ]] --

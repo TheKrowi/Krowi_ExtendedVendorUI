@@ -94,3 +94,5 @@ L["Toys"] = true
 L["Vendor has"] = true
 L["You can afford"] = true
 L["You can fit"] = true
+L["ForeverGamepadNotLoaded"] = "Extended Vendor UI does not work with WoW Forever's gamepad interface, so it is not loaded. To use it, turn off the gamepad interface on the Gamepad page of the game options and type /reload."
+L["ForeverGamepadReload"] = "WoW Forever's gamepad interface is on, which Extended Vendor UI does not work with. Type /reload to get Blizzard's vendor window."
