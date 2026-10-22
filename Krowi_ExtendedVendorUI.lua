@@ -37,10 +37,6 @@ local function IsForeverGamepadStyleOn()
     return ok and isOn and true or false
 end
 
-local function Print(text)
-    print(text) -- The text names the addon itself
-end
-
 if IsEllesmereUIListModeOn() then
     addon.NotLoaded = 'EllesmereUIListMode'
     addon.NotLoadedText = addon.L['Plugin_EllesmereUI_ListModeNotLoaded']
@@ -51,7 +47,12 @@ end
 
 if addon.NotLoaded then
     local notice
+    -- At the first vendor and from the addon compartment (Icon.lua)
     function addon.ShowNotLoadedNotice()
+        if addon.NotLoaded == 'ForeverGamepad' then
+            print(addon.NotLoadedText) -- A window could need the mouse to close; the text names the addon
+            return
+        end
         if not notice then
             notice = CreateFrame('Frame', 'KrowiEVU_NotLoadedNotice', UIParent, 'BasicFrameTemplateWithInset')
             notice:SetWidth(420)
@@ -80,11 +81,7 @@ if addon.NotLoaded then
     noticeHelper:RegisterEvent('MERCHANT_SHOW')
     noticeHelper:SetScript('OnEvent', function(self)
         self:UnregisterEvent('MERCHANT_SHOW') -- Once a session
-        if addon.NotLoaded == 'ForeverGamepad' then
-            Print(addon.NotLoadedText) -- A window could need the mouse to close
-        else
-            addon.ShowNotLoadedNotice()
-        end
+        addon.ShowNotLoadedNotice()
     end)
     return
 end
@@ -95,7 +92,7 @@ if addon.Util.IsForever then
     styleHelper:SetScript('OnEvent', function(self)
         if IsForeverGamepadStyleOn() then
             self:UnregisterEvent('MERCHANT_SHOW') -- Once a session
-            Print(addon.L['ForeverGamepadReload'])
+            print(addon.L['ForeverGamepadReload']) -- The text names the addon
         end
     end)
 end

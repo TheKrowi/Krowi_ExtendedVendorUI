@@ -63,10 +63,11 @@ local EXPECTED_FLAGS = {
 -- Which plugin addons have their merchant skin or icons on, read the way the plugins read it
 local function GetSkinStates()
     local states = {}
-    local elv = ElvUI and ElvUI[1]
+    -- The ElvUI and GW2_UI plugins do nothing on WoW Forever (Plugins/ElvUI.lua, GW2_UI.lua), so no skin is expected there
+    local elv = not addon.Util.IsForever and ElvUI and ElvUI[1]
     local elvBlizzard = elv and elv.private and elv.private.skins and elv.private.skins.blizzard
     states.ElvUI = elvBlizzard and elvBlizzard.enable and elvBlizzard.merchant and true or false
-    local gw = GW2_ADDON
+    local gw = not addon.Util.IsForever and GW2_ADDON
     states.GW2_UI = gw and gw.settings and gw.settings.skins and gw.settings.skins.merchant and gw.settings.skins.merchant.enabled and true or false
     states.EllesmereUI = addon.Util.IsMainline and EllesmereUI and C_AddOns.IsAddOnLoaded('EllesmereUIBlizzardSkin')
         and type(EllesmereUI.GetBlizzWindowStyle) == 'function' and EllesmereUI.GetBlizzWindowStyle('merchant') ~= 'off'
@@ -325,7 +326,7 @@ local function CheckClientFlags()
         end
     end
     if #wrong == 0 then
-        Add('PASS', ('client flags for project %d: %s'):format(WOW_PROJECT_ID, Join(run.Flags)))
+        Add('PASS', ('client flags for project %d: %s'):format(WOW_PROJECT_ID, table.concat(run.Flags, ', ')))
     else
         Add('FAIL', ('client flags for project %d wrong: %s'):format(WOW_PROJECT_ID, Join(wrong)))
     end
