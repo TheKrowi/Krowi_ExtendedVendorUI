@@ -1,5 +1,5 @@
 # Spec: CurseForge feedback of March to October 2026
-Intent: [intent.md](intent.md). Status: accepted
+Intent: [intent.md](intent.md). Status: done
 
 Each issue's analysis, with sources, is its first comment on GitHub; this file keeps the requirements, design and checks.
 

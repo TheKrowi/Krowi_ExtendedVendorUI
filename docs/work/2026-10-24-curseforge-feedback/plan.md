@@ -1,5 +1,5 @@
 # Plan: CurseForge feedback of March to October 2026
-Spec: [spec.md](spec.md). Status: in progress
+Spec: [spec.md](spec.md). Status: done
 
 ## Files that change
 - `Tests/Tests.lua`: round 1 checks (token banner, server list, placed decor, TLH overlay, first draw), round 2 steps (Gear, token banner options) and the recipe record note.
@@ -14,10 +14,10 @@ Spec: [spec.md](spec.md). Status: in progress
 
 ## Order of work
 1. Round 1 checks, committed and deployed alone to Retail and Mists Classic, so the reports are reproduced on 24.0's code. Done.
-2. Fixes and features, one commit per issue, not deployed until round 1 is read. Done for #100 to #108; #109 and #110 wait for round 1.
-3. zhCN: the 22 strings drafted, uploaded to CurseForge, imported. Done. The 9 new strings go to CurseForge after Krowi's go, then their zhCN.
-4. Round 2: deploy to every client, `/kevutest` per vendor and client, `Read-GameTests.ps1`, `Read-GameErrors.ps1`.
-5. `krowi:taint-reviewer`, `/code-review`, `CLAUDE.md` write-back, PR.
+2. Fixes and features, one commit per issue, not deployed until round 1 is read. Done for #100 to #108; round 1 showed no change is needed for #109 and #110.
+3. zhCN: the 22 strings drafted, uploaded to CurseForge, imported; the 9 new strings exported to CurseForge on Krowi's go, with their zhCN. Done.
+4. Round 2: deployed to every client; `/kevutest` passed on Retail (Alice Fischer, Lyrendal, Hesta Forlath, then Alice Fischer after the review fixes), Mists, Anniversary and Era. WoW Forever was not tested: its realm was down. Done.
+5. `krowi:taint-reviewer` (no finding), `/code-review` (fixed in `517d249`), the menu placement Krowi asked for, `CLAUDE.md` write-back, PR. Done.
 
 ## Risks
 - The gear and recipe checks run per vendor item on every list build. Guarded: the gear check returns at once with every option off; the recipe record runs once per item per visit, only with the item's data loaded.

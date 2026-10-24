@@ -1,5 +1,5 @@
 # Intent: CurseForge feedback of March to October 2026
-Author: players on CurseForge (project 872787), collected by Krowi (maintainer). Source: GitHub issues #100 to #110, each quoting one CurseForge comment. Status: accepted
+Author: players on CurseForge (project 872787), collected by Krowi (maintainer). Source: GitHub issues #100 to #110, each quoting one CurseForge comment. Status: done
 
 ## Problem
 The CurseForge comments since March hold two regressions of 23.0, four older bugs and five requests. Each is a GitHub issue now, with its analysis as the first comment.
