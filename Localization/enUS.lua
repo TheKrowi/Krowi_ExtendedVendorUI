@@ -102,3 +102,7 @@ There are no options.]=]
 L["Plugin_TransmogLootHelper_Name"] = "Transmog Loot Helper"
 L["Gold total"] = true
 L["Hide currencies you have none of"] = true
+L["Gear"] = true
+L["Only usable items"] = true
+L["Hide sub-optimal armor"] = true
+L["Minimum quality"] = true

@@ -260,6 +260,26 @@ function KrowiEVU_FilterButtonMixin:CreateMenu(menu)
 			self:CreateCheckbox(menu, addon.L['Housing'], {'HideCollected', 'Housing'})
 		end
 	end
+
+	mb:CreateDivider(menu)
+
+	-- Gear section: weapons and armor, under every filter
+	mb:CreateTitle(menu, addon.L['Gear'])
+	self:CreateCheckbox(menu, addon.L['Only usable items'], {'Gear', 'UsableOnly'})
+	self:CreateCheckbox(menu, addon.L['Hide sub-optimal armor'], {'Gear', 'HideSubOptimalArmor'})
+	local minQuality = mb:CreateSubmenuButton(menu, addon.L['Minimum quality'])
+	for _, quality in ipairs({0, 2, 3, 4}) do -- None, Uncommon, Rare, Epic
+		mb:CreateCustomRadio(minQuality, quality == 0 and NONE or _G['ITEM_QUALITY' .. quality .. '_DESC'],
+			function()
+				return addon.Filters.db.profile.Gear.MinQuality == quality
+			end,
+			function()
+				addon.Filters.db.profile.Gear.MinQuality = quality
+				addon.Filters:SetFilter(addon.Filters:GetFilter())
+			end
+		)
+	end
+	mb:AddChildMenu(menu, minQuality)
 end
 
 -- Hooks

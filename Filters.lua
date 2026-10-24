@@ -91,6 +91,11 @@ local defaults = {
 			Weapon = { --[[ Automatically generated ]] },
 		},
 		HousingQuantity = 1,
+		Gear = { -- Weapons and armor, under every filter
+			UsableOnly = false,
+			HideSubOptimalArmor = false,
+			MinQuality = 0, -- An Enum.ItemQuality value; 0 is off
+		},
 	}
 }
 
@@ -145,17 +150,74 @@ function filters:RegisterListener(listener)
 	tinsert(listeners, listener)
 end
 
--- The vendor's real indices that pass the active filter
+-- The vendor's real indices that pass the active filter and the gear options
 function filters:BuildList(list)
 	wipe(list)
 	local lootFilter = self:GetFilter()
+	self:PrepareGear()
 	for i = 1, GetMerchantNumItems() do
 		local itemId = GetMerchantItemID(i)
-		if itemId == nil or self:Validate(lootFilter, itemId) then
+		if itemId == nil or (self:Validate(lootFilter, itemId) and self:ValidateGear(i, itemId)) then
 			tinsert(list, i)
 		end
 	end
 	return list
+end
+
+-- [[ Gear ]] --
+-- The armor proficiency spells, best first, with the armor subclass each allows (Cloth 1, Leather 2, Mail 3, Plate 4)
+local ARMOR_PROFICIENCIES = {
+	{ Spell = 750, SubClass = 4 }, -- Plate Mail
+	{ Spell = 8737, SubClass = 3 }, -- Mail
+	{ Spell = 9077, SubClass = 2 }, -- Leather
+}
+
+local bestArmorSubClass
+-- Once per list: the best armor the character can wear, or nil for cloth only, when the sub-optimal check has nothing to hide
+function filters:PrepareGear()
+	bestArmorSubClass = nil
+	if not self.db.profile.Gear.HideSubOptimalArmor then
+		return
+	end
+	for _, proficiency in ipairs(ARMOR_PROFICIENCIES) do
+		if C_SpellBook.IsSpellKnown(proficiency.Spell) then
+			bestArmorSubClass = proficiency.SubClass
+			return
+		end
+	end
+end
+
+function filters:GetBestArmorSubClass()
+	return bestArmorSubClass
+end
+
+-- Weapons and armor only; an item whose data is not loaded yet stays in the list
+function filters:ValidateGear(index, itemId)
+	local gear = self.db.profile.Gear
+	if not (gear.UsableOnly or gear.HideSubOptimalArmor or gear.MinQuality > 0) then
+		return true
+	end
+	local _, _, _, equipLoc, _, classId, subClassId = C_Item.GetItemInfoInstant(itemId)
+	if classId ~= Enum.ItemClass.Armor and classId ~= Enum.ItemClass.Weapon then
+		return true
+	end
+	if gear.UsableOnly then
+		local info = addon.Gui.MerchantItemSlot.GetItemInfo(index)
+		if info and info.name and not info.isUsable then
+			return false
+		end
+	end
+	-- Cloth, leather and mail worn on the body; a cloak is cloth for everyone
+	if bestArmorSubClass and classId == Enum.ItemClass.Armor and subClassId >= 1 and subClassId < bestArmorSubClass and equipLoc ~= 'INVTYPE_CLOAK' then
+		return false
+	end
+	if gear.MinQuality > 0 then
+		local quality = C_Item.GetItemQualityByID(itemId)
+		if quality and quality < gear.MinQuality then
+			return false
+		end
+	end
+	return true
 end
 
 function filters:RefreshFilters()
