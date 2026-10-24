@@ -134,7 +134,7 @@ local function CalculateGoldCount(goldCount, itemIndex)
     if not info then
         return goldCount
     end
-    if info.price and info.price > 0 and not info.hasExtendedCost then
+    if info.price and info.price > 0 then -- Also with an extended cost: gold and a currency (live MerchantFrame.lua:307)
         goldCount = goldCount + info.price
     end
     return goldCount
@@ -213,23 +213,18 @@ local function DrawGoldToken(goldCount)
     end
 end
 
--- The Hide currencies you have none of option
-local function IsHiddenCost(token)
-    return addon.Options.db.profile.TokenBanner.HideNone and token.HaveAmount == 0
-end
-
--- A cost without data, or hidden, takes no place in the row; HideRemainingTokens hides the pooled token it was given
+-- A cost without data, or a currency hidden by Hide currencies you have none of, takes no place in the row;
+-- HideRemainingTokens hides the pooled token it was given
 local function DrawCurrencyToken(texture, value, link)
     local token = GetPoolToken(tokenIndex + 1)
-    if token:SetCurrency(texture, value, link) and not IsHiddenCost(token) then
+    if token:SetCurrency(texture, value, link) and not (addon.Options.db.profile.TokenBanner.HideNone and token.HaveAmount == 0) then
         tokenIndex = tokenIndex + 1
         DrawToken(tokenIndex)
     end
 end
 
 local function DrawItemToken(texture, value, link)
-    local token = GetPoolToken(tokenIndex + 1)
-    if token:SetItem(texture, value, link) and not IsHiddenCost(token) then
+    if GetPoolToken(tokenIndex + 1):SetItem(texture, value, link) then
         tokenIndex = tokenIndex + 1
         DrawToken(tokenIndex)
     end
@@ -239,6 +234,7 @@ function tokenBanner:Update()
     local goldCount, currencyCounts, itemCounts = CalculateCounts()
 
     tokenIndex = 0
+    tokenLines = 1 -- Drawing the first token sets it too, but a banner with no token keeps one line
 
     DrawGoldToken(goldCount)
 

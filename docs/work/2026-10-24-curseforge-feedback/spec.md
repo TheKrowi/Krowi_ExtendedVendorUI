@@ -18,7 +18,7 @@ Each issue's analysis, with sources, is its first comment on GitHub; this file k
 
 ## #101 Transmog Loot Helper overlay
 
-**Requirements.** 1. With TLH v12.1.5-02 or later, every shown slot with an item gets TLH's overlay after every draw. 2. The plugin's name and description show on the Plugins options page. 3. TLH never retries every frame because of this addon's slots. TLH's integration retries while the first slot's `hasItem` is nil (from login until the first vendor, and whenever a vendor opens with an empty list; taint review of 2026-10-24), so the addon's slots are created with `hasItem = false` and an empty slot sets `false` where Blizzard sets nil; Blizzard only tests it for truth on every client. The plugin also skips the call for an empty list. Reported to TLH's author on #97.
+**Requirements.** 1. With TLH v12.1.5-02 or later, every shown slot with an item gets TLH's overlay after every draw. 2. The plugin's name and description show on the Plugins options page. 3. TLH never retries every frame because of this addon's slots. TLH's integration retries while the first slot's `hasItem` is nil (from login until the first vendor, and whenever a vendor opens with an empty list; taint review of 2026-10-24), so the addon's slots are created with `hasItem = false` and an empty slot sets `false` where Blizzard sets nil; Blizzard only tests it for truth on every client. Reported to TLH's author on #97.
 
 **Design.** Merge #97's commit (Slackluster, `3aa6195d78`) unchanged, then: the two strings in enUS, single quotes, and skip `UpdateOverlay` when the list is empty.
 
@@ -34,7 +34,7 @@ Each issue's analysis, with sources, is its first comment on GitHub; this file k
 
 **Requirements.** 1. A new Hide collected checkbox hides recipes another character on the account is recorded to know. 2. Each character records, per recipe item, whether it knows it, whenever a vendor shows that item, whatever the checkboxes. 3. Off by default.
 
-**Design.** `KrowiEVU_Filters`'s AceDB `global.KnownRecipes["Name-Realm"][itemId] = true` (account-wide, untouched by profile reset or copy). `filters.IsRecipeCollected` records its tooltip result when the item's data is cached (true sets, false clears, so a dropped profession clears on the next visit); `BuildList` runs it once per recipe item per vendor visit (the set is cleared on `MERCHANT_CLOSED`) so recording does not depend on the checkboxes. Profile key `HideCollected.RecipesOtherCharacters`; the three recipe branches of `Validate`, `ValidateRecipesOnly` and `ValidateCustom` hide a recipe when (Recipes and this character knows it) or (the new key and another character is recorded to know it). Limits for the reply: only characters of this WoW account folder, learned from vendor visits, and another character's data arrives after it logs out or reloads.
+**Design.** `KrowiEVU_Filters`'s AceDB `global.KnownRecipes["Name-Realm"][itemId] = true` (account-wide, untouched by profile reset or copy). `filters.RecordRecipe`, run by `BuildList` once per recipe item per vendor visit (the set is cleared on `MERCHANT_CLOSED`) so recording does not depend on the checkboxes, stores `IsRecipeCollected`'s tooltip result when the item's data is cached and the tooltip could be read (true sets, false clears, so a dropped profession clears on the next visit). Profile key `HideCollected.RecipesOtherCharacters`; the three recipe branches of `Validate`, `ValidateRecipesOnly` and `ValidateCustom` hide a recipe when (Recipes and this character knows it) or (the new key and another character is recorded to know it). Limits for the reply: only characters of this WoW account folder, learned from vendor visits, and another character's data arrives after it logs out or reloads.
 
 ## #104 Gold total
 
@@ -65,9 +65,9 @@ Waits for the player's answer on #107. No code in this batch.
 
 ## #108 Hide currencies you have none of
 
-**Requirements.** A Hide currencies you have none of checkbox in the Token Banner menu, off by default; on, a currency or item cost the player has 0 of gets no token.
+**Requirements.** A Hide currencies you have none of checkbox in the Token Banner menu's Currency Options, off by default; on, a currency the player has 0 of gets no token. Item costs stay (code review of 2026-10-24: the label says currencies).
 
-**Design.** `TokenBanner.HideNone = false`; the token's `Set*` records the amount owned and the banner skips it when the option is on and the amount is 0.
+**Design.** `TokenBanner.HideNone = false`; `SetCurrency` records the amount owned and the banner skips the currency when the option is on and the amount is 0.
 
 ## #109 Kirasztia
 

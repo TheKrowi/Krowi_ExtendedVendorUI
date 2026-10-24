@@ -27,7 +27,7 @@ addon.Options.Defaults = {
 	        CurrencyAbbreviate = 'None',
             Format = 'Both',
             GoldTotal = true, -- Off: the gold token shows only the gold the player has
-            HideNone = false, -- On: no token for a currency or item cost the player has none of
+            HideNone = false, -- On: no token for a currency the player has none of (item costs stay)
         }
     }
 }

@@ -525,23 +525,21 @@ if addon.Util.IsModern then -- Recipes
 		knownRecipes[character][itemId] = known or nil -- A dropped profession clears on the next visit
 	end
 
+	-- Also returns whether the tooltip could be read at all
 	function filters.IsRecipeCollected(itemId)
 		local tooltipInfo = C_TooltipInfo.GetItemByID(itemId)
 		if not tooltipInfo then
-			return false
+			return false, false
 		end
-		local known = false
 		for _, line in next, tooltipInfo.lines do
 			if issecretvalue and issecretvalue(line.leftText) then
-				return false -- Tooltip text is secret under some restrictions (12.x); nothing is recorded then
+				return false, false -- Tooltip text is secret under some restrictions (12.x)
 			end
 			if line.leftText == ITEM_SPELL_KNOWN then
-                known = true
-                break
+                return true, true
             end
 		end
-		Record(itemId, known)
-		return known
+		return false, true
 	end
 
 	function filters.IsRecipeKnownByOtherCharacter(itemId)
@@ -576,7 +574,10 @@ if addon.Util.IsModern then -- Recipes
 		end
 		recorded[itemId] = true
 		if filters.IsRecipe(itemId) then
-			filters.IsRecipeCollected(itemId)
+			local known, readable = filters.IsRecipeCollected(itemId)
+			if readable then
+				Record(itemId, known)
+			end
 		end
 	end
 else

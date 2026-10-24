@@ -328,7 +328,7 @@ local function CheckTokenBanner()
     local gold, costs = 0, {}
     for _, index in ipairs(indices) do
         local info = merchantItemSlot.GetItemInfo(index)
-        if info and info.price and info.price > 0 and not info.hasExtendedCost then
+        if info and info.price and info.price > 0 then -- Gold, also next to a currency (live MerchantFrame.lua:307)
             gold = gold + info.price
         end
         for costIndex = 1, GetMerchantItemCostInfo(index) or 0 do
@@ -363,7 +363,7 @@ local function CheckTokenBanner()
     local costNames, missing, extra = {}, {}, {}
     for key, value in next, costs do
         tinsert(costNames, GetCostName(key) .. ' x' .. value)
-        if options.HideNone and GetHaveAmount(key) == 0 then -- Hide currencies you have none of
+        if options.HideNone and key:find('^currency:') and GetHaveAmount(key) == 0 then -- Hide currencies you have none of
             if shown[key] then
                 tinsert(extra, GetCostName(key) .. ', which you have none of')
             end
@@ -488,11 +488,27 @@ local function CheckRecipes()
     end
 end
 
+-- The best armor each class wears (Cloth 1, Leather 2, Mail 3, Plate 4), and the one it wears before level 40 where the
+-- client has the old proficiencies; written out here so the check does not use the filter's own proficiency spells
+local CLASS_ARMOR = {
+    WARRIOR = { 4, 3 }, PALADIN = { 4, 3 }, DEATHKNIGHT = { 4, 4 },
+    HUNTER = { 3, 2 }, SHAMAN = { 3, 2 }, EVOKER = { 3, 3 },
+    ROGUE = { 2, 2 }, DRUID = { 2, 2 }, MONK = { 2, 2 }, DEMONHUNTER = { 2, 2 },
+    MAGE = { 1, 1 }, PRIEST = { 1, 1 }, WARLOCK = { 1, 1 },
+}
+
 -- The Gear options against every weapon and armor piece of the vendor: none that breaks one is in the list
 local function CheckGear()
     local gear = filters.db.profile.Gear
     local best = filters:GetBestArmorSubClass()
     Note('best armor known: ' .. (best and C_Item.GetItemSubClassInfo(Enum.ItemClass.Armor, best) or 'cloth only, or no armor proficiency found'))
+    -- Retail learns every proficiency at once; WoW Forever's rules are unknown, so only noted there
+    local classArmor = CLASS_ARMOR[select(2, UnitClass('player'))]
+    if classArmor and not addon.Util.IsForever then
+        local expected = (addon.Util.IsMainline or UnitLevel('player') >= 40) and classArmor[1] or classArmor[2]
+        local actual = best or 1
+        Add(actual == expected and 'PASS' or 'FAIL', ('best armor %d for this class and level, %d found from the proficiencies (1 cloth to 4 plate)'):format(expected, actual))
+    end
     local inList = {}
     for _, index in ipairs(container:GetIndices()) do
         inList[index] = true

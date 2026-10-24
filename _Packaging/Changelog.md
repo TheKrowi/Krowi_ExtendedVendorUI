@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - The token banner no longer keeps a currency from an earlier vendor, and no longer stops updating after an error
+- The token banner's gold total now includes items that cost gold and a currency
 - Hide collected, Housing now also hides decor you have placed
 - Transmog Loot Helper's icons show on vendor items again and follow page, filter and search changes (Transmog Loot Helper 12.1.5-02 or later)
 
