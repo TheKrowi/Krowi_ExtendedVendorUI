@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## 24.1
 ### Fixed
+- The token banner no longer keeps a currency from an earlier vendor, and no longer stops updating after an error
 - Hide collected, Housing now also hides decor you have placed
 
 ## 24.0 - 2026-10-22

@@ -7,7 +7,7 @@ local tokenBanner = addon.Gui.TokenBanner
 local preLoadTokenNum = 5
 
 local tokenPool = {}
-function HideAllTokens()
+local function HideAllTokens()
     for _, token in next, tokenPool do
 		token:Hide()
 	end
@@ -40,7 +40,8 @@ end
 local function DrawToken(index)
     local token  = DrawTokenQuick(index)
 
-    if token:GetLeft() < KrowiEVU_TokenBanner:GetLeft() + 10 then
+    local left, bannerLeft = token:GetLeft(), KrowiEVU_TokenBanner:GetLeft() -- nil until the frames are laid out
+    if left and bannerLeft and left < bannerLeft + 10 then
         local offset = 5 + (token:GetHeight() + 3) * tokenLines
         token:SetPoint('TOPRIGHT', KrowiEVU_TokenBanner, 'TOPRIGHT', -10, addon.Util.IsModern and -offset or -offset + 1)
         tokenLines = tokenLines + 1
@@ -90,12 +91,20 @@ local function HideBlizzardTokenFrame()
     end
 end
 
+-- One update for any number of requests within the delay. The flag is cleared before the update runs, so an error in it
+-- cannot stop the later ones, as Krowi_Util's DelayFunction would: it frees its slot only after the function returns.
+local updatePending
 function tokenBanner:RequestUpdate()
-    if not KrowiEVU_TokenBanner then
+    if not KrowiEVU_TokenBanner or updatePending then
         return
     end
 
-    addon.Util.DelayFunction('KrowiEVU_TokenBannerUpdate', 0.25, function()
+    updatePending = true
+    C_Timer.After(0.25, function()
+        updatePending = nil
+        if not MerchantFrame:IsShown() then -- Opening the window requests one
+            return
+        end
         tokenBanner:Update()
         addon.Gui.MerchantFrame.SetMerchantFrameSize()
     end)
@@ -131,36 +140,39 @@ local function CalculateGoldCount(goldCount, itemIndex)
     return goldCount
 end
 
+-- Keyed by the id, so one cost whose links differ (an amount or level in the link) still gets one token
 local function CalculateCurrencyCounts(currencyCounts, link, texture, value)
-    if not link:find('currency:') then
+    local key = link:match('currency:%d+')
+    if not key then
         return currencyCounts
     end
 
-    if not currencyCounts[link] then
-        currencyCounts[link] = {
+    if not currencyCounts[key] then
+        currencyCounts[key] = {
             link = link,
             texture = texture,
             count = 0
         }
     end
-    currencyCounts[link].count = currencyCounts[link].count + value
+    currencyCounts[key].count = currencyCounts[key].count + value
 
     return currencyCounts
 end
 
 local function CalculateItemCounts(itemCounts, link, texture, value)
-    if not link:find('item:') then
+    local key = link:match('item:%d+')
+    if not key then
         return itemCounts
     end
 
-    if not itemCounts[link] then
-        itemCounts[link] = {
+    if not itemCounts[key] then
+        itemCounts[key] = {
             link = link,
             texture = texture,
             count = 0
         }
     end
-    itemCounts[link].count = itemCounts[link].count + value
+    itemCounts[key].count = itemCounts[key].count + value
 
     return itemCounts
 end
@@ -195,24 +207,25 @@ local function DrawGoldToken(goldCount)
         return
     end
 
-    tokenIndex = tokenIndex + 1
-    local token = GetPoolToken(tokenIndex)
-    token:SetGold(goldCount)
-    DrawToken(tokenIndex)
+    if GetPoolToken(tokenIndex + 1):SetGold(goldCount) then
+        tokenIndex = tokenIndex + 1
+        DrawToken(tokenIndex)
+    end
 end
 
+-- A cost without data takes no place in the row; HideRemainingTokens hides the pooled token it was given
 local function DrawCurrencyToken(texture, value, link)
-    tokenIndex = tokenIndex + 1
-    local token = GetPoolToken(tokenIndex)
-    token:SetCurrency(texture, value, link)
-    DrawToken(tokenIndex)
+    if GetPoolToken(tokenIndex + 1):SetCurrency(texture, value, link) then
+        tokenIndex = tokenIndex + 1
+        DrawToken(tokenIndex)
+    end
 end
 
 local function DrawItemToken(texture, value, link)
-    tokenIndex = tokenIndex + 1
-    local token = GetPoolToken(tokenIndex)
-    token:SetItem(texture, value, link)
-    DrawToken(tokenIndex)
+    if GetPoolToken(tokenIndex + 1):SetItem(texture, value, link) then
+        tokenIndex = tokenIndex + 1
+        DrawToken(tokenIndex)
+    end
 end
 
 function tokenBanner:Update()

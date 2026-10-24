@@ -41,6 +41,7 @@ local singleFormat = '%s'
 
 function KrowiEVU_TokenMixin:Draw()
     if not self.Need or not self.Have then
+        self:Hide()
         return
     end
 
@@ -60,16 +61,26 @@ function KrowiEVU_TokenMixin:Draw()
     self:Show()
 end
 
+-- The tokens are pooled: clear what an earlier vendor left, so a cost without data never shows another one's text or icon
+local function Reset(token)
+    token.Need, token.Have, token.HaveAmount, token.IconTexture, token.Link = nil, nil, nil, nil, nil
+end
+
+-- The Set functions return whether the token has what it needs to be drawn
 function KrowiEVU_TokenMixin:SetGold(value)
+    Reset(self)
     self.IsGold = true
     self.IsCurrency = false
     self.IsItem = false
 
     self.Need, self.IconTexture = currency:FormatMoney(value, GetOptionsForLib())
-    self.Have = currency:FormatMoney(GetMoney(), GetOptionsForLib())
+    self.HaveAmount = GetMoney()
+    self.Have = currency:FormatMoney(self.HaveAmount, GetOptionsForLib())
+    return true
 end
 
 function KrowiEVU_TokenMixin:SetCurrency(texture, value, link)
+    Reset(self)
     self.IsGold = false
     self.IsCurrency = true
     self.IsItem = false
@@ -79,14 +90,21 @@ function KrowiEVU_TokenMixin:SetCurrency(texture, value, link)
     self.Link = link
 
     local currencyInfo = C_CurrencyInfo.GetCurrencyInfoFromLink(link)
+    if not currencyInfo and C_CurrencyInfo.GetCurrencyIDFromLink then -- Retail and WoW Forever only
+        local currencyId = C_CurrencyInfo.GetCurrencyIDFromLink(link)
+        currencyInfo = currencyId and C_CurrencyInfo.GetCurrencyInfo(currencyId)
+    end
     if not currencyInfo then
-        return
+        return false
     end
 
-    self.Have = currency:FormatCurrency(currencyInfo.quantity, options)
+    self.HaveAmount = currencyInfo.quantity
+    self.Have = currency:FormatCurrency(self.HaveAmount, options)
+    return true
 end
 
 function KrowiEVU_TokenMixin:SetItem(texture, value, link)
+    Reset(self)
     self.IsGold = false
     self.IsCurrency = false
     self.IsItem = true
@@ -97,10 +115,12 @@ function KrowiEVU_TokenMixin:SetItem(texture, value, link)
 
     local itemId = tonumber(link:match('item:(%d+)'))
     if not itemId then
-        return
+        return false
     end
 
-    self.Have = currency:FormatCurrency(C_Item.GetItemCount(link, true, false, true, true), options)
+    self.HaveAmount = C_Item.GetItemCount(link, true, false, true, true)
+    self.Have = currency:FormatCurrency(self.HaveAmount, options)
+    return true
 end
 
 function KrowiEVU_TokenMixin:OnShow()
