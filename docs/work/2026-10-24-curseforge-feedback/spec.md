@@ -12,7 +12,9 @@ Each issue's analysis, with sources, is its first comment on GitHub; this file k
 
 **Root cause (to confirm in game).** `KrowiEVU_TokenMixin:Draw` returns early on missing data without hiding the token (`TokenMixin.lua:42-45`), so a reused token keeps an earlier vendor's text and icon. And the update runs through Krowi_Util's `DelayFunction` (`TokenBanner.lua:98`), whose slot is freed only after the callback returns, so one error freezes the banner for the session; `DrawToken` compares a `GetLeft()` that can be nil (`TokenBanner.lua:43`, logged on Era). Reproduction: the round 1 token banner check at the Neighborhood Tricky Treat Trader.
 
-**Design.** `SetGold`, `SetCurrency` and `SetItem` clear the token's earlier data and return whether it can be drawn; the banner advances to the next token only for a drawable one. A currency's amount falls back from `GetCurrencyInfoFromLink` to its id where the client has `GetCurrencyIDFromLink`. `DrawToken` skips the wrap when a position is unknown. The banner keeps its own pending flag, cleared before the update runs, instead of `DelayFunction`, and skips the update while the vendor window is hidden. If round 1 shows another cause, this section is updated before the fix.
+**Design.** `SetGold`, `SetCurrency` and `SetItem` clear the token's earlier data and return whether it can be drawn; the banner advances to the next token only for a drawable one. A currency's amount falls back from `GetCurrencyInfoFromLink` to its id where the client has `GetCurrencyIDFromLink`. `DrawToken` skips the wrap when a position is unknown. The banner keeps its own pending flag, cleared before the update runs, instead of `DelayFunction`, and skips the update while the vendor window is hidden.
+
+**Round 1 (2026-10-24).** At the Tricky Treat Trader the banner showed exactly the vendor's costs, the day's three candies; one of them, Drustvar Choc-O-Drops, has a round gold icon that reads as a coin, so the candy report is most likely the banner listing what the vendor wants rather than what the player carries. The two code defects were not triggered in the run and stay fixed.
 
 ## #101 Transmog Loot Helper overlay
 
@@ -75,11 +77,15 @@ Waits for the player's answer on #107. No code in this batch.
 
 **Design if reproduced.** Pass `LE_LOOT_FILTER_ALL` to the server for the addon's own ids; the addon's `Validate` already filters on the client.
 
+**Round 1 (2026-10-24): not reproduced, no change.** At Alice Fischer (Stormwind, gear for every armor type) the server sent all 61 items for ids 104 and 201, as for All. The likeliest cause on 22.0 was Hide collected, Appearances. The server list check stays in `/kevutest`.
+
 ## #110 EllesmereUI first draw
 
 **Requirement.** The first draw after a reload, with EllesmereUI on, 10x4 by columns, has every slot filled and skinned.
 
 **Design.** Round 1's first step checks it; a fix is designed only if it fails.
+
+**Round 1 (2026-10-24): passed, no change.** EllesmereUI 9.6.7, 10x4 by columns, first draw after a reload at Alice Fischer (61 items): all 40 slots filled and skinned. Fixed by 23.0's EllesmereUI plugin.
 
 ## Options considered
 Per issue in its GitHub analysis. Not chosen: a Show gold checkbox that removes the token (#104; the window would show no gold at all), a recipe filter by profession or a kept Moxie list (#108), scanning profession windows (#103; recipe items do not map reliably to spells), stat checkboxes or a Pawn plugin (#106), our own TLH plugin (#101).
