@@ -17,7 +17,6 @@ Works on Retail, Mists of Pandaria Classic, Burning Crusade Anniversary, Classic
   - Toys
   - Appearances
   - Appearance sets (ensembles and arsenals)
-  - Illusions (experimental)
   - Recipes, and optionally recipes your other characters know once they have opened a vendor that sells them
   - Housing decor, in storage or placed (with configurable quantity threshold from 1-999)
 - **Gear Filters**: For weapons and armor: only usable items, hide armor below the best type your class can wear, and a minimum quality.
