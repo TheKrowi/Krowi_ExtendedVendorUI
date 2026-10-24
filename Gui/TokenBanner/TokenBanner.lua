@@ -267,16 +267,13 @@ function tokenBanner:CreateOptionsMenu(menuObj, menuBuilder)
 
     menuBuilder:CreateDivider(tokenBannerMenu)
 
-    menuBuilder:CreateCheckbox(tokenBannerMenu, addon.L['Gold total'], profile, {'GoldTotal'})
-    menuBuilder:CreateCheckbox(tokenBannerMenu, addon.L['Hide currencies you have none of'], profile, {'HideNone'})
-
-    menuBuilder:CreateDivider(tokenBannerMenu)
-
 	addon.CurrencyLib:CreateMoneyOptionsMenu(tokenBannerMenu, menuBuilder, profile)
+    menuBuilder:CreateCheckbox(tokenBannerMenu, addon.L['Gold total'], profile, {'GoldTotal'}) -- Last in Money Options
 
 	menuBuilder:CreateDivider(tokenBannerMenu)
 
 	addon.CurrencyLib:CreateCurrencyOptionsMenu(tokenBannerMenu, menuBuilder, profile)
+    menuBuilder:CreateCheckbox(tokenBannerMenu, addon.L['Hide currencies you have none of'], profile, {'HideNone'}) -- Last in Currency Options
 
     menuBuilder:AddChildMenu(menuObj, tokenBannerMenu)
 end
