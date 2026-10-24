@@ -96,3 +96,7 @@ L["You can afford"] = true
 L["You can fit"] = true
 L["ForeverGamepadNotLoaded"] = "Extended Vendor UI does not work with WoW Forever's gamepad interface, so it is not loaded. To use it, turn off the gamepad interface on the Gamepad page of the game options and type /reload."
 L["ForeverGamepadReload"] = "WoW Forever's gamepad interface is on, which Extended Vendor UI does not work with. Type /reload to get Blizzard's vendor window."
+L["Plugin_TransmogLootHelper_Desc"] = [=[This plugin keeps Transmog Loot Helper's overlay icons on the vendor items up to date when the page, filter or search changes. It needs Transmog Loot Helper 12.1.5-02 or later.
+
+There are no options.]=]
+L["Plugin_TransmogLootHelper_Name"] = "Transmog Loot Helper"
