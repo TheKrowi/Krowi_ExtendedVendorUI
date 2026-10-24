@@ -96,3 +96,14 @@ L["Toys"] = "玩具"
 L["Vendor has"] = "商人库存"
 L["You can afford"] = "可负担"
 L["You can fit"] = "背包可容纳"
+L["Gear"] = "装备"
+L["Gold total"] = "金币总计"
+L["Hide currencies you have none of"] = "隐藏未拥有的货币"
+L["Hide sub-optimal armor"] = "隐藏非最佳护甲类型"
+L["Minimum quality"] = "最低品质"
+L["Only usable items"] = "仅显示可用物品"
+L["Plugin_TransmogLootHelper_Desc"] = [=[此插件在翻页、更改筛选或搜索时，更新 Transmog Loot Helper 在商人物品上的图标叠加。需要 Transmog Loot Helper 12.1.5-02 或更高版本。
+
+此插件无设置项。]=]
+L["Plugin_TransmogLootHelper_Name"] = "Transmog Loot Helper"
+L["Recipes my other characters know"] = "我的其他角色已学会的配方"
