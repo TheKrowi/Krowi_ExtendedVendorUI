@@ -213,16 +213,23 @@ local function DrawGoldToken(goldCount)
     end
 end
 
--- A cost without data takes no place in the row; HideRemainingTokens hides the pooled token it was given
+-- The Hide currencies you have none of option
+local function IsHiddenCost(token)
+    return addon.Options.db.profile.TokenBanner.HideNone and token.HaveAmount == 0
+end
+
+-- A cost without data, or hidden, takes no place in the row; HideRemainingTokens hides the pooled token it was given
 local function DrawCurrencyToken(texture, value, link)
-    if GetPoolToken(tokenIndex + 1):SetCurrency(texture, value, link) then
+    local token = GetPoolToken(tokenIndex + 1)
+    if token:SetCurrency(texture, value, link) and not IsHiddenCost(token) then
         tokenIndex = tokenIndex + 1
         DrawToken(tokenIndex)
     end
 end
 
 local function DrawItemToken(texture, value, link)
-    if GetPoolToken(tokenIndex + 1):SetItem(texture, value, link) then
+    local token = GetPoolToken(tokenIndex + 1)
+    if token:SetItem(texture, value, link) and not IsHiddenCost(token) then
         tokenIndex = tokenIndex + 1
         DrawToken(tokenIndex)
     end
@@ -257,7 +264,12 @@ function tokenBanner:CreateOptionsMenu(menuObj, menuBuilder)
 	menuBuilder:CreateRadio(tokenBannerMenu, addon.L['Need'], profile, {'Format'}, 'Need')
 	menuBuilder:CreateRadio(tokenBannerMenu, addon.L['Have'], profile, {'Format'}, 'Have')
 	menuBuilder:CreateRadio(tokenBannerMenu, addon.L['Both'], profile, {'Format'}, 'Both')
-	
+
+    menuBuilder:CreateDivider(tokenBannerMenu)
+
+    menuBuilder:CreateCheckbox(tokenBannerMenu, addon.L['Gold total'], profile, {'GoldTotal'})
+    menuBuilder:CreateCheckbox(tokenBannerMenu, addon.L['Hide currencies you have none of'], profile, {'HideNone'})
+
     menuBuilder:CreateDivider(tokenBannerMenu)
 
 	addon.CurrencyLib:CreateMoneyOptionsMenu(tokenBannerMenu, menuBuilder, profile)

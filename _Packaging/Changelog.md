@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 
 ## 24.1
+### Added
+- Token Banner option Gold total: turn it off to see the gold you have instead of the total cost
+- Token Banner option Hide currencies you have none of, for recipe vendors that list every profession's currency
+
 ### Fixed
 - The token banner no longer keeps a currency from an earlier vendor, and no longer stops updating after an error
 - Hide collected, Housing now also hides decor you have placed

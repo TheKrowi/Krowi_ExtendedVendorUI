@@ -100,3 +100,5 @@ L["Plugin_TransmogLootHelper_Desc"] = [=[This plugin keeps Transmog Loot Helper'
 
 There are no options.]=]
 L["Plugin_TransmogLootHelper_Name"] = "Transmog Loot Helper"
+L["Gold total"] = true
+L["Hide currencies you have none of"] = true

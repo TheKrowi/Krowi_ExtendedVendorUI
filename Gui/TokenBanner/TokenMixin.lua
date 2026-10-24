@@ -46,7 +46,9 @@ function KrowiEVU_TokenMixin:Draw()
     end
 
     local text
-    if addon.Options.db.profile.TokenBanner.Format == 'Both' then
+    if self.IsGold and not addon.Options.db.profile.TokenBanner.GoldTotal then
+       text = self.Have -- Only the gold the player has, as Blizzard's window shows it
+    elseif addon.Options.db.profile.TokenBanner.Format == 'Both' then
        text = string.format(bothFormat, self.Have, self.Need)
     else
        text = string.format(singleFormat, addon.Options.db.profile.TokenBanner.Format == 'Need' and self.Need or self.Have)
