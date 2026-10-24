@@ -68,3 +68,31 @@ L["Show options button Desc"] = "显示/隐藏商人窗口中的设置按钮。"
 L["Token Banner"] = "代币窗口"
 L["Token Format"] = "代币格式"
 L["Toys"] = "玩具"
+L["Bulk Purchase"] = "批量购买"
+L["Buy"] = "购买"
+L["Enable bulk purchase"] = "启用批量购买"
+L["Enable bulk purchase Desc"] = "Shift+点击商人物品以打开批量购买窗口。"
+L["Max"] = "最大"
+L["Maximum purchase"] = "最大购买数量"
+L["Partial stack"] = "不满一组"
+L["Show purchase confirmation"] = "显示购买确认"
+L["Show purchase confirmation Desc"] = "购买超过一组时显示确认对话框。"
+L["Stack"] = "一组"
+L["Stack purchase"] = "按组购买"
+L["Stack size"] = "每组数量"
+L["Vendor has"] = "商人库存"
+L["You can afford"] = "可负担"
+L["You can fit"] = "背包可容纳"
+L["Plugin_EllesmereUI_Desc"] = [=[此插件为商人物品应用 EllesmereUI 的商人皮肤并显示物品等级。
+
+此插件无设置项。]=]
+L["Plugin_EllesmereUI_ListModeNotLoaded"] = [=[Extended Vendor UI 无法与 EllesmereUI 的商人列表模式同时使用，因此未加载。
+
+如需使用 Extended Vendor UI，请在 EllesmereUI 的商人选项中关闭 Show As List（列表显示）。]=]
+L["Plugin_EllesmereUI_Name"] = "EllesmereUI"
+L["Plugin_GW2UI_Desc"] = [=[此插件为商人物品应用 GW2 UI 的商人皮肤。
+
+此插件无设置项。]=]
+L["Plugin_GW2UI_Name"] = "GW2 UI"
+L["ForeverGamepadNotLoaded"] = "Extended Vendor UI 无法与 WoW Forever 的手柄界面同时使用，因此未加载。如需使用，请在游戏选项的手柄页面关闭手柄界面，然后输入 /reload。"
+L["ForeverGamepadReload"] = "WoW Forever 的手柄界面已开启，Extended Vendor UI 无法与其同时使用。输入 /reload 以使用暴雪的商人窗口。"
