@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 24.1
+### Fixed
+- Hide collected, Housing now also hides decor you have placed
+
 ## 24.0 - 2026-10-22
 ### Added
 - WoW Forever support

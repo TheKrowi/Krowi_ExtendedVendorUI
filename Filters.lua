@@ -479,10 +479,12 @@ if addon.Util.IsMainline then -- Housing
 		return classId == Enum.ItemClass.Housing
 	end
 
+	-- Owned anywhere: in storage, placed in a house or plot, or granted and not yet placed (live HousingCatalogUIDocumentation.lua:555-557)
 	function filters.IsHousingCollected(itemId)
-		local entryInfo = C_HousingCatalog.GetCatalogEntryInfoByItem(C_Item.GetItemInfoInstant(itemId))
+		local entryInfo = C_HousingCatalog.GetCatalogEntryInfoByItem(itemId)
 		if entryInfo then
-			return entryInfo.quantity >= addon.Filters.db.profile.HousingQuantity
+			local owned = (entryInfo.totalNumStored or 0) + (entryInfo.totalNumPlaced or 0) + (entryInfo.remainingRedeemable or 0)
+			return owned >= addon.Filters.db.profile.HousingQuantity
 		end
 		return false
 	end
