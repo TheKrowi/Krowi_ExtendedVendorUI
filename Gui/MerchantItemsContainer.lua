@@ -43,6 +43,7 @@ local function GetItemSlot(index)
     end
     local itemSlot = CreateFrame('Frame', 'KrowiEVU_MerchantItem' .. index, MerchantFrame, 'MerchantItemTemplate')
     itemSlot:Hide()
+    itemSlot.ItemButton.hasItem = false -- See DrawEmpty in MerchantItemSlot.lua
     itemSlot.ItemButton:SetScript('OnClick', ItemButton_OnClick)
     isOwnItemButton[itemSlot.ItemButton] = true
     itemSlots[index] = itemSlot
