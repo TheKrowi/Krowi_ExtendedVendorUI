@@ -256,6 +256,7 @@ function KrowiEVU_FilterButtonMixin:CreateMenu(menu)
 		self:CreateCheckbox(menu, addon.L['Appearance Sets'], {'HideCollected', 'TransmogSets'})
 		self:CreateCheckbox(menu, addon.L['Illusions'], {'HideCollected', 'Illusions'})
 		self:CreateCheckbox(menu, addon.L['Recipes'], {'HideCollected', 'Recipes'})
+		self:CreateCheckbox(menu, addon.L['Recipes my other characters know'], {'HideCollected', 'RecipesOtherCharacters'})
 		if addon.Util.IsMainline then
 			self:CreateCheckbox(menu, addon.L['Housing'], {'HideCollected', 'Housing'})
 		end

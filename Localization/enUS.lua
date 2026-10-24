@@ -106,3 +106,4 @@ L["Gear"] = true
 L["Only usable items"] = true
 L["Hide sub-optimal armor"] = true
 L["Minimum quality"] = true
+L["Recipes my other characters know"] = true

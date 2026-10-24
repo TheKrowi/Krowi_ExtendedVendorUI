@@ -71,6 +71,7 @@ local defaults = {
 			TransmogSets = false,
 			Illusions = false,
 			Recipes = false,
+			RecipesOtherCharacters = false,
 			Housing = false,
 		},
 		Custom = {
@@ -159,6 +160,9 @@ function filters:BuildList(list)
 		local itemId = GetMerchantItemID(i)
 		if itemId == nil or (self:Validate(lootFilter, itemId) and self:ValidateGear(i, itemId)) then
 			tinsert(list, i)
+		end
+		if itemId then
+			self.RecordRecipe(itemId)
 		end
 	end
 	return list
@@ -279,8 +283,8 @@ function filters:Validate(lootFilter, itemId)
 			return not self.IsIllusionCollected(itemId)
 		end
 
-		if self.IsRecipe(itemId) and addon.Filters.db.profile.HideCollected.Recipes then
-			return not self.IsRecipeCollected(itemId)
+		if self.IsRecipe(itemId) and self.IsRecipeHidden(itemId) then
+			return false
 		end
 
 		if self.IsHousing(itemId) and addon.Filters.db.profile.HideCollected.Housing then
@@ -482,10 +486,7 @@ if addon.Util.IsModern then -- Recipes
 		if not self.IsRecipe(itemId) then
 			return false
 		end
-		if addon.Filters.db.profile.HideCollected.Recipes then
-			return not self.IsRecipeCollected(itemId)
-		end
-		return true
+		return not self.IsRecipeHidden(itemId)
 	end
 
 	function filters.IsRecipe(itemId)
@@ -506,14 +507,76 @@ if addon.Util.IsModern then -- Recipes
 		return false
 	end
 
+	-- Account wide, per character: the recipe items a vendor showed it that it knows, for Hide collected, Recipes my other
+	-- characters know
+	local characterKey
+	local function GetKnownRecipes()
+		characterKey = characterKey or (UnitName('player') .. '-' .. GetRealmName())
+		addon.Filters.db.global.KnownRecipes = addon.Filters.db.global.KnownRecipes or {}
+		return addon.Filters.db.global.KnownRecipes, characterKey
+	end
+
+	local function Record(itemId, known)
+		if not C_Item.IsItemDataCachedByID(itemId) then
+			return -- The tooltip may not be complete yet, and would clear a recipe this character knows
+		end
+		local knownRecipes, character = GetKnownRecipes()
+		knownRecipes[character] = knownRecipes[character] or {}
+		knownRecipes[character][itemId] = known or nil -- A dropped profession clears on the next visit
+	end
+
 	function filters.IsRecipeCollected(itemId)
 		local tooltipInfo = C_TooltipInfo.GetItemByID(itemId)
+		if not tooltipInfo then
+			return false
+		end
+		local known = false
 		for _, line in next, tooltipInfo.lines do
+			if issecretvalue and issecretvalue(line.leftText) then
+				return false -- Tooltip text is secret under some restrictions (12.x); nothing is recorded then
+			end
 			if line.leftText == ITEM_SPELL_KNOWN then
-                return true
+                known = true
+                break
             end
 		end
+		Record(itemId, known)
+		return known
+	end
+
+	function filters.IsRecipeKnownByOtherCharacter(itemId)
+		local knownRecipes, character = GetKnownRecipes()
+		for name, recipes in next, knownRecipes do
+			if name ~= character and recipes[itemId] then
+				return true
+			end
+		end
 		return false
+	end
+
+	-- Hide collected, Recipes (this character) and Recipes my other characters know
+	function filters.IsRecipeHidden(itemId)
+		local hideCollected = addon.Filters.db.profile.HideCollected
+		return (hideCollected.Recipes and filters.IsRecipeCollected(itemId))
+			or (hideCollected.RecipesOtherCharacters and filters.IsRecipeKnownByOtherCharacter(itemId)) or false
+	end
+
+	-- Every recipe item a vendor shows is recorded once a visit, whatever the Hide collected options
+	local recorded = {}
+	local recordFrame = CreateFrame('Frame')
+	recordFrame:RegisterEvent('MERCHANT_SHOW')
+	recordFrame:SetScript('OnEvent', function()
+		wipe(recorded)
+	end)
+
+	function filters.RecordRecipe(itemId)
+		if recorded[itemId] or not C_Item.IsItemDataCachedByID(itemId) then
+			return
+		end
+		recorded[itemId] = true
+		if filters.IsRecipe(itemId) then
+			filters.IsRecipeCollected(itemId)
+		end
 	end
 else
 	function filters.IsRecipe(itemId)
@@ -522,6 +585,13 @@ else
 
 	function filters.IsRecipeCollected(itemId)
 		return false
+	end
+
+	function filters.IsRecipeHidden(itemId)
+		return false
+	end
+
+	function filters.RecordRecipe(itemId)
 	end
 end
 
@@ -630,10 +700,7 @@ do -- Custom
 
 		if self.IsRecipe(itemId) then
 			if addon.Filters.db.profile.Custom.Recipes then
-				if addon.Filters.db.profile.HideCollected.Recipes then
-					return not self.IsRecipeCollected(itemId)
-				end
-				return true
+				return not self.IsRecipeHidden(itemId)
 			end
 			return false
 		end
