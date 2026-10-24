@@ -561,10 +561,11 @@ if addon.Util.IsModern then -- Recipes
 			or (hideCollected.RecipesOtherCharacters and filters.IsRecipeKnownByOtherCharacter(itemId)) or false
 	end
 
-	-- Every recipe item a vendor shows is recorded once a visit, whatever the Hide collected options
+	-- Every recipe item a vendor shows is recorded once a visit, whatever the Hide collected options. Cleared when the window
+	-- closes: Blizzard can draw a vendor before its MERCHANT_SHOW.
 	local recorded = {}
 	local recordFrame = CreateFrame('Frame')
-	recordFrame:RegisterEvent('MERCHANT_SHOW')
+	recordFrame:RegisterEvent('MERCHANT_CLOSED')
 	recordFrame:SetScript('OnEvent', function()
 		wipe(recorded)
 	end)

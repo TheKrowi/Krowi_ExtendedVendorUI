@@ -16,7 +16,7 @@ Each issue's analysis, with sources, is its first comment on GitHub; this file k
 
 ## #101 Transmog Loot Helper overlay
 
-**Requirements.** 1. With TLH v12.1.5-02 or later, every shown slot with an item gets TLH's overlay after every draw. 2. The plugin's name and description show on the Plugins options page. 3. No call to TLH while the page is empty (TLH would retry every frame).
+**Requirements.** 1. With TLH v12.1.5-02 or later, every shown slot with an item gets TLH's overlay after every draw. 2. The plugin's name and description show on the Plugins options page. 3. The plugin does not call TLH for an empty list (TLH would retry every frame). TLH's own vendor-open code still retries every frame when a vendor opens with an empty list; that is TLH's to fix (taint review of 2026-10-24).
 
 **Design.** Merge #97's commit (Slackluster, `3aa6195d78`) unchanged, then: the two strings in enUS, single quotes, and skip `UpdateOverlay` when the list is empty.
 
@@ -32,7 +32,7 @@ Each issue's analysis, with sources, is its first comment on GitHub; this file k
 
 **Requirements.** 1. A new Hide collected checkbox hides recipes another character on the account is recorded to know. 2. Each character records, per recipe item, whether it knows it, whenever a vendor shows that item, whatever the checkboxes. 3. Off by default.
 
-**Design.** `KrowiEVU_Filters`'s AceDB `global.KnownRecipes["Name-Realm"][itemId] = true` (account-wide, untouched by profile reset or copy). `filters.IsRecipeCollected` records its tooltip result when the item's data is cached (true sets, false clears, so a dropped profession clears on the next visit); `BuildList` runs it once per recipe item per session so recording does not depend on the checkboxes. Profile key `HideCollected.RecipesOtherCharacters`; the three recipe branches of `Validate`, `ValidateRecipesOnly` and `ValidateCustom` hide a recipe when (Recipes and this character knows it) or (the new key and another character is recorded to know it). Limits for the reply: only characters of this WoW account folder, learned from vendor visits, and another character's data arrives after it logs out or reloads.
+**Design.** `KrowiEVU_Filters`'s AceDB `global.KnownRecipes["Name-Realm"][itemId] = true` (account-wide, untouched by profile reset or copy). `filters.IsRecipeCollected` records its tooltip result when the item's data is cached (true sets, false clears, so a dropped profession clears on the next visit); `BuildList` runs it once per recipe item per vendor visit (the set is cleared on `MERCHANT_CLOSED`) so recording does not depend on the checkboxes. Profile key `HideCollected.RecipesOtherCharacters`; the three recipe branches of `Validate`, `ValidateRecipesOnly` and `ValidateCustom` hide a recipe when (Recipes and this character knows it) or (the new key and another character is recorded to know it). Limits for the reply: only characters of this WoW account folder, learned from vendor visits, and another character's data arrives after it logs out or reloads.
 
 ## #104 Gold total
 
