@@ -1,12 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 24.1
+## 24.1 - 2026-10-24
 ### Added
 - Token Banner option Gold total: turn it off to see the gold you have instead of the total cost
 - Token Banner option Hide currencies you have none of, for recipe vendors that list every profession's currency
 - Gear filters for weapons and armor under every filter: Only usable items, Hide sub-optimal armor and Minimum quality
 - Hide collected option Recipes my other characters know: hides recipes your other characters know once they have opened a vendor that sells them (Retail, WoW Forever)
+- Complete Chinese (Simplified) translation
 
 ### Fixed
 - The token banner no longer keeps a currency from an earlier vendor, and no longer stops updating after an error
