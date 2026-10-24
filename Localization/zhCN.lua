@@ -6,7 +6,7 @@ KrowiEVU.PluginsApi:LoadPluginLocalization(L)
 
 -- [[ 此行之后的所有内容均由 CurseForge 自动生成，请勿手动编辑 - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2026-10-24 14-39-06 ]] --
+-- [[ Exported at 2026-10-24 16-32-42 ]] --
 L["Are you sure you want to hide the options button?"] = [=[是否隐藏设置按钮？
 可在此重新显示：主菜单 → 选项 → 插件 → {addonName} → {general} → {options}]=]
 L["Arsenals"] = "军械库"
@@ -28,8 +28,12 @@ L["Enter number of rows"] = "输入行数 (1-99):"
 L["Filters"] = "筛选器"
 L["ForeverGamepadNotLoaded"] = "Extended Vendor UI 无法与 WoW Forever 的手柄界面同时使用，因此未加载。如需使用，请在游戏选项的手柄页面关闭手柄界面，然后输入 /reload。"
 L["ForeverGamepadReload"] = "WoW Forever 的手柄界面已开启，Extended Vendor UI 无法与其同时使用。输入 /reload 以使用暴雪的商人窗口。"
+L["Gear"] = "装备"
+L["Gold total"] = "金币总计"
 L["Have"] = "已拥有"
 L["Hide collected"] = "隐藏已收集物品"
+L["Hide currencies you have none of"] = "隐藏未拥有的货币"
+L["Hide sub-optimal armor"] = "隐藏非最佳护甲类型"
 L["Housing"] = "住宅装饰"
 L["Housing Quantity"] = "住宅装饰数量"
 L["Icon Left click"] = "打开商人窗口选项"
@@ -37,9 +41,11 @@ L["Icon Right click"] = "打开设置选项"
 L["Illusions"] = "幻象（实验性）"
 L["Max"] = "最大"
 L["Maximum purchase"] = "最大购买数量"
+L["Minimum quality"] = "最低品质"
 L["Mounts"] = "坐骑"
 L["Need"] = "未拥有"
 L["Only show"] = "仅显示"
+L["Only usable items"] = "仅显示可用物品"
 L["Options button"] = "设置按钮"
 L["Options Desc"] = "通过商人窗口右上方的设置按钮也能打开选项设置。"
 L["Other"] = "其他"
@@ -73,7 +79,12 @@ L["Plugin_GW2UI_Desc"] = [=[此插件为商人物品应用 GW2 UI 的商人皮�
 
 此插件无设置项。]=]
 L["Plugin_GW2UI_Name"] = "GW2 UI"
+L["Plugin_TransmogLootHelper_Desc"] = [=[此插件在翻页、更改筛选或搜索时，更新 Transmog Loot Helper 在商人物品上的图标叠加。需要 Transmog Loot Helper 12.1.5-02 或更高版本。
+
+此插件无设置项。]=]
+L["Plugin_TransmogLootHelper_Name"] = "Transmog Loot Helper"
 L["Recipes"] = "配方"
+L["Recipes my other characters know"] = "我的其他角色已学会的配方"
 L["RememberFilter"] = "记住筛选条件"
 L["RememberSearch"] = "记住搜索内容"
 L["RememberSearchBetweenVendors"] = "保存搜索历史"
@@ -96,14 +107,3 @@ L["Toys"] = "玩具"
 L["Vendor has"] = "商人库存"
 L["You can afford"] = "可负担"
 L["You can fit"] = "背包可容纳"
-L["Gear"] = "装备"
-L["Gold total"] = "金币总计"
-L["Hide currencies you have none of"] = "隐藏未拥有的货币"
-L["Hide sub-optimal armor"] = "隐藏非最佳护甲类型"
-L["Minimum quality"] = "最低品质"
-L["Only usable items"] = "仅显示可用物品"
-L["Plugin_TransmogLootHelper_Desc"] = [=[此插件在翻页、更改筛选或搜索时，更新 Transmog Loot Helper 在商人物品上的图标叠加。需要 Transmog Loot Helper 12.1.5-02 或更高版本。
-
-此插件无设置项。]=]
-L["Plugin_TransmogLootHelper_Name"] = "Transmog Loot Helper"
-L["Recipes my other characters know"] = "我的其他角色已学会的配方"
