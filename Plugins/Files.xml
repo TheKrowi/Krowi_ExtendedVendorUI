@@ -3,4 +3,5 @@
     <Script file='ElvUI.lua' />
     <Script file='GW2_UI.lua' />
     <Script file='EllesmereUI.lua' />
+    <Script file='TransmogLootHelper.lua' />
 </Ui>
