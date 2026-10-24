@@ -5,7 +5,7 @@ KrowiEVU.PluginsApi:LoadPluginLocalization(L)
 
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2026-10-21 20-08-49 ]] --
+-- [[ Exported at 2026-10-24 16-32-42 ]] --
 L["Are you sure you want to hide the options button?"] = [=[Are you sure you want to hide the options button?
 The options button can be shown again via {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options}]=]
 L["Arsenals"] = true
@@ -25,8 +25,14 @@ L["Enter housing quantity"] = "Enter housing quantity (1-999):"
 L["Enter number of columns"] = "Enter number of columns (2-99):"
 L["Enter number of rows"] = "Enter number of rows (1-99):"
 L["Filters"] = true
+L["ForeverGamepadNotLoaded"] = "Extended Vendor UI does not work with WoW Forever's gamepad interface, so it is not loaded. To use it, turn off the gamepad interface on the Gamepad page of the game options and type /reload."
+L["ForeverGamepadReload"] = "WoW Forever's gamepad interface is on, which Extended Vendor UI does not work with. Type /reload to get Blizzard's vendor window."
+L["Gear"] = true
+L["Gold total"] = true
 L["Have"] = true
 L["Hide collected"] = true
+L["Hide currencies you have none of"] = true
+L["Hide sub-optimal armor"] = true
 L["Housing"] = true
 L["Housing Quantity"] = true
 L["Icon Left click"] = "Open Merchant Window Options"
@@ -34,9 +40,11 @@ L["Icon Right click"] = "Open Options"
 L["Illusions"] = "Illusions (experimental)"
 L["Max"] = true
 L["Maximum purchase"] = true
+L["Minimum quality"] = true
 L["Mounts"] = true
 L["Need"] = true
 L["Only show"] = true
+L["Only usable items"] = true
 L["Options button"] = true
 L["Options Desc"] = "Open the options that are also available from the options button in the merchant window."
 L["Other"] = true
@@ -71,7 +79,12 @@ L["Plugin_GW2UI_Desc"] = [=[This plugin gives the vendor items GW2 UI's merchant
 
 There are no options.]=]
 L["Plugin_GW2UI_Name"] = "GW2 UI"
+L["Plugin_TransmogLootHelper_Desc"] = [=[This plugin keeps Transmog Loot Helper's overlay icons on the vendor items up to date when the page, filter or search changes. It needs Transmog Loot Helper 12.1.5-02 or later.
+
+There are no options.]=]
+L["Plugin_TransmogLootHelper_Name"] = "Transmog Loot Helper"
 L["Recipes"] = true
+L["Recipes my other characters know"] = true
 L["RememberFilter"] = "Remember filter"
 L["RememberSearch"] = "Remember search"
 L["RememberSearchBetweenVendors"] = "Remember search between vendors"
@@ -94,5 +107,3 @@ L["Toys"] = true
 L["Vendor has"] = true
 L["You can afford"] = true
 L["You can fit"] = true
-L["ForeverGamepadNotLoaded"] = "Extended Vendor UI does not work with WoW Forever's gamepad interface, so it is not loaded. To use it, turn off the gamepad interface on the Gamepad page of the game options and type /reload."
-L["ForeverGamepadReload"] = "WoW Forever's gamepad interface is on, which Extended Vendor UI does not work with. Type /reload to get Blizzard's vendor window."

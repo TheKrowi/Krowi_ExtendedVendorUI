@@ -44,8 +44,8 @@ local function Join(list)
 end
 
 -- [[ Environment ]] --
-local ADDONS = { 'ElvUI', 'GW2_UI', 'EllesmereUI', 'EllesmereUIBlizzardSkin', 'CanIMogIt', 'Auctionator', 'Krowi_Vendorer', 'Plumber' }
-local PLUGINS = { 'ElvUI', 'GW2_UI', 'EllesmereUI', 'EllesmereUIItemLevel', 'CanIMogIt' }
+local ADDONS = { 'ElvUI', 'GW2_UI', 'EllesmereUI', 'EllesmereUIBlizzardSkin', 'CanIMogIt', 'TransmogLootHelper', 'Auctionator', 'Krowi_Vendorer', 'Plumber' }
+local PLUGINS = { 'ElvUI', 'GW2_UI', 'EllesmereUI', 'EllesmereUIItemLevel', 'CanIMogIt', 'TransmogLootHelper' }
 
 -- The Krowi_Util client flags and the ones each client's WOW_PROJECT_ID should make true; the expansion flags follow the
 -- Retail patch, so they are recorded but not checked
@@ -75,6 +75,8 @@ local function GetSkinStates()
     states.EllesmereUIItemLevel = addon.Util.IsMainline and EllesmereUI and C_AddOns.IsAddOnLoaded('EllesmereUIBlizzardSkin')
         and EllesmereUIDB and EllesmereUIDB.merchantShowItemLevel == true or false
     states.CanIMogIt = CIMI_AddToFrame and MerchantFrame_CIMIUpdateIcon and true or false
+    -- Its overlay can be off in its own settings, which are private; then this check fails and says so
+    states.TransmogLootHelper = TransmogLootHelper and C_AddOns.IsAddOnLoaded('TransmogLootHelper') and true or false
     return states
 end
 
@@ -257,6 +259,9 @@ local function CheckPlugins()
             if skins.CanIMogIt and not button.CanIMogItOverlay then
                 tinsert(missing.CanIMogIt, i)
             end
+            if skins.TransmogLootHelper and index and not button.TLHOverlay then
+                tinsert(missing.TransmogLootHelper, i)
+            end
         end
     end
     for _, name in ipairs(PLUGINS) do
@@ -282,11 +287,266 @@ local function CheckPlugins()
     end
 end
 
+-- 'currency:<id>' or 'item:<id>' from a cost link, so links that differ only in their colour or level still match
+local function GetCostKey(link)
+    return link:match('(currency:%d+)') or link:match('(item:%d+)')
+end
+
+local function GetCostName(key)
+    local kind, id = key:match('^(%a+):(%d+)$')
+    if kind == 'currency' then
+        local info = C_CurrencyInfo.GetCurrencyInfo(tonumber(id))
+        return (info and info.name or key) .. ' (' .. key .. ')'
+    end
+    return (C_Item.GetItemInfo(tonumber(id)) or key) .. ' (' .. key .. ')'
+end
+
+-- How much of a cost the player has, the way the token banner reads it
+local function GetHaveAmount(key)
+    local kind, id = key:match('^(%a+):(%d+)$')
+    if kind == 'currency' then
+        local info = C_CurrencyInfo.GetCurrencyInfo(tonumber(id))
+        return info and info.quantity
+    end
+    return C_Item.GetItemCount(tonumber(id), true, false, true, true)
+end
+
+-- The currencies Blizzard's own row shows for this vendor
+local function GetVendorCurrencies()
+    if C_MerchantFrame and C_MerchantFrame.GetMerchantCurrencies then
+        return C_MerchantFrame.GetMerchantCurrencies() or {}
+    end
+    return GetMerchantCurrencies and { GetMerchantCurrencies() } or {}
+end
+
+-- The token banner against the costs of the items in the list, worked out here the way the banner should: each cost shown
+-- once and nothing left from an earlier vendor or list, the token banner options followed. With the whole vendor in the
+-- list, also every currency Blizzard's own row shows.
+local function CheckTokenBanner()
+    local options = addon.Options.db.profile.TokenBanner
+    local indices = container:GetIndices()
+    local gold, costs = 0, {}
+    for _, index in ipairs(indices) do
+        local info = merchantItemSlot.GetItemInfo(index)
+        if info and info.price and info.price > 0 then -- Gold, also next to a currency (live MerchantFrame.lua:307)
+            gold = gold + info.price
+        end
+        for costIndex = 1, GetMerchantItemCostInfo(index) or 0 do
+            local texture, value, link = GetMerchantItemCostItem(index, costIndex)
+            local key = texture and value and link and GetCostKey(link)
+            if key then
+                costs[key] = (costs[key] or 0) + value
+            end
+        end
+    end
+
+    local shownGold, shown = false, {}
+    local i = 1
+    while _G['KrowiEVU_TokenBannerToken' .. i] do
+        local token = _G['KrowiEVU_TokenBannerToken' .. i]
+        if token:IsShown() then
+            if token.IsGold then
+                shownGold = true
+                -- Gold total off: only the gold the player has
+                if not options.GoldTotal then
+                    local text = token.Text:GetText()
+                    Add(text and token.Have and text:find(token.Have, 1, true) == 1 and 'PASS' or 'FAIL', ('Gold total off: the gold token shows "%s", the gold you have is "%s"'):format(tostring(text), tostring(token.Have)))
+                end
+            elseif token.Link then
+                local key = GetCostKey(token.Link) or token.Link
+                shown[key] = (shown[key] or 0) + 1
+            end
+        end
+        i = i + 1
+    end
+
+    local costNames, missing, extra = {}, {}, {}
+    for key, value in next, costs do
+        tinsert(costNames, GetCostName(key) .. ' x' .. value)
+        if options.HideNone and key:find('^currency:') and GetHaveAmount(key) == 0 then -- Hide currencies you have none of
+            if shown[key] then
+                tinsert(extra, GetCostName(key) .. ', which you have none of')
+            end
+        elseif shown[key] ~= 1 then
+            tinsert(missing, GetCostName(key) .. (shown[key] and (' shown ' .. shown[key] .. ' times') or ''))
+        end
+    end
+    for key in next, shown do
+        if not costs[key] then
+            tinsert(extra, GetCostName(key))
+        end
+    end
+    table.sort(costNames)
+    Note(('costs of the %d items in the list: gold %d%s'):format(#indices, gold, #costNames > 0 and (', ' .. table.concat(costNames, ', ')) or ''))
+    if (gold > 0) ~= shownGold then
+        tinsert(gold > 0 and missing or extra, 'gold')
+    end
+    if #missing == 0 and #extra == 0 then
+        Add('PASS', 'token banner: every cost of the list, nothing else')
+    else
+        Add('FAIL', ('token banner: missing %s; shown but should not be %s'):format(#missing > 0 and table.concat(missing, ', ') or 'none', #extra > 0 and table.concat(extra, ', ') or 'none'))
+    end
+
+    if #indices == GetMerchantNumItems() then
+        local notCosts = {}
+        for _, currencyId in ipairs(GetVendorCurrencies()) do
+            if not costs['currency:' .. currencyId] then
+                tinsert(notCosts, GetCostName('currency:' .. currencyId))
+            end
+        end
+        if #notCosts > 0 then
+            Add('FAIL', 'token banner: Blizzard\'s currency row would show ' .. table.concat(notCosts, ', ') .. ', which no item in the list costs')
+        end
+    end
+end
+
+-- The server sends the vendor's list for the merchant filter it was given; the addon's own filters must not lose items
+-- there that filter All gets (the count under All is taken in the step that sets it)
+local function CheckServerList()
+    local filter = filters:GetFilter()
+    local count = GetMerchantNumItems()
+    if filter == LE_LOOT_FILTER_ALL then
+        run.ServerAll = count
+        return
+    end
+    Note(('the server sends %d items for filter %s'):format(count, tostring(filter)))
+    if filter >= _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_NEW_RANGE'] and run.ServerAll then
+        Add(count >= run.ServerAll and 'PASS' or 'FAIL', ('server list for the addon\'s filter %d: %d items, %d for All'):format(filter, count, run.ServerAll))
+    end
+end
+
+-- Hide collected, Housing: decor the player owns anywhere (in storage, placed or not yet redeemed) is hidden, the rest shown
+local function CheckHousing()
+    if not addon.Util.IsMainline or filters:GetFilter() ~= LE_LOOT_FILTER_ALL then
+        return
+    end
+    local inList = {}
+    for _, index in ipairs(container:GetIndices()) do
+        inList[index] = true
+    end
+    local profile = filters.db.profile
+    local decor, wrong = 0, {}
+    for index = 1, GetMerchantNumItems() do
+        local itemId = GetMerchantItemID(index)
+        local entry = itemId and filters.IsHousing(itemId) and C_HousingCatalog.GetCatalogEntryInfoByItem(itemId)
+        if entry then
+            decor = decor + 1
+            local stored, placed, redeemable = entry.totalNumStored or 0, entry.totalNumPlaced or 0, entry.remainingRedeemable or 0
+            local shown = inList[index] or false
+            if placed > 0 then
+                Note(('decor %s: %d stored, %d placed, %d to redeem, %s'):format(entry.name, stored, placed, redeemable, shown and 'shown' or 'hidden'))
+            end
+            if profile.HideCollected.Housing and (stored + placed + redeemable >= profile.HousingQuantity) == shown then
+                tinsert(wrong, ('%s (%d owned, %s)'):format(entry.name, stored + placed + redeemable, shown and 'shown' or 'hidden'))
+            end
+        end
+    end
+    if decor == 0 then
+        return
+    end
+    if not profile.HideCollected.Housing then
+        Note(('%d decor items; Hide collected, Housing is off'):format(decor))
+    elseif #wrong == 0 then
+        Add('PASS', ('Hide collected, Housing: %d decor items, owned ones (%d or more) hidden'):format(decor, profile.HousingQuantity))
+    else
+        Add('FAIL', 'Hide collected, Housing wrong for ' .. table.concat(wrong, ', '))
+    end
+end
+
+-- The recipe record behind Hide collected, Recipes my other characters know, under filter All
+local function CheckRecipes()
+    if not addon.Util.IsModern or filters:GetFilter() ~= LE_LOOT_FILTER_ALL then
+        return
+    end
+    local inList = {}
+    for _, index in ipairs(container:GetIndices()) do
+        inList[index] = true
+    end
+    local recipes, byOthers, wrong = 0, 0, {}
+    for index = 1, GetMerchantNumItems() do
+        local itemId = GetMerchantItemID(index)
+        if itemId and filters.IsRecipe(itemId) then
+            recipes = recipes + 1
+            if filters.IsRecipeKnownByOtherCharacter(itemId) then
+                byOthers = byOthers + 1
+                if filters.db.profile.HideCollected.RecipesOtherCharacters and inList[index] then
+                    tinsert(wrong, (C_Item.GetItemInfo(itemId)) or tostring(itemId))
+                end
+            end
+        end
+    end
+    if recipes == 0 then
+        return
+    end
+    local characters = 0
+    for _ in next, filters.db.global.KnownRecipes or {} do
+        characters = characters + 1
+    end
+    Note(('%d recipes; %d known by another of the %d characters recorded'):format(recipes, byOthers, characters))
+    if filters.db.profile.HideCollected.RecipesOtherCharacters then
+        Add(#wrong == 0 and 'PASS' or 'FAIL', 'Recipes my other characters know: ' .. (#wrong == 0 and 'none of theirs shown' or ('shown ' .. table.concat(wrong, ', '))))
+    end
+end
+
+-- The best armor each class wears (Cloth 1, Leather 2, Mail 3, Plate 4), and the one it wears before level 40 where the
+-- client has the old proficiencies; written out here so the check does not use the filter's own proficiency spells
+local CLASS_ARMOR = {
+    WARRIOR = { 4, 3 }, PALADIN = { 4, 3 }, DEATHKNIGHT = { 4, 4 },
+    HUNTER = { 3, 2 }, SHAMAN = { 3, 2 }, EVOKER = { 3, 3 },
+    ROGUE = { 2, 2 }, DRUID = { 2, 2 }, MONK = { 2, 2 }, DEMONHUNTER = { 2, 2 },
+    MAGE = { 1, 1 }, PRIEST = { 1, 1 }, WARLOCK = { 1, 1 },
+}
+
+-- The Gear options against every weapon and armor piece of the vendor: none that breaks one is in the list
+local function CheckGear()
+    local gear = filters.db.profile.Gear
+    local best = filters:GetBestArmorSubClass()
+    Note('best armor known: ' .. (best and C_Item.GetItemSubClassInfo(Enum.ItemClass.Armor, best) or 'cloth only, or no armor proficiency found'))
+    -- Retail learns every proficiency at once; WoW Forever's rules are unknown, so only noted there
+    local classArmor = CLASS_ARMOR[select(2, UnitClass('player'))]
+    if classArmor and not addon.Util.IsForever then
+        local expected = (addon.Util.IsMainline or UnitLevel('player') >= 40) and classArmor[1] or classArmor[2]
+        local actual = best or 1
+        Add(actual == expected and 'PASS' or 'FAIL', ('best armor %d for this class and level, %d found from the proficiencies (1 cloth to 4 plate)'):format(expected, actual))
+    end
+    local inList = {}
+    for _, index in ipairs(container:GetIndices()) do
+        inList[index] = true
+    end
+    local pieces, hidden, wrong = 0, 0, {}
+    for index = 1, GetMerchantNumItems() do
+        local itemId = GetMerchantItemID(index)
+        local _, _, _, equipLoc, _, classId, subClassId = C_Item.GetItemInfoInstant(itemId or 0)
+        if itemId and (classId == Enum.ItemClass.Armor or classId == Enum.ItemClass.Weapon) then
+            pieces = pieces + 1
+            local info = merchantItemSlot.GetItemInfo(index)
+            local quality = C_Item.GetItemQualityByID(itemId)
+            local breaks = (gear.UsableOnly and info and info.name and not info.isUsable)
+                or (best and gear.HideSubOptimalArmor and classId == Enum.ItemClass.Armor and subClassId >= 1 and subClassId < best and equipLoc ~= 'INVTYPE_CLOAK')
+                or (gear.MinQuality > 0 and quality and quality < gear.MinQuality)
+            if not inList[index] then
+                hidden = hidden + 1
+            elseif breaks then
+                tinsert(wrong, info and info.name or tostring(itemId))
+            end
+        end
+    end
+    if pieces == 0 then
+        Add('SKIP', 'Gear: this vendor sells no weapons or armor')
+        return
+    end
+    Add(#wrong == 0 and 'PASS' or 'FAIL', ('Gear: %d of %d weapon and armor pieces hidden'):format(hidden, pieces) .. (#wrong > 0 and ('; shown though they should not be: ' .. table.concat(wrong, ', ')) or ''))
+end
+
 local function CheckMerchantTab()
     CheckGrid()
     CheckBlizzardHidden()
     CheckPaging()
     CheckPlugins()
+    CheckTokenBanner()
+    CheckServerList()
+    CheckHousing()
+    CheckRecipes()
 end
 
 local function CheckTooltip()
@@ -450,7 +710,16 @@ local function RestoreGrid()
     end
 end
 
+-- The Gear and token banner options the steps change
+local function RestoreOptions()
+    local gear = filters.db.profile.Gear
+    gear.UsableOnly, gear.HideSubOptimalArmor, gear.MinQuality = saved.Gear.UsableOnly, saved.Gear.HideSubOptimalArmor, saved.Gear.MinQuality
+    local tokenBanner = addon.Options.db.profile.TokenBanner
+    tokenBanner.GoldTotal, tokenBanner.HideNone = saved.GoldTotal, saved.HideNone
+end
+
 local function Restore()
+    RestoreOptions()
     RestoreGrid()
     if saved.Filter == _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_SEARCH'] then
         KrowiEVU_SearchBox:SetText(saved.Search)
@@ -461,6 +730,14 @@ end
 
 -- [[ Steps ]] --
 steps = {
+    {
+        -- Before the test changes anything: the vendor's first draw when /kevutest was typed before opening it
+        Name = 'opened',
+        Text = 'the window as it opened',
+        Run = function()
+            Note(run.OnOpen and 'started as the vendor opened: this is the first draw' or 'started at an open vendor: not its first draw')
+        end,
+    },
     {
         Name = 'all',
         Text = 'filter All, page 1',
@@ -523,6 +800,29 @@ steps = {
         Run = function()
             RestoreGrid()
             current.Text = ('filter All, %dx%d grid again'):format(saved.Rows, saved.Columns)
+        end,
+    },
+    {
+        Name = 'gear',
+        Text = 'filter All, Gear: only usable items, no sub-optimal armor, Uncommon or better',
+        Run = function()
+            local gear = filters.db.profile.Gear
+            gear.UsableOnly, gear.HideSubOptimalArmor, gear.MinQuality = true, true, 2
+            KrowiEVU_FilterButton:SetFilter(LE_LOOT_FILTER_ALL)
+        end,
+        Check = function()
+            CheckMerchantTab()
+            CheckGear()
+        end,
+    },
+    {
+        Name = 'banner-options',
+        Text = 'filter All, Gold total off, Hide currencies you have none of on',
+        Run = function()
+            RestoreOptions()
+            local tokenBanner = addon.Options.db.profile.TokenBanner
+            tokenBanner.GoldTotal, tokenBanner.HideNone = false, true
+            KrowiEVU_FilterButton:SetFilter(LE_LOOT_FILTER_ALL)
         end,
     },
     {
@@ -706,7 +1006,7 @@ local function GetBanner()
             C_Timer.After(SETTLE, function() -- After the window's first draw
                 if startPending then
                     startPending = nil
-                    tests.Start()
+                    tests.Start(true)
                 end
             end)
         elseif event == 'MERCHANT_CLOSED' then
@@ -769,7 +1069,8 @@ Stop = function(reason)
     print(prefix .. ('%s%d passed, %d failed, %d skipped. /reload to save the results.'):format(reason and (reason .. '; ') or '', counts.PASS, counts.FAIL, counts.SKIP))
 end
 
-function tests.Start()
+-- onOpen: started by the vendor window opening, so the first step sees its first draw
+function tests.Start(onOpen)
     if running then
         return
     end
@@ -802,9 +1103,12 @@ function tests.Start()
         LastFilter = KrowiEVU_Filters.LastFilter,
         Rows = profile.NumRows,
         Columns = profile.NumColumns,
+        Gear = CopyTable(filters.db.profile.Gear),
+        GoldTotal = profile.TokenBanner.GoldTotal,
+        HideNone = profile.TokenBanner.HideNone,
     }
 
-    run = { Time = date('%Y-%m-%d %H:%M:%S'), Steps = {} }
+    run = { Time = date('%Y-%m-%d %H:%M:%S'), Steps = {}, OnOpen = onOpen }
     RecordEnvironment()
     -- Kept as a history: Krowi runs several in a row (one per skin addon, a reload between each) before they are read
     KrowiEVU_Debug = KrowiEVU_Debug or {}
@@ -824,7 +1128,7 @@ function tests.Start()
     banner:RegisterEvent('SCREENSHOT_FAILED')
     running = true
     runToken = runToken + 1
-    print(prefix .. ('%d steps, about 15 s, then three that need the mouse; /kevutest again stops it'):format(#steps))
+    print(prefix .. ('%d steps, about 25 s, then three that need the mouse; /kevutest again stops it'):format(#steps))
     RunStep(1)
 end
 

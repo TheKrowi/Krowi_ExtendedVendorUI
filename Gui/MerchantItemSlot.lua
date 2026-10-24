@@ -143,12 +143,13 @@ local function Tint(slot, numAvailable, isKnownHeirloom, tintRed)
 end
 
 -- [[ Empty slot ]] --
--- The same on every client
+-- The same on every client. hasItem is false where Blizzard sets nil: Blizzard only tests it for truth (live
+-- MerchantFrame.lua:718), while Transmog Loot Helper retries every frame as long as the first slot's is nil.
 local function DrawEmpty(slot)
     local slotName = slot:GetName()
     local itemButton = slot.ItemButton
     itemButton.price = nil
-    itemButton.hasItem = nil
+    itemButton.hasItem = false
     itemButton.name = nil
     itemButton:Hide()
     SetItemButtonNameFrameVertexColor(slot, 0.5, 0.5, 0.5)

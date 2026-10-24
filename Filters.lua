@@ -71,6 +71,7 @@ local defaults = {
 			TransmogSets = false,
 			Illusions = false,
 			Recipes = false,
+			RecipesOtherCharacters = false,
 			Housing = false,
 		},
 		Custom = {
@@ -91,6 +92,11 @@ local defaults = {
 			Weapon = { --[[ Automatically generated ]] },
 		},
 		HousingQuantity = 1,
+		Gear = { -- Weapons and armor, under every filter
+			UsableOnly = false,
+			HideSubOptimalArmor = false,
+			MinQuality = 0, -- An Enum.ItemQuality value; 0 is off
+		},
 	}
 }
 
@@ -145,17 +151,77 @@ function filters:RegisterListener(listener)
 	tinsert(listeners, listener)
 end
 
--- The vendor's real indices that pass the active filter
+-- The vendor's real indices that pass the active filter and the gear options
 function filters:BuildList(list)
 	wipe(list)
 	local lootFilter = self:GetFilter()
+	self:PrepareGear()
 	for i = 1, GetMerchantNumItems() do
 		local itemId = GetMerchantItemID(i)
-		if itemId == nil or self:Validate(lootFilter, itemId) then
+		if itemId == nil or (self:Validate(lootFilter, itemId) and self:ValidateGear(i, itemId)) then
 			tinsert(list, i)
+		end
+		if itemId then
+			self.RecordRecipe(itemId)
 		end
 	end
 	return list
+end
+
+-- [[ Gear ]] --
+-- The armor proficiency spells, best first, with the armor subclass each allows (Cloth 1, Leather 2, Mail 3, Plate 4)
+local ARMOR_PROFICIENCIES = {
+	{ Spell = 750, SubClass = 4 }, -- Plate Mail
+	{ Spell = 8737, SubClass = 3 }, -- Mail
+	{ Spell = 9077, SubClass = 2 }, -- Leather
+}
+
+local bestArmorSubClass
+-- Once per list: the best armor the character can wear, or nil for cloth only, when the sub-optimal check has nothing to hide
+function filters:PrepareGear()
+	bestArmorSubClass = nil
+	if not self.db.profile.Gear.HideSubOptimalArmor then
+		return
+	end
+	for _, proficiency in ipairs(ARMOR_PROFICIENCIES) do
+		if C_SpellBook.IsSpellKnown(proficiency.Spell) then
+			bestArmorSubClass = proficiency.SubClass
+			return
+		end
+	end
+end
+
+function filters:GetBestArmorSubClass()
+	return bestArmorSubClass
+end
+
+-- Weapons and armor only; an item whose data is not loaded yet stays in the list
+function filters:ValidateGear(index, itemId)
+	local gear = self.db.profile.Gear
+	if not (gear.UsableOnly or gear.HideSubOptimalArmor or gear.MinQuality > 0) then
+		return true
+	end
+	local _, _, _, equipLoc, _, classId, subClassId = C_Item.GetItemInfoInstant(itemId)
+	if classId ~= Enum.ItemClass.Armor and classId ~= Enum.ItemClass.Weapon then
+		return true
+	end
+	if gear.UsableOnly then
+		local info = addon.Gui.MerchantItemSlot.GetItemInfo(index)
+		if info and info.name and not info.isUsable then
+			return false
+		end
+	end
+	-- Cloth, leather and mail worn on the body; a cloak is cloth for everyone
+	if bestArmorSubClass and classId == Enum.ItemClass.Armor and subClassId >= 1 and subClassId < bestArmorSubClass and equipLoc ~= 'INVTYPE_CLOAK' then
+		return false
+	end
+	if gear.MinQuality > 0 then
+		local quality = C_Item.GetItemQualityByID(itemId)
+		if quality and quality < gear.MinQuality then
+			return false
+		end
+	end
+	return true
 end
 
 function filters:RefreshFilters()
@@ -217,8 +283,8 @@ function filters:Validate(lootFilter, itemId)
 			return not self.IsIllusionCollected(itemId)
 		end
 
-		if self.IsRecipe(itemId) and addon.Filters.db.profile.HideCollected.Recipes then
-			return not self.IsRecipeCollected(itemId)
+		if self.IsRecipe(itemId) and self.IsRecipeHidden(itemId) then
+			return false
 		end
 
 		if self.IsHousing(itemId) and addon.Filters.db.profile.HideCollected.Housing then
@@ -420,10 +486,7 @@ if addon.Util.IsModern then -- Recipes
 		if not self.IsRecipe(itemId) then
 			return false
 		end
-		if addon.Filters.db.profile.HideCollected.Recipes then
-			return not self.IsRecipeCollected(itemId)
-		end
-		return true
+		return not self.IsRecipeHidden(itemId)
 	end
 
 	function filters.IsRecipe(itemId)
@@ -444,14 +507,78 @@ if addon.Util.IsModern then -- Recipes
 		return false
 	end
 
+	-- Account wide, per character: the recipe items a vendor showed it that it knows, for Hide collected, Recipes my other
+	-- characters know
+	local characterKey
+	local function GetKnownRecipes()
+		characterKey = characterKey or (UnitName('player') .. '-' .. GetRealmName())
+		addon.Filters.db.global.KnownRecipes = addon.Filters.db.global.KnownRecipes or {}
+		return addon.Filters.db.global.KnownRecipes, characterKey
+	end
+
+	local function Record(itemId, known)
+		if not C_Item.IsItemDataCachedByID(itemId) then
+			return -- The tooltip may not be complete yet, and would clear a recipe this character knows
+		end
+		local knownRecipes, character = GetKnownRecipes()
+		knownRecipes[character] = knownRecipes[character] or {}
+		knownRecipes[character][itemId] = known or nil -- A dropped profession clears on the next visit
+	end
+
+	-- Also returns whether the tooltip could be read at all
 	function filters.IsRecipeCollected(itemId)
 		local tooltipInfo = C_TooltipInfo.GetItemByID(itemId)
+		if not tooltipInfo then
+			return false, false
+		end
 		for _, line in next, tooltipInfo.lines do
+			if issecretvalue and issecretvalue(line.leftText) then
+				return false, false -- Tooltip text is secret under some restrictions (12.x)
+			end
 			if line.leftText == ITEM_SPELL_KNOWN then
-                return true
+                return true, true
             end
 		end
+		return false, true
+	end
+
+	function filters.IsRecipeKnownByOtherCharacter(itemId)
+		local knownRecipes, character = GetKnownRecipes()
+		for name, recipes in next, knownRecipes do
+			if name ~= character and recipes[itemId] then
+				return true
+			end
+		end
 		return false
+	end
+
+	-- Hide collected, Recipes (this character) and Recipes my other characters know
+	function filters.IsRecipeHidden(itemId)
+		local hideCollected = addon.Filters.db.profile.HideCollected
+		return (hideCollected.Recipes and filters.IsRecipeCollected(itemId))
+			or (hideCollected.RecipesOtherCharacters and filters.IsRecipeKnownByOtherCharacter(itemId)) or false
+	end
+
+	-- Every recipe item a vendor shows is recorded once a visit, whatever the Hide collected options. Cleared when the window
+	-- closes: Blizzard can draw a vendor before its MERCHANT_SHOW.
+	local recorded = {}
+	local recordFrame = CreateFrame('Frame')
+	recordFrame:RegisterEvent('MERCHANT_CLOSED')
+	recordFrame:SetScript('OnEvent', function()
+		wipe(recorded)
+	end)
+
+	function filters.RecordRecipe(itemId)
+		if recorded[itemId] or not C_Item.IsItemDataCachedByID(itemId) then
+			return
+		end
+		recorded[itemId] = true
+		if filters.IsRecipe(itemId) then
+			local known, readable = filters.IsRecipeCollected(itemId)
+			if readable then
+				Record(itemId, known)
+			end
+		end
 	end
 else
 	function filters.IsRecipe(itemId)
@@ -460,6 +587,13 @@ else
 
 	function filters.IsRecipeCollected(itemId)
 		return false
+	end
+
+	function filters.IsRecipeHidden(itemId)
+		return false
+	end
+
+	function filters.RecordRecipe(itemId)
 	end
 end
 
@@ -479,10 +613,12 @@ if addon.Util.IsMainline then -- Housing
 		return classId == Enum.ItemClass.Housing
 	end
 
+	-- Owned anywhere: in storage, placed in a house or plot, or granted and not yet placed (live HousingCatalogUIDocumentation.lua:555-557)
 	function filters.IsHousingCollected(itemId)
-		local entryInfo = C_HousingCatalog.GetCatalogEntryInfoByItem(C_Item.GetItemInfoInstant(itemId))
+		local entryInfo = C_HousingCatalog.GetCatalogEntryInfoByItem(itemId)
 		if entryInfo then
-			return entryInfo.quantity >= addon.Filters.db.profile.HousingQuantity
+			local owned = (entryInfo.totalNumStored or 0) + (entryInfo.totalNumPlaced or 0) + (entryInfo.remainingRedeemable or 0)
+			return owned >= addon.Filters.db.profile.HousingQuantity
 		end
 		return false
 	end
@@ -566,10 +702,7 @@ do -- Custom
 
 		if self.IsRecipe(itemId) then
 			if addon.Filters.db.profile.Custom.Recipes then
-				if addon.Filters.db.profile.HideCollected.Recipes then
-					return not self.IsRecipeCollected(itemId)
-				end
-				return true
+				return not self.IsRecipeHidden(itemId)
 			end
 			return false
 		end
