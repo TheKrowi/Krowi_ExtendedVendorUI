@@ -16,7 +16,7 @@ Each issue's analysis, with sources, is its first comment on GitHub; this file k
 
 ## #101 Transmog Loot Helper overlay
 
-**Requirements.** 1. With TLH v12.1.5-02 or later, every shown slot with an item gets TLH's overlay after every draw. 2. The plugin's name and description show on the Plugins options page. 3. The plugin does not call TLH for an empty list (TLH would retry every frame). TLH's own vendor-open code still retries every frame when a vendor opens with an empty list; that is TLH's to fix (taint review of 2026-10-24).
+**Requirements.** 1. With TLH v12.1.5-02 or later, every shown slot with an item gets TLH's overlay after every draw. 2. The plugin's name and description show on the Plugins options page. 3. TLH never retries every frame because of this addon's slots. TLH's integration retries while the first slot's `hasItem` is nil (from login until the first vendor, and whenever a vendor opens with an empty list; taint review of 2026-10-24), so the addon's slots are created with `hasItem = false` and an empty slot sets `false` where Blizzard sets nil; Blizzard only tests it for truth on every client. The plugin also skips the call for an empty list. Reported to TLH's author on #97.
 
 **Design.** Merge #97's commit (Slackluster, `3aa6195d78`) unchanged, then: the two strings in enUS, single quotes, and skip `UpdateOverlay` when the list is empty.
 
