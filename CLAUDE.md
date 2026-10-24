@@ -81,5 +81,4 @@ Other bugs and drift:
 - Transmog Loot Helper (its `integrations/Krowi_ExtendedVendorUI.lua` and `app:MerchantOverlay`, v12.1.5-02) reaches only the first 99 slots of a larger grid; reported to its author on #97.
 - `.vscode/settings.json` still lists `MerchantFrame_SetFilter`, which no longer exists, and not `KrowiEVU_MerchantPrevPageButton`, `KrowiEVU_MerchantNextPageButton` or `KrowiEVU_MerchantPageText` (left alone in the redesign because the main checkout had an uncommitted change to the file).
 - `Gui/OptionsButton/OptionsButtonMixin.lua:47` points at `Interface\AddOns\Krowi_MerchantFrameExtended\Media\`, the old folder name, so the arrow texture in the hide-options-button text never shows.
-- `README.md` and `_Packaging/Description.md` do not mention Bulk Purchase.
 - Unused: `addon.IsWrathClassic` and `addon.IsDragonflightRetail` (`Krowi_ExtendedVendorUI.lua:7-8`), the empty `filters:RefreshFilters`, `Gui/TokenBanner/TokenBannerMixin.lua` and `Options/Options.lua`.
