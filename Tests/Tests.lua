@@ -44,8 +44,8 @@ local function Join(list)
 end
 
 -- [[ Environment ]] --
-local ADDONS = { 'ElvUI', 'GW2_UI', 'EllesmereUI', 'EllesmereUIBlizzardSkin', 'CanIMogIt', 'Auctionator', 'Krowi_Vendorer', 'Plumber' }
-local PLUGINS = { 'ElvUI', 'GW2_UI', 'EllesmereUI', 'EllesmereUIItemLevel', 'CanIMogIt' }
+local ADDONS = { 'ElvUI', 'GW2_UI', 'EllesmereUI', 'EllesmereUIBlizzardSkin', 'CanIMogIt', 'TransmogLootHelper', 'Auctionator', 'Krowi_Vendorer', 'Plumber' }
+local PLUGINS = { 'ElvUI', 'GW2_UI', 'EllesmereUI', 'EllesmereUIItemLevel', 'CanIMogIt', 'TransmogLootHelper' }
 
 -- The Krowi_Util client flags and the ones each client's WOW_PROJECT_ID should make true; the expansion flags follow the
 -- Retail patch, so they are recorded but not checked
@@ -75,6 +75,8 @@ local function GetSkinStates()
     states.EllesmereUIItemLevel = addon.Util.IsMainline and EllesmereUI and C_AddOns.IsAddOnLoaded('EllesmereUIBlizzardSkin')
         and EllesmereUIDB and EllesmereUIDB.merchantShowItemLevel == true or false
     states.CanIMogIt = CIMI_AddToFrame and MerchantFrame_CIMIUpdateIcon and true or false
+    -- Its overlay can be off in its own settings, which are private; then this check fails and says so
+    states.TransmogLootHelper = TransmogLootHelper and C_AddOns.IsAddOnLoaded('TransmogLootHelper') and true or false
     return states
 end
 
@@ -257,6 +259,9 @@ local function CheckPlugins()
             if skins.CanIMogIt and not button.CanIMogItOverlay then
                 tinsert(missing.CanIMogIt, i)
             end
+            if skins.TransmogLootHelper and index and not button.TLHOverlay then
+                tinsert(missing.TransmogLootHelper, i)
+            end
         end
     end
     for _, name in ipairs(PLUGINS) do
@@ -282,11 +287,160 @@ local function CheckPlugins()
     end
 end
 
+-- 'currency:<id>' or 'item:<id>' from a cost link, so links that differ only in their colour or level still match
+local function GetCostKey(link)
+    return link:match('(currency:%d+)') or link:match('(item:%d+)')
+end
+
+local function GetCostName(key)
+    local kind, id = key:match('^(%a+):(%d+)$')
+    if kind == 'currency' then
+        local info = C_CurrencyInfo.GetCurrencyInfo(tonumber(id))
+        return (info and info.name or key) .. ' (' .. key .. ')'
+    end
+    return (C_Item.GetItemInfo(tonumber(id)) or key) .. ' (' .. key .. ')'
+end
+
+-- The currencies Blizzard's own row shows for this vendor
+local function GetVendorCurrencies()
+    if C_MerchantFrame and C_MerchantFrame.GetMerchantCurrencies then
+        return C_MerchantFrame.GetMerchantCurrencies() or {}
+    end
+    return GetMerchantCurrencies and { GetMerchantCurrencies() } or {}
+end
+
+-- The token banner against the costs of the items in the list, worked out here the way the banner should: each cost shown
+-- once and nothing left from an earlier vendor or list. With the whole vendor in the list, also every currency Blizzard's
+-- own row shows.
+local function CheckTokenBanner()
+    local indices = container:GetIndices()
+    local gold, costs = 0, {}
+    for _, index in ipairs(indices) do
+        local info = merchantItemSlot.GetItemInfo(index)
+        if info and info.price and info.price > 0 and not info.hasExtendedCost then
+            gold = gold + info.price
+        end
+        for costIndex = 1, GetMerchantItemCostInfo(index) or 0 do
+            local texture, value, link = GetMerchantItemCostItem(index, costIndex)
+            local key = texture and value and link and GetCostKey(link)
+            if key then
+                costs[key] = (costs[key] or 0) + value
+            end
+        end
+    end
+
+    local shownGold, shown = false, {}
+    local i = 1
+    while _G['KrowiEVU_TokenBannerToken' .. i] do
+        local token = _G['KrowiEVU_TokenBannerToken' .. i]
+        if token:IsShown() then
+            if token.IsGold then
+                shownGold = true
+            elseif token.Link then
+                local key = GetCostKey(token.Link) or token.Link
+                shown[key] = (shown[key] or 0) + 1
+            end
+        end
+        i = i + 1
+    end
+
+    local costNames, missing, extra = {}, {}, {}
+    for key, value in next, costs do
+        tinsert(costNames, GetCostName(key) .. ' x' .. value)
+        if shown[key] ~= 1 then
+            tinsert(missing, GetCostName(key) .. (shown[key] and (' shown ' .. shown[key] .. ' times') or ''))
+        end
+    end
+    for key in next, shown do
+        if not costs[key] then
+            tinsert(extra, GetCostName(key))
+        end
+    end
+    table.sort(costNames)
+    Note(('costs of the %d items in the list: gold %d%s'):format(#indices, gold, #costNames > 0 and (', ' .. table.concat(costNames, ', ')) or ''))
+    if (gold > 0) ~= shownGold then
+        tinsert(gold > 0 and missing or extra, 'gold')
+    end
+    if #missing == 0 and #extra == 0 then
+        Add('PASS', 'token banner: every cost of the list, nothing else')
+    else
+        Add('FAIL', ('token banner: missing %s; not a cost of the list %s'):format(#missing > 0 and table.concat(missing, ', ') or 'none', #extra > 0 and table.concat(extra, ', ') or 'none'))
+    end
+
+    if #indices == GetMerchantNumItems() then
+        local notCosts = {}
+        for _, currencyId in ipairs(GetVendorCurrencies()) do
+            if not costs['currency:' .. currencyId] then
+                tinsert(notCosts, GetCostName('currency:' .. currencyId))
+            end
+        end
+        if #notCosts > 0 then
+            Add('FAIL', 'token banner: Blizzard\'s currency row would show ' .. table.concat(notCosts, ', ') .. ', which no item in the list costs')
+        end
+    end
+end
+
+-- The server sends the vendor's list for the merchant filter it was given; the addon's own filters must not lose items
+-- there that filter All gets (the count under All is taken in the step that sets it)
+local function CheckServerList()
+    local filter = filters:GetFilter()
+    local count = GetMerchantNumItems()
+    if filter == LE_LOOT_FILTER_ALL then
+        run.ServerAll = count
+        return
+    end
+    Note(('the server sends %d items for filter %s'):format(count, tostring(filter)))
+    if filter >= _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_NEW_RANGE'] and run.ServerAll then
+        Add(count >= run.ServerAll and 'PASS' or 'FAIL', ('server list for the addon\'s filter %d: %d items, %d for All'):format(filter, count, run.ServerAll))
+    end
+end
+
+-- Hide collected, Housing: decor the player owns anywhere (in storage, placed or not yet redeemed) is hidden, the rest shown
+local function CheckHousing()
+    if not addon.Util.IsMainline or filters:GetFilter() ~= LE_LOOT_FILTER_ALL then
+        return
+    end
+    local inList = {}
+    for _, index in ipairs(container:GetIndices()) do
+        inList[index] = true
+    end
+    local profile = filters.db.profile
+    local decor, wrong = 0, {}
+    for index = 1, GetMerchantNumItems() do
+        local itemId = GetMerchantItemID(index)
+        local entry = itemId and filters.IsHousing(itemId) and C_HousingCatalog.GetCatalogEntryInfoByItem(itemId)
+        if entry then
+            decor = decor + 1
+            local stored, placed, redeemable = entry.totalNumStored or 0, entry.totalNumPlaced or 0, entry.remainingRedeemable or 0
+            local shown = inList[index] or false
+            if placed > 0 then
+                Note(('decor %s: %d stored, %d placed, %d to redeem, %s'):format(entry.name, stored, placed, redeemable, shown and 'shown' or 'hidden'))
+            end
+            if profile.HideCollected.Housing and (stored + placed + redeemable >= profile.HousingQuantity) == shown then
+                tinsert(wrong, ('%s (%d owned, %s)'):format(entry.name, stored + placed + redeemable, shown and 'shown' or 'hidden'))
+            end
+        end
+    end
+    if decor == 0 then
+        return
+    end
+    if not profile.HideCollected.Housing then
+        Note(('%d decor items; Hide collected, Housing is off'):format(decor))
+    elseif #wrong == 0 then
+        Add('PASS', ('Hide collected, Housing: %d decor items, owned ones (%d or more) hidden'):format(decor, profile.HousingQuantity))
+    else
+        Add('FAIL', 'Hide collected, Housing wrong for ' .. table.concat(wrong, ', '))
+    end
+end
+
 local function CheckMerchantTab()
     CheckGrid()
     CheckBlizzardHidden()
     CheckPaging()
     CheckPlugins()
+    CheckTokenBanner()
+    CheckServerList()
+    CheckHousing()
 end
 
 local function CheckTooltip()
@@ -461,6 +615,14 @@ end
 
 -- [[ Steps ]] --
 steps = {
+    {
+        -- Before the test changes anything: the vendor's first draw when /kevutest was typed before opening it
+        Name = 'opened',
+        Text = 'the window as it opened',
+        Run = function()
+            Note(run.OnOpen and 'started as the vendor opened: this is the first draw' or 'started at an open vendor: not its first draw')
+        end,
+    },
     {
         Name = 'all',
         Text = 'filter All, page 1',
@@ -706,7 +868,7 @@ local function GetBanner()
             C_Timer.After(SETTLE, function() -- After the window's first draw
                 if startPending then
                     startPending = nil
-                    tests.Start()
+                    tests.Start(true)
                 end
             end)
         elseif event == 'MERCHANT_CLOSED' then
@@ -769,7 +931,8 @@ Stop = function(reason)
     print(prefix .. ('%s%d passed, %d failed, %d skipped. /reload to save the results.'):format(reason and (reason .. '; ') or '', counts.PASS, counts.FAIL, counts.SKIP))
 end
 
-function tests.Start()
+-- onOpen: started by the vendor window opening, so the first step sees its first draw
+function tests.Start(onOpen)
     if running then
         return
     end
@@ -804,7 +967,7 @@ function tests.Start()
         Columns = profile.NumColumns,
     }
 
-    run = { Time = date('%Y-%m-%d %H:%M:%S'), Steps = {} }
+    run = { Time = date('%Y-%m-%d %H:%M:%S'), Steps = {}, OnOpen = onOpen }
     RecordEnvironment()
     -- Kept as a history: Krowi runs several in a row (one per skin addon, a reload between each) before they are read
     KrowiEVU_Debug = KrowiEVU_Debug or {}
