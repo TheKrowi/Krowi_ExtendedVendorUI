@@ -36,6 +36,42 @@ local function IsForeverGamepadStyleOn()
     local ok, isOn = pcall(InputUtil.IsGamepadUIEnabled) -- Read at load on a beta client; a failure must not stop the addon
     return ok and isOn and true or false
 end
+addon.IsForeverGamepadStyleOn = IsForeverGamepadStyleOn -- Plugins/Plumber.lua
+
+-- [[ Notice window ]] --
+-- For the not-loaded notices below and the Plumber one (Plugins/Plumber.lua)
+local notice, noticeText
+local function ShowNotice(text)
+    if not notice then
+        notice = CreateFrame('Frame', 'KrowiEVU_Notice', UIParent, 'BasicFrameTemplateWithInset')
+        notice:SetWidth(420)
+        notice:SetPoint('TOP', 0, -135)
+        notice:SetFrameStrata('DIALOG')
+        notice:SetToplevel(true)
+        notice:EnableMouse(true)
+        notice.TitleText:SetText(addon.Metadata.Title)
+        -- The template's close button calls HideUIPanel, which runs tainted from here and refuses in combat; a vendor can be
+        -- opened in combat (taint review of 2026-10-25)
+        notice.CloseButton:SetScript('OnClick', function()
+            notice:Hide()
+        end)
+        noticeText = notice:CreateFontString(nil, 'ARTWORK', 'GameFontHighlight')
+        noticeText:SetPoint('TOP', 0, -40)
+        noticeText:SetWidth(380)
+        -- Without the tooltip variant's OnLeave, which hides the shared tooltip whoever owns it, tainted
+        local okay = CreateFrame('Button', nil, notice, 'UIPanelButtonNoTooltipTemplate')
+        okay:SetSize(120, 22)
+        okay:SetPoint('BOTTOM', 0, 14)
+        okay:SetText(OKAY)
+        okay:SetScript('OnClick', function()
+            notice:Hide()
+        end)
+    end
+    noticeText:SetText(text)
+    notice:SetHeight(noticeText:GetStringHeight() + 96)
+    notice:Show()
+end
+addon.ShowNotice = ShowNotice
 
 if IsEllesmereUIListModeOn() then
     addon.NotLoaded = 'EllesmereUIListMode'
@@ -46,35 +82,13 @@ elseif IsForeverGamepadStyleOn() then
 end
 
 if addon.NotLoaded then
-    local notice
     -- At the first vendor and from the addon compartment (Icon.lua)
     function addon.ShowNotLoadedNotice()
         if addon.NotLoaded == 'ForeverGamepad' then
             print(addon.NotLoadedText) -- A window could need the mouse to close; the text names the addon
             return
         end
-        if not notice then
-            notice = CreateFrame('Frame', 'KrowiEVU_NotLoadedNotice', UIParent, 'BasicFrameTemplateWithInset')
-            notice:SetWidth(420)
-            notice:SetPoint('TOP', 0, -135)
-            notice:SetFrameStrata('DIALOG')
-            notice:SetToplevel(true)
-            notice:EnableMouse(true)
-            notice.TitleText:SetText(addon.Metadata.Title)
-            local text = notice:CreateFontString(nil, 'ARTWORK', 'GameFontHighlight')
-            text:SetPoint('TOP', 0, -40)
-            text:SetWidth(380)
-            text:SetText(addon.NotLoadedText)
-            local okay = CreateFrame('Button', nil, notice, 'UIPanelButtonTemplate')
-            okay:SetSize(120, 22)
-            okay:SetPoint('BOTTOM', 0, 14)
-            okay:SetText(OKAY)
-            okay:SetScript('OnClick', function()
-                notice:Hide()
-            end)
-            notice:SetHeight(text:GetStringHeight() + 96)
-        end
-        notice:Show()
+        ShowNotice(addon.NotLoadedText)
     end
 
     local noticeHelper = CreateFrame('Frame')
