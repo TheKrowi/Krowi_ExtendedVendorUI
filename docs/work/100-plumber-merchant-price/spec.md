@@ -19,7 +19,13 @@ Plumber 1.9.6 d, `Modules/MerchantPrice.lua` (identical to [GitHub `2f7186c`](ht
 - The module loads only on Retail and WoW Forever (Plumber `Plumber.toc:62`, `[AllowLoadGameType standard, camelot]`) and is off by default (`Initialization.lua:312`). Its checkbox applies at once (`Modules/ControlCenter/SettingsPanel.lua:388`): turning it off moves the frames back (`RestoreObjects`, L123-L147) without a reload.
 - Why `/kevutest` never saw it: Plumber is disabled on every Retail character of Krowi's account (`AddOns.txt`), though its saved variable has Merchant Price on. The test lists Plumber in its run header when it is loaded, and no run did.
 
-**Reproduction (before the build):** enable Plumber on one Retail character, `/reload`, open Alice Fischer. Expected: no token banner, Plumber's box at the bottom right with only gold. Screenshot recorded here.
+**Reproduction (before the build):** enable Plumber on one Retail character, `/reload`, open a vendor that charges more than gold, and run `/kevutest`.
+
+**Recorded 2026-10-25,** on 24.1 plus only the new test check (`5058751`). Retail 12.1.5 (70575), Plumber 1.9.6 d, vendor Wah'du. Every one of the list's 22 items costs Mythical Soul Fragment (×66 in all).
+- `/kevutest` run of 09:53:53 (49 passed, 8 failed, 2 skipped): "FAIL token banner not visible" on all 8 merchant-tab steps, and no other failure.
+- The cost check still passed on every step: the banner drew the right token, only invisibly.
+- BugGrabber: no error from the addon.
+- Screenshot `WoWScrnShot_102526_095354.jpg`: the bottom bar shows only Plumber's "1,768,164g 32s 89c", with no token banner and no Mythical Soul Fragment.
 
 ## Design
 - `Krowi_ExtendedVendorUI.lua`:
