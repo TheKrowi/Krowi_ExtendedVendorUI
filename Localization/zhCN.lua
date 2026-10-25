@@ -107,3 +107,10 @@ L["Toys"] = "玩具"
 L["Vendor has"] = "商人库存"
 L["You can afford"] = "可负担"
 L["You can fit"] = "背包可容纳"
+L["Plugin_Plumber_Desc"] = [=[当 Plumber 的商品价格模块隐藏代币窗口时，此插件会在每次登录后的第一个商人处提示你。开启商品价格后，商人窗口底部只显示你的金币。
+
+如需再次查看列表中物品的花费，请在 Plumber 的设置中关闭商品价格。
+
+此插件无设置项。]=]
+L["Plugin_Plumber_MerchantPriceHidesTokenBanner"] = "Plumber 的商品价格模块隐藏了 Extended Vendor UI 的代币窗口，因此商人窗口只显示你的金币。如需再次查看列表中物品的花费，请在 Plumber 的设置中关闭商品价格。"
+L["Plugin_Plumber_Name"] = "Plumber"
