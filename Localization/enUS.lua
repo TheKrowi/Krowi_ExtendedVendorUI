@@ -107,3 +107,10 @@ L["Toys"] = true
 L["Vendor has"] = true
 L["You can afford"] = true
 L["You can fit"] = true
+L["Plugin_Plumber_Desc"] = [=[This plugin tells you once a session, at a vendor, when Plumber's Merchant Price hides the token banner. With Merchant Price on, the bottom of the vendor window shows only your gold.
+
+To see the costs of the listed items again, turn off Merchant Price in Plumber's settings.
+
+There are no options.]=]
+L["Plugin_Plumber_MerchantPriceHidesTokenBanner"] = "Plumber's Merchant Price hides the token banner of Extended Vendor UI, so the vendor window shows only your gold. To see the costs of the listed items again, turn off Merchant Price in Plumber's settings."
+L["Plugin_Plumber_Name"] = "Plumber"
