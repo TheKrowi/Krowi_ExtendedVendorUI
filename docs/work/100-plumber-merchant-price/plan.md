@@ -11,6 +11,17 @@ Spec: [spec.md](spec.md). Status: draft
 - `_Packaging/Changelog.md`: `## 24.2` with the Added line.
 - `CLAUDE.md`: Plumber in the built-in plugins and the Merchant Price limit (write-back).
 
+## Where the build departed
+- **Taint review** (no taint path): the notice window's X and Okay buttons got the addon's own handlers. This fixes the EllesmereUI and Forever notices too.
+- **Code review:**
+  - The plugin uses the plugin event API instead of a private frame.
+  - `/kevutest` checks the notice once a run, and not at a vendor that was open before Merchant Price came on.
+  - The zhCN description says "after each login or UI reload".
+- **Code review findings left as they are:**
+  - Escape does not close the notice. It is the addon's own window, and making Escape close it would mean writing to Blizzard's `UISpecialFrames` or keyboard handling that is protected in combat.
+  - Three similar once-a-session helpers stay separate.
+  - Without Plumber, every vendor open still runs one `IsAddOnLoaded` check.
+
 ## Order of work
 1. **Test first.** Add the visibility check to `Tests/Tests.lua` and deploy it alone to Retail.
 2. **Reproduction (Krowi, in game).** Enable Plumber on one Retail character (its Merchant Price is already on), `/reload`, open a currency vendor and run `/kevutest`. Expected: the banner check FAILs with "not visible", no notice shows, and the screenshot shows Plumber's box with only gold. Record the run and the screenshot in the spec.

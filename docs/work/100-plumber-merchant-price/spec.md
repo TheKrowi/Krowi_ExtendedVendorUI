@@ -35,7 +35,8 @@ Plumber 1.9.6 d, `Modules/MerchantPrice.lua` (identical to [GitHub `2f7186c`](ht
   - It returns at its top unless `addon.Util.IsModern`, because Merchant Price exists only on Retail and Forever.
   - It registers as `Plumber`. `InjectOptions` adds the Plugins page entry (`AddPluginTable`, Loaded from `C_AddOns.IsAddOnLoaded('Plumber')`).
   - `plumber:IsHidingTokenBanner()` checks requirement 2: `C_AddOns.IsAddOnLoaded('Plumber')`, `type(PlumberDB) == 'table' and PlumberDB.MerchantPrice == true`, `MerchantMoneyInset:GetParent() ~= MerchantFrame`.
-  - `Load` (boot, so never while the addon steps aside) creates a `MERCHANT_SHOW` frame that runs the check, as the Forever style helper does. When it is true, the frame unregisters (once a session), prints the text, and shows the window unless `addon.IsForeverGamepadStyleOn()`. It then sets `plumber.NoticeShown = true`.
+  - `Load` (boot, so never while the addon steps aside) registers `MERCHANT_SHOW` through the plugin event API (`KrowiEVU.PluginsApi:RegisterEvent`). `OnEvent` returns once `NoticeShown` is set (once a session). Otherwise it runs the check and keeps the result as `HidingAtVendorOpen`. When it is true, it sets `NoticeShown`, prints the text, and shows the window unless `addon.IsForeverGamepadStyleOn()`.
+  - The notice window closes with its own handlers on both buttons. The template's X button would call `HideUIPanel`, which refuses in combat. The Okay button uses `UIPanelButtonNoTooltipTemplate`, whose `OnLeave` doesn't hide the shared tooltip. Both come from the taint review of 2026-10-25.
   - Plumber moves the frames at its module enable (login), so the check is valid at `MERCHANT_SHOW`.
 - `Localization/enUS.lua`: three strings, appended below the marker.
   - `Plugin_Plumber_Name` = "Plumber".
@@ -45,7 +46,7 @@ Plumber 1.9.6 d, `Modules/MerchantPrice.lua` (identical to [GitHub `2f7186c`](ht
 - `Localization/zhCN.lua`: drafts of the three, put on CurseForge with `krowi:localization` and imported, so the file stays the CurseForge export (as in 24.1).
 - `Tests/Tests.lua`, `CheckTokenBanner`:
   - It checks `KrowiEVU_TokenBanner:IsVisible()`.
-  - When the banner is not visible and `KrowiEVU.PluginsApi.Plugins.Plumber:IsHidingTokenBanner()` is true, it records an INFO line, then a PASS or FAIL on `NoticeShown`.
+  - When the banner is not visible and `KrowiEVU.PluginsApi.Plugins.Plumber:IsHidingTokenBanner()` is true, it records an INFO line on each step. Once a run, it also records a PASS or FAIL on `NoticeShown`. That check is only an INFO when `HidingAtVendorOpen` is false, which means Merchant Price came on after the vendor opened and the notice is due at the next vendor (code review of 2026-10-25).
   - Otherwise, a hidden banner is a FAIL. The existing cost check stays.
 - `_Packaging/Changelog.md`: a 24.2 entry, under Added: "A notice when Plumber's Merchant Price hides the token banner, with how to get it back (Retail, WoW Forever)".
 
