@@ -1,5 +1,5 @@
 # Plan: Plumber's Merchant Price hides the token banner
-Spec: [spec.md](spec.md). Status: draft
+Spec: [spec.md](spec.md). Status: done
 
 ## Files that change
 - `Tests/Tests.lua`: `CheckTokenBanner` checks that the banner is visible, with the Plumber case (requirement 6).

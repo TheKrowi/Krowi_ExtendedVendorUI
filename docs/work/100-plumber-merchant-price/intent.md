@@ -1,5 +1,5 @@
 # Intent: Plumber's Merchant Price hides the token banner
-Author: hemmshoe, clicket, guino2377 and a player at Hallow's End on CurseForge (project 872787), collected by Krowi (maintainer). Source: GitHub issue #100 (reopened 2026-10-25), Plumber issue [#533](https://github.com/Peterodox/Plumber/issues/533). Status: accepted
+Author: hemmshoe, clicket, guino2377 and a player at Hallow's End on CurseForge (project 872787), collected by Krowi (maintainer). Source: GitHub issue #100 (reopened 2026-10-25), Plumber issue [#533](https://github.com/Peterodox/Plumber/issues/533). Status: done
 
 ## Problem
 Since 23.0 (2026-10-21), Retail players with Plumber's Merchant Price module on see only their gold at the bottom right of the vendor window, and none of the currencies or items the vendor charges. One player went back to 22.2 to get them. At the candy vendor, a player saw a "coin" with the addon on and the candy with it off. The cause is Plumber: Merchant Price hides the bar the token banner sits in and draws its own box. Since 23.0 that box can no longer see the vendor's items, so it shows only gold. The addon's banner, which shows every cost of the list, stays hidden. Turning off only Merchant Price brings it back, but nothing tells the player that.

@@ -1,5 +1,5 @@
 # Spec: Plumber's Merchant Price hides the token banner
-Intent: [intent.md](intent.md). Status: accepted
+Intent: [intent.md](intent.md). Status: done
 
 ## Requirements
 1. When Plumber's Merchant Price hides the token banner, the first vendor window of the session shows a notice window and prints a chat line. Both say that Plumber's Merchant Price hides the banner and that turning it off in Plumber's settings brings it back.
