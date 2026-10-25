@@ -6,7 +6,7 @@ KrowiEVU.PluginsApi:LoadPluginLocalization(L)
 
 -- [[ 此行之后的所有内容均由 CurseForge 自动生成，请勿手动编辑 - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2026-10-24 16-32-42 ]] --
+-- [[ Exported at 2026-10-25 09-47-27 ]] --
 L["Are you sure you want to hide the options button?"] = [=[是否隐藏设置按钮？
 可在此重新显示：主菜单 → 选项 → 插件 → {addonName} → {general} → {options}]=]
 L["Arsenals"] = "军械库"
@@ -79,6 +79,13 @@ L["Plugin_GW2UI_Desc"] = [=[此插件为商人物品应用 GW2 UI 的商人皮�
 
 此插件无设置项。]=]
 L["Plugin_GW2UI_Name"] = "GW2 UI"
+L["Plugin_Plumber_Desc"] = [=[当 Plumber 的商品价格模块隐藏代币窗口时，此插件会在每次登录后的第一个商人处提示你。开启商品价格后，商人窗口底部只显示你的金币。
+
+如需再次查看列表中物品的花费，请在 Plumber 的设置中关闭商品价格。
+
+此插件无设置项。]=]
+L["Plugin_Plumber_MerchantPriceHidesTokenBanner"] = "Plumber 的商品价格模块隐藏了 Extended Vendor UI 的代币窗口，因此商人窗口只显示你的金币。如需再次查看列表中物品的花费，请在 Plumber 的设置中关闭商品价格。"
+L["Plugin_Plumber_Name"] = "Plumber"
 L["Plugin_TransmogLootHelper_Desc"] = [=[此插件在翻页、更改筛选或搜索时，更新 Transmog Loot Helper 在商人物品上的图标叠加。需要 Transmog Loot Helper 12.1.5-02 或更高版本。
 
 此插件无设置项。]=]
@@ -107,10 +114,3 @@ L["Toys"] = "玩具"
 L["Vendor has"] = "商人库存"
 L["You can afford"] = "可负担"
 L["You can fit"] = "背包可容纳"
-L["Plugin_Plumber_Desc"] = [=[当 Plumber 的商品价格模块隐藏代币窗口时，此插件会在每次登录后的第一个商人处提示你。开启商品价格后，商人窗口底部只显示你的金币。
-
-如需再次查看列表中物品的花费，请在 Plumber 的设置中关闭商品价格。
-
-此插件无设置项。]=]
-L["Plugin_Plumber_MerchantPriceHidesTokenBanner"] = "Plumber 的商品价格模块隐藏了 Extended Vendor UI 的代币窗口，因此商人窗口只显示你的金币。如需再次查看列表中物品的花费，请在 Plumber 的设置中关闭商品价格。"
-L["Plugin_Plumber_Name"] = "Plumber"
