@@ -322,6 +322,7 @@ end
 -- The token banner against the costs of the items in the list, worked out here the way the banner should: each cost shown
 -- once and nothing left from an earlier vendor or list, the token banner options followed. With the whole vendor in the
 -- list, also every currency Blizzard's own row shows.
+local plumberNoticeChecked -- The notice is one fact of the session, checked once a run
 local function CheckTokenBanner()
     -- Shown is not enough: the banner is a child of Blizzard's MerchantMoneyInset, which Plumber's Merchant Price moves into a
     -- hidden frame of its own. The addon only tells the player then (Plugins/Plumber.lua), so that case passes on the notice.
@@ -331,7 +332,16 @@ local function CheckTokenBanner()
         local plumber = KrowiEVU.PluginsApi.Plugins.Plumber
         if plumber and plumber:IsHidingTokenBanner() then
             Note('token banner hidden by Plumber\'s Merchant Price')
-            Add(plumber.NoticeShown and 'PASS' or 'FAIL', 'Plumber notice shown this session')
+            if not plumberNoticeChecked then
+                plumberNoticeChecked = true
+                if plumber.NoticeShown then
+                    Add('PASS', 'Plumber notice shown this session')
+                elseif plumber.HidingAtVendorOpen == false then
+                    Note('Merchant Price came on after this vendor opened, so the notice comes at the next vendor')
+                else
+                    Add('FAIL', 'Plumber notice not shown this session')
+                end
+            end
         else
             Add('FAIL', 'token banner not visible')
         end
@@ -1110,6 +1120,7 @@ function tests.Start(onOpen)
     HookBlizzard()
     skins = GetSkinStates()
     counts = { PASS = 0, FAIL = 0, SKIP = 0 }
+    plumberNoticeChecked = nil
     local profile = addon.Options.db.profile
     saved = {
         Filter = filters:GetFilter(),

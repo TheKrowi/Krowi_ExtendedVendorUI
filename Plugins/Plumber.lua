@@ -26,18 +26,22 @@ function plumber:IsHidingTokenBanner()
 end
 
 function plumber:Load()
-    local noticeHelper = CreateFrame('Frame')
-    noticeHelper:RegisterEvent('MERCHANT_SHOW')
-    noticeHelper:SetScript('OnEvent', function(helper)
-        if not plumber:IsHidingTokenBanner() then
-            return -- Checked again at the next vendor
-        end
-        helper:UnregisterEvent('MERCHANT_SHOW') -- Once a session
-        plumber.NoticeShown = true
-        local text = addon.L[L_Prefix .. 'MerchantPriceHidesTokenBanner']
-        print(text) -- The text names the addon
-        if not addon.IsForeverGamepadStyleOn() then -- A window could need the mouse to close
-            addon.ShowNotice(text)
-        end
-    end)
+    KrowiEVU.PluginsApi:RegisterEvent('MERCHANT_SHOW')
+end
+
+function plumber:OnEvent(event)
+    if event ~= 'MERCHANT_SHOW' or self.NoticeShown then -- Once a session
+        return
+    end
+    -- Kept for /kevutest: Merchant Price turned on while a vendor is open is told at the next vendor
+    self.HidingAtVendorOpen = self:IsHidingTokenBanner()
+    if not self.HidingAtVendorOpen then
+        return
+    end
+    self.NoticeShown = true
+    local text = addon.L[L_Prefix .. 'MerchantPriceHidesTokenBanner']
+    print(text) -- The text names the addon
+    if not addon.IsForeverGamepadStyleOn() then -- A window could need the mouse to close
+        addon.ShowNotice(text)
+    end
 end
