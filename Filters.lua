@@ -271,8 +271,20 @@ function filters:SortList(list)
 		return
 	end
 	local values = {}
+	local waiting
 	for _, index in ipairs(list) do
 		values[index] = GetSortValue(index, by)
+		-- A name or quality is missing until the item's data has arrived: ask for it and sort again then, so the order settles
+		-- as the window opens and not after a purchase, when a second click on the slot would buy another item (taint review
+		-- of 2026-10-29). Only for data not cached yet, or an item without a quality would ask forever.
+		local itemId = values[index] == nil and (by == 'Name' or by == 'Quality') and GetMerchantItemID(index)
+		if itemId and not C_Item.IsItemDataCachedByID(itemId) then
+			C_Item.RequestLoadItemDataByID(itemId)
+			waiting = true
+		end
+	end
+	if waiting then
+		addon.Gui.MerchantItemSlot.WaitForItemInfo()
 	end
 	local order = by == 'TokenPrice' and self:GetTokenOrder()
 	table.sort(list, function(a, b)
