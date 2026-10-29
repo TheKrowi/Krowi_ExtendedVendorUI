@@ -1,5 +1,5 @@
 # Intent: The arrows in the hide-options-button text never show
-Author: Krowi (maintainer), from the known-debt list in `CLAUDE.md`. Source: known debt (found 2026-10-15, rechecked 2026-10-29). Status: draft
+Author: Krowi (maintainer), from the known-debt list in `CLAUDE.md`. Source: known debt (found 2026-10-15, rechecked 2026-10-29). Status: accepted
 
 ## Problem
 Hiding the options button asks "Are you sure you want to hide the options button?" and says where to show it again: Game Menu, AddOns, Extended Vendor UI and so on, with an arrow texture between the steps (`{arrow}`, filled in by `ReplaceVarsWithMenu`, `Gui/OptionsButton/OptionsButtonMixin.lua:50-63`, used at line 195). The texture path is `Interface\AddOns\Krowi_MerchantFrameExtended\Media\ui-backarrow`, the addon's old folder name. The file ships as `Media\ui-backarrow.tga` in this addon's folder, so the arrows never show.

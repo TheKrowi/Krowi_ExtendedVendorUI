@@ -1,5 +1,5 @@
 # Intent: Bulk purchase calls the deprecated GetInventorySlotInfo
-Author: Krowi (maintainer), from the known-debt list in `CLAUDE.md`. Source: known debt (`Find-DeprecatedApi.ps1`, 2026-10-19 and 2026-10-22; rechecked 2026-10-29). Status: draft
+Author: Krowi (maintainer), from the known-debt list in `CLAUDE.md`. Source: known debt (`Find-DeprecatedApi.ps1`, 2026-10-19 and 2026-10-22; rechecked 2026-10-29). Status: accepted
 
 ## Problem
 The Bulk Purchase window counts the free bag space for an item. `HasBagEquippedInSlot` (`Gui/BulkPurchase/BulkPurchaseMixin.lua:54-57`) calls the global `GetInventorySlotInfo`. Retail 12.1.5 and Forever 1.60.1 deprecated it for `C_PaperDollInfo.GetInventorySlotInfo`. On both, the old global exists only while the `loadDeprecationFallbacks` CVar is on (`Deprecated_PaperDoll.lua:4-8`). When Blizzard removes the fallback, as 12.1.5 did for other globals (which broke Krowi's Vendorer), the Bulk Purchase window errors on Retail and Forever. The Classic clients have no `C_PaperDollInfo.GetInventorySlotInfo` (absent from the classic, classic_anniversary and classic_era API docs) and keep the global.

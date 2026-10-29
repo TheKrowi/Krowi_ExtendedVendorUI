@@ -68,19 +68,10 @@ For one pass per client, ask Krowi to type `/kevutest` and open a vendor with mo
 
 ## Known debt (verified 2026-10-15, updated 2026-10-29)
 
-Each entry has a draft work item in `docs/work/2026-10-29-<slug>/` (intent with exploration steps); take one through `krowi:process-issue` and drop its line here when it is done.
+Each entry has a draft work item in `docs/work/2026-10-29-<slug>/` (intent with exploration steps); take one through `krowi:process-issue` and drop its line here when it is done. Done on 2026-10-29: `search-npc-name-secret`, `classic-currency-click`, `inventory-slot-info`, `options-button-arrow`.
 
-Taint and secret values:
-
-- Possible secret-value error on Retail: the `MerchantFrame` `OnShow` hook in `Gui/SearchBox/SearchBoxMixin.lua` stores and compares `UnitName('npc')`, which is `SecretWhenUnitNameIdentityRestricted`, without an `issecretvalue` probe (`search-npc-name-secret`).
-
-Other bugs and drift:
-
-- Classic: clicking a currency in the token banner calls `CharacterFrame:ToggleTokenFrame()` (`Gui/TokenBanner/TokenMixin.lua:139`), which only Retail and Forever have; Classic opens the tab with `ToggleCharacter("TokenFrame")` (`classic-currency-click`).
 - Retail's new-player tutorial points its buy-items arrow at Blizzard's `MerchantItem2` (live `Blizzard_NewPlayerExperience/Blizzard_TutorialTutorials.lua:2397`), which is hidden on the merchant tab; with Direction Rows the addon's slot 2 sits in the same place (`tutorial-buy-arrow`).
-- `Gui/BulkPurchase/BulkPurchaseMixin.lua:55` calls `GetInventorySlotInfo`, deprecated on Retail 12.1.5 and Forever 1.60.1 for `C_PaperDollInfo.GetInventorySlotInfo`; on both the old global exists only while the `loadDeprecationFallbacks` CVar is on (`Deprecated_PaperDoll.lua:4-8`; `Find-DeprecatedApi.ps1`, 2026-10-19 and 2026-10-22; `inventory-slot-info`).
 - Retail and Forever (found 2026-10-21): `Enum.TooltipDataLineType.RestrictedSpellKnown` (`filters.IsIllusionCollected` in `Filters.lua`) exists in neither live's nor Forever's UI source, so Hide collected never hides an illusion. `_Packaging/Description.md` leaves illusions out of its Hide Collected list until this works (Krowi, 2026-10-24; `illusions-hide-collected`).
 - Transmog Loot Helper (its `integrations/Krowi_ExtendedVendorUI.lua` and `app:MerchantOverlay`, v12.1.5-02) reaches only the first 99 slots of a larger grid; reported to its author on #97 (`tlh-slot-limit`).
 - `.vscode/settings.json` still lists `MerchantFrame_SetFilter`, which no longer exists (`dead-code`).
-- `Gui/OptionsButton/OptionsButtonMixin.lua:50` points at `Interface\AddOns\Krowi_MerchantFrameExtended\Media\`, the old folder name, so the arrow texture in the hide-options-button text never shows (`options-button-arrow`).
 - Unused: `addon.IsWrathClassic` and `addon.IsDragonflightRetail` (`Krowi_ExtendedVendorUI.lua:7-8`), the empty `filters:RefreshFilters`, `Gui/TokenBanner/TokenBannerMixin.lua` and `Options/Options.lua` (`dead-code`).
