@@ -100,6 +100,9 @@ local function IsItemUnique(itemID)
     if not tooltipData then return false end
     local uniqueString = ITEM_UNIQUE or 'Unique'
     for _, line in ipairs(tooltipData.lines) do
+        if issecretvalue and issecretvalue(line.leftText) then
+            return false -- Tooltip text can be secret under restrictions (12.x); comparing it errors
+        end
         if line.leftText == uniqueString then
             return true
         end
