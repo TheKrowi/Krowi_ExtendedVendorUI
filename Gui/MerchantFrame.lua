@@ -43,6 +43,24 @@ do
 	merchantFrame.UpdateRepairButtons = UpdateRepairButtons -- Makes placing them correctly possible via plugins like ElvUI
 	hooksecurefunc('MerchantFrame_UpdateRepairButtons', UpdateRepairButtons)
 
+	-- With nothing to repair Blizzard disables both repair-all buttons, and they say nothing: a disabled button runs no OnEnter,
+	-- and theirs only fill the tooltip when there is a cost (live MerchantFrame.xml:240-252 and 338-371, TBC 215-222). So they
+	-- run their mouse scripts while disabled too, and then say what they do (#32). Blizzard's OnLeave hides the tooltip again.
+	local function AddDisabledTooltip(button, title)
+		button:SetMotionScriptsWhileDisabled(true)
+		button:HookScript('OnEnter', function(self)
+			if self:IsEnabled() then
+				return
+			end
+			GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
+			GameTooltip:SetText(title)
+			GameTooltip:AddLine(addon.L['Nothing to repair'], 1, 1, 1)
+			GameTooltip:Show()
+		end)
+	end
+	AddDisabledTooltip(MerchantRepairAllButton, REPAIR_ALL_ITEMS)
+	AddDisabledTooltip(MerchantGuildBankRepairButton, addon.L['Repair all items with guild money'])
+
 	MerchantFrameInset:ClearPoint('BOTTOMRIGHT')
 	MerchantFrameInset:SetPoint('RIGHT', MerchantFrame, 'RIGHT', -6, 0)
 	MerchantFrameInset:SetPoint('BOTTOM', buttonsInset, 'TOP', 0, 4)
