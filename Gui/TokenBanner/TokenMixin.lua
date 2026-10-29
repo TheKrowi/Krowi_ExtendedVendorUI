@@ -129,6 +129,26 @@ function KrowiEVU_TokenMixin:OnShow()
     -- print('Token shown', self.Have, self.Need)
 end
 
+-- Only the Mainline character frame has ToggleTokenFrame. Classic opens the tab its character window shows currencies on:
+-- the Currency tab on Mists, the PvP tab with honor and arena points on TBC, none on Era
+local function ToggleCurrencyTab()
+    if addon.Util.IsModern then
+        CharacterFrame:ToggleTokenFrame()
+        return
+    end
+    if not (ToggleCharacter and CHARACTERFRAME_SUBFRAMES) then
+        return
+    end
+    if tContains(CHARACTERFRAME_SUBFRAMES, 'TokenFrame') then
+        local getCurrencyListSize = C_CurrencyInfo and C_CurrencyInfo.GetCurrencyListSize or GetCurrencyListSize
+        if getCurrencyListSize() > 0 then -- As Retail's ToggleTokenFrame
+            ToggleCharacter('TokenFrame')
+        end
+    elseif tContains(CHARACTERFRAME_SUBFRAMES, 'PVPFrame') then
+        ToggleCharacter('PVPFrame')
+    end
+end
+
 function KrowiEVU_TokenMixin:OnClick()
     if IsModifiedClick("CHATLINK") then
         local linkedToChat = HandleModifiedItemClick(self.Link);
@@ -136,6 +156,6 @@ function KrowiEVU_TokenMixin:OnClick()
     end
 
     if self.IsCurrency then
-        CharacterFrame:ToggleTokenFrame();
+        ToggleCurrencyTab()
     end
 end
