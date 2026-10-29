@@ -623,8 +623,13 @@ local function CheckBulkPurchase()
         local free, bagType = C_Container.GetContainerNumFreeSlots(bag)
         local text = ('%d: %s free, type %s'):format(bag, tostring(free), tostring(bagType))
         if bag > 0 then
-            local slot = C_Container.ContainerIDToInventoryID(bag)
-            text = text .. (', slot %s %s'):format(tostring(slot), slot and GetInventoryItemID('player', slot) and 'with a bag' or 'empty')
+            -- WoW Forever's 1.x build may have no bag 5
+            local ok, slot = pcall(C_Container.ContainerIDToInventoryID, bag)
+            if not ok then
+                text = text .. ', no slot: ' .. tostring(slot)
+            else
+                text = text .. (', slot %s %s'):format(tostring(slot), slot and GetInventoryItemID('player', slot) and 'with a bag' or 'empty')
+            end
         end
         tinsert(bags, text)
     end
