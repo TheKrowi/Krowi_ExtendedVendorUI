@@ -745,6 +745,9 @@ local function CheckScrap()
     local scale, frameScale = button:GetEffectiveScale(), MerchantFrame:GetEffectiveScale()
     local inside = left * scale >= frameLeft * frameScale - 1 and right * scale <= frameRight * frameScale + 1
     Add(inside and 'PASS' or 'FAIL', 'Scrap: its button is ' .. (inside and 'inside' or 'outside') .. ' the window')
+    -- Scrap makes it 37 wide; two anchors left over from another vendor stretch it
+    local width = right - left
+    Add(math.abs(width - 37) < 1 and 'PASS' or 'FAIL', ('Scrap: its button is %.0f wide (37 unstretched)'):format(width))
     if MerchantRepairAllButton:IsShown() then
         local points = MerchantRepairAllButton:GetNumPoints()
         Add(points == 1 and 'PASS' or 'FAIL', ('Scrap: the repair-all button has %d anchor(s)'):format(points))
