@@ -35,4 +35,7 @@ Option 1 (recommended): no change to the placement. Add a `/kevutest` check on t
 - `/kevutest` on Retail with Rows: the new check passes. Switch to Columns in the options and run again: option 1 records the INFO line; option 2 passes.
 - No Exile's Reach run: the position check proves the same thing without a new character.
 
+## Built ahead of the decision (2026-10-29)
+The `/kevutest` check both options need is in the `all` step (`CheckTutorialArrow`): PASS or FAIL with Rows, an INFO line with Columns. Option 2 would only add the anchor and turn the Columns line into a check.
+
 ## Decision
