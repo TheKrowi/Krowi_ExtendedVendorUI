@@ -1,5 +1,5 @@
 # Intent: Hide collected never hides illusions
-Author: Krowi (maintainer), from the known-debt list in `CLAUDE.md`. Source: known debt (found 2026-10-21, rechecked 2026-10-29). Status: draft
+Author: Krowi (maintainer), from the known-debt list in `CLAUDE.md`. Source: known debt (found 2026-10-21, rechecked 2026-10-29). Status: accepted
 
 ## Problem
 With Hide collected on for Illusions, illusions the account already has still show. `filters.IsIllusionCollected` (`Filters.lua:465-473`) looks for a tooltip line of type `Enum.TooltipDataLineType.RestrictedSpellKnown`. That type exists in neither live's nor Forever's UI source: live's `TooltipDataLineType` (`TooltipInfoSharedDocumentation.lua`) has `LearnTransmogIllusion` (40) but no `RestrictedSpellKnown`. The check compares with nil and is never true. `_Packaging/Description.md` leaves illusions out of its Hide Collected list until this works (Krowi, 2026-10-24).
