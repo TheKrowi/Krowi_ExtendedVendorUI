@@ -15,7 +15,8 @@ All notable changes to this project will be documented in this file.
 - Clicking a currency in the token banner no longer gives an error and opens the Currency tab (Mists Classic) or the PvP tab (TBC Anniversary)
 - The message for hiding the options button shows its arrows again
 - Hide collected, Illusions now hides the illusions you have (Retail, WoW Forever)
-- Bulk Purchase no longer gives an error with a reagent bag equipped
+- Bulk Purchase no longer counts the reagent bag's free slots for items that do not go in it, so buying the maximum no longer ends with Inventory is full (Retail, WoW Forever)
+- Bulk Purchase now counts the room left on stacks you already have (Mists Classic, TBC Anniversary, Classic Era)
 - With Scrap, its button now sits next to the repair buttons inside the vendor window, and the repair button no longer stretches (Mists Classic, TBC Anniversary, Classic Era)
 
 ## 24.1 - 2026-10-24
