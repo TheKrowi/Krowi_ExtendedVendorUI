@@ -676,6 +676,35 @@ local function CheckCurrencyClick()
     Add(shown and tabShown and 'PASS' or 'FAIL', ('currency click: the character window %s, %s %s'):format(shown and 'opened' or 'did not open', expected, tabShown and 'shown' or 'not shown'))
 end
 
+-- The repair-all buttons run their mouse scripts while disabled, so they can say what they do with nothing to repair (#32)
+local function CheckRepairButtons()
+    if not MerchantRepairAllButton:IsShown() then
+        return
+    end
+    for _, button in ipairs({ MerchantRepairAllButton, MerchantGuildBankRepairButton }) do
+        if button:IsShown() then
+            Add(button:GetMotionScriptsWhileDisabled() and 'PASS' or 'FAIL', ('%s: mouse scripts while disabled %s, now %s'):format(button:GetName(),
+                tostring(button:GetMotionScriptsWhileDisabled()), button:IsEnabled() and 'enabled' or 'disabled'))
+        end
+    end
+end
+
+-- The tooltip of the repair-all button under the mouse: Blizzard's with the cost when something needs repair, the addon's
+-- Nothing to repair line when the button is disabled
+local function CheckRepairTooltip()
+    if not (GameTooltip:IsShown() and GameTooltip:GetOwner() == MerchantRepairAllButton) then
+        Add('FAIL', 'repair tooltip: no tooltip for the repair-all button under the mouse')
+        return
+    end
+    local title = GameTooltipTextLeft1 and GameTooltipTextLeft1:GetText()
+    local second = GameTooltipTextLeft2 and GameTooltipTextLeft2:IsShown() and GameTooltipTextLeft2:GetText()
+    if MerchantRepairAllButton:IsEnabled() then
+        Add(title == REPAIR_ALL_ITEMS and 'PASS' or 'FAIL', ('repair tooltip (something to repair): "%s"'):format(tostring(title)))
+    else
+        Add(title == REPAIR_ALL_ITEMS and second == addon.L['Nothing to repair'] and 'PASS' or 'FAIL', ('repair tooltip (nothing to repair): "%s", "%s"'):format(tostring(title), tostring(second)))
+    end
+end
+
 -- The best armor each class wears (Cloth 1, Leather 2, Mail 3, Plate 4), and the one it wears before level 40 where the
 -- client has the old proficiencies; written out here so the check does not use the filter's own proficiency spells
 local CLASS_ARMOR = {
@@ -966,6 +995,7 @@ steps = {
             CheckMerchantTab()
             CheckTutorialArrow()
             CheckBulkPurchase()
+            CheckRepairButtons()
         end,
     },
     {
@@ -1104,6 +1134,17 @@ steps = {
         Check = CheckCurrencyClick,
     },
     {
+        Name = 'repair',
+        Text = 'hover over the repair-all button (the hammer)',
+        Wait = 'repair',
+        Run = function()
+            if not MerchantRepairAllButton:IsShown() then
+                return 'this vendor does not repair'
+            end
+        end,
+        Check = CheckRepairTooltip,
+    },
+    {
         Name = 'tooltip',
         Text = 'hover over an item and keep the mouse still',
         Wait = 'hover',
@@ -1205,6 +1246,20 @@ local function HookItemSlots()
     end
 end
 
+-- After Blizzard's OnEnter and the addon's tooltip hook (Gui/MerchantFrame.lua), which run first
+local repairHooked
+local function HookRepair()
+    if repairHooked then
+        return
+    end
+    repairHooked = true
+    MerchantRepairAllButton:HookScript('OnEnter', function()
+        if waitingFor == 'repair' then
+            Continue()
+        end
+    end)
+end
+
 -- After the token's own click, which opens the character window
 local function OnTokenClick(self)
     if waitingFor == 'currency' and self.IsCurrency then
@@ -1277,6 +1332,8 @@ RunStep = function(n)
             HookItemSlots()
         elseif step.Wait == 'currency' then
             HookTokens()
+        elseif step.Wait == 'repair' then
+            HookRepair()
         end
         Wait(step.Wait)
     else
