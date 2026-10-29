@@ -12,5 +12,8 @@ Spec: [spec.md](spec.md). Status: built; the in-game check is pending
 - Era: no currency in the banner, or a click does nothing.
 - Retail: the click still opens the Currency tab.
 
+## Taint review (2026-10-29)
+No taint or secret-value finding. One low finding, fixed: in combat, Blizzard refuses `ShowUIPanel`/`HideUIPanel` from addon code after `ToggleCharacter` has already switched the tab, and prints "Interface action failed because of an AddOn"; Retail's `ToggleTokenFrame` had the same. `ToggleCurrencyTab` now returns in combat on every client. The tainted tab state is written into CLAUDE.md's taint section.
+
 ## Where the build departed
 Built without a separate plan stage (Krowi, 2026-10-29). The reproduction before the fix was not recorded in game; the error follows from the code (the method is nil on every Classic character frame).

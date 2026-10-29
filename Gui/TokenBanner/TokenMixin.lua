@@ -132,6 +132,11 @@ end
 -- Only the Mainline character frame has ToggleTokenFrame. Classic opens the tab its character window shows currencies on:
 -- the Currency tab on Mists, the PvP tab with honor and arena points on TBC, none on Era
 local function ToggleCurrencyTab()
+    -- From addon code Blizzard refuses to show or hide the window in combat, after the tab is already switched, and says an
+    -- interface action failed (taint review of 2026-10-29)
+    if InCombatLockdown() then
+        return
+    end
     if addon.Util.IsModern then
         CharacterFrame:ToggleTokenFrame()
         return
