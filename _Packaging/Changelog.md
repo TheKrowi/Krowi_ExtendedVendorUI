@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - The message for hiding the options button shows its arrows again
 - Hide collected, Illusions now hides the illusions you have (Retail, WoW Forever)
 - Bulk Purchase no longer gives an error with a reagent bag equipped
+- With Scrap, its button now sits next to the repair buttons inside the vendor window, and the repair button no longer stretches (Mists Classic, TBC Anniversary, Classic Era)
 
 ## 24.1 - 2026-10-24
 ### Added
