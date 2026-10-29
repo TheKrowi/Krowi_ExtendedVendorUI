@@ -1,5 +1,5 @@
 # Intent: The search box reads the vendor's name without a secret-value probe
-Author: Krowi (maintainer), from the known-debt list in `CLAUDE.md`. Source: known debt (found 2026-10-15, rechecked 2026-10-29). Status: draft
+Author: Krowi (maintainer), from the known-debt list in `CLAUDE.md`. Source: known debt (found 2026-10-15, rechecked 2026-10-29). Status: accepted
 
 ## Problem
 When the vendor window opens, the search box's `MerchantFrame` `OnShow` hook (`Gui/SearchBox/SearchBoxMixin.lua:49-66`) reads `UnitName('npc')`, keeps it, and with Remember search on and Remember search between vendors off compares it with the previous vendor's name (line 60) to decide whether to keep the search. On Retail 12.x `UnitName` is `SecretWhenUnitNameIdentityRestricted` (live `UnitDocumentation.lua`). Where that restriction is on, the name is a secret value and the comparison errors. No player has reported it yet.
@@ -8,7 +8,7 @@ When the vendor window opens, the search box's `MerchantFrame` `OnShow` hook (`G
 Opening a vendor never gives a Lua error, wherever the player stands. Remember search keeps working as it does now wherever the name can be read.
 
 ## Affected users and systems
-- Clients: Retail; WoW Forever if its `UnitName` carries the same flag. Classic clients have no secret values.
+- Clients: Retail and WoW Forever (both carry the flag). Classic clients have no secret values.
 - Options: Remember search and Remember search between vendors (both off by default, `Options/Defaults.lua:15-16`), so only players who turned on Remember search alone hit the comparison.
 - Places: wherever a vendor can be opened under a unit-name restriction (to be found, see below).
 
