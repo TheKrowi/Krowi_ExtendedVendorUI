@@ -1,5 +1,5 @@
 # Intent: Sort the vendor list
-Author: SmallStrayFox (#55, 2025-03-25), scoped by Krowi (maintainer) on 2026-10-29. Status: draft
+Author: SmallStrayFox (#55, 2025-03-25), scoped by Krowi (maintainer) on 2026-10-29. Status: accepted
 
 ## Problem
 The grid shows a vendor's items in the vendor's own order. At a token vendor (the reporter's case: Trials of Style) a player who wants to spend tokens on the cheapest items first has to scan every page for the prices.

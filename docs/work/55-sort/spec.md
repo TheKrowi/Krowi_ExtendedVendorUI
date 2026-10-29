@@ -1,5 +1,5 @@
 # Spec: Sort the vendor list
-Intent: [intent.md](intent.md). Status: draft
+Intent: [intent.md](intent.md). Status: accepted
 
 ## Requirements
 1. The filter menu has a Sort section after Gear: Vendor order (default), Name, Gold price, Token price, Quality (and the extra keys Krowi picks), as radio buttons, plus a Reverse order checkbox.
@@ -40,9 +40,9 @@ Intent: [intent.md](intent.md). Status: draft
 - By hand at a token vendor with two currencies (Retail) and an honor vendor (Anniversary): the banner and Token price agree on the order.
 
 ## Decision
-Open, for Krowi:
-1. Banner order: gold, then tokens in the order they first appear in the vendor's list, on every client (recommended); or on Retail and Forever Blizzard's currency order (`GetMerchantCurrencies`) with first appearance only for cost items and on Classic.
-2. Token price: grouped by token in banner order, cheapest first (recommended); or one entry per token.
-3. Gold price: the price shown on the slot, which is for the shown stack (recommended); or per single item.
-4. Remembered for every vendor (recommended), or back to Vendor order at each vendor.
-5. Extra keys: item level (equippable items only; overlaps #107) and item type (class, then subtype, then name)?
+Krowi, 2026-10-29 ("#55 recommended"):
+1. Banner order: gold, then tokens in the order they first appear in the vendor's full list, on every client.
+2. Token price: grouped by token in banner order, cheapest first in each group, items without a token cost last.
+3. Gold price: the price shown on the slot (for the shown stack).
+4. Remembered, applies at every vendor.
+5. No extra keys for now (no recommendation was made); item level can come with #107 once its requester answers.
