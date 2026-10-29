@@ -48,6 +48,9 @@ end)
 
 MerchantFrame:HookScript('OnShow', function(self)
     local currentNpcName = UnitName('npc')
+    if issecretvalue and issecretvalue(currentNpcName) then
+        currentNpcName = nil -- Secret under unit identity restrictions (12.x), comparing it errors: counts as another vendor
+    end
 
     -- Scenario 1: RememberSearch=true AND RememberSearchBetweenVendors=true → keep search across all vendors
     if addon.Options.db.profile.RememberSearch and addon.Options.db.profile.RememberSearchBetweenVendors then
@@ -57,7 +60,7 @@ MerchantFrame:HookScript('OnShow', function(self)
 
     -- Scenario 2: RememberSearch=true AND RememberSearchBetweenVendors=false AND same NPC → keep search
     if addon.Options.db.profile.RememberSearch and not addon.Options.db.profile.RememberSearchBetweenVendors
-    and previousUnitName == currentNpcName then
+    and currentNpcName and previousUnitName == currentNpcName then
         return
     end
 
