@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file.
 - Opening a vendor in a raid, dungeon, delve or PvP match no longer gives an error with Remember search on
 - Clicking a currency in the token banner no longer gives an error and opens the Currency tab (Mists Classic) or the PvP tab (TBC Anniversary)
 - The message for hiding the options button shows its arrows again
+- Hide collected, Illusions now hides the illusions you have (Retail, WoW Forever)
+- Bulk Purchase no longer gives an error with a reagent bag equipped
 
 ## 24.1 - 2026-10-24
 ### Added
