@@ -1,12 +1,6 @@
 -- [[ Namespaces ]] --
 local addonName, addon = ...
 
--- [[ Version data ]] --
-local version = (GetBuildInfo())
-local major = string.match(version, '(%d+)%.(%d+)%.(%d+)(%w?)')
-addon.IsWrathClassic = major == '3'
-addon.IsDragonflightRetail = major == '10'
-
 -- [[ EllesmereUI's merchant list mode ]] --
 -- That mode replaces the merchant grid with EllesmereUI's own list of every item, which this addon can neither filter nor lay out.
 -- Then the addon loads nothing: every later file returns at its top, and a notice says why when a vendor opens (Krowi, 2026-10-21).

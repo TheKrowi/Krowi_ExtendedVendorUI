@@ -149,7 +149,6 @@
         "MerchantFrameLootFilter",
         "GetSpecializationInfo",
         "LE_LOOT_FILTER_SPEC1",
-        "MerchantFrame_SetFilter",
         "LE_LOOT_FILTER_CLASS",
         "LE_LOOT_FILTER_SPEC4",
         "ALL_SPECS",

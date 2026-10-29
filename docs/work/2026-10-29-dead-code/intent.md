@@ -1,5 +1,5 @@
 # Intent: Remove dead code and a stale editor global
-Author: Krowi (maintainer), from the known-debt list in `CLAUDE.md`. Source: known debt (found 2026-10-15, rechecked 2026-10-29). Status: draft
+Author: Krowi (maintainer), from the known-debt list in `CLAUDE.md`. Source: known debt (found 2026-10-15, rechecked 2026-10-29). Status: accepted
 
 ## Problem
 Nothing is broken for players. The code carries pieces nothing uses, which cost reading time and mislead searches:

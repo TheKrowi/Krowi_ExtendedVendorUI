@@ -224,17 +224,8 @@ function filters:ValidateGear(index, itemId)
 	return true
 end
 
-function filters:RefreshFilters()
-    -- for t, _ in next, addon.Tabs do
-    --     addon.Tabs[t].Filters = self.db.profile.Tabs[t]
-    -- end
-end
-
 function filters:Load()
 	self.db = LibStub('AceDB-3.0'):New('KrowiEVU_Filters', defaults, true)
-    self.db.RegisterCallback(self, 'OnProfileChanged', 'RefreshFilters')
-    self.db.RegisterCallback(self, 'OnProfileCopied', 'RefreshFilters')
-    self.db.RegisterCallback(self, 'OnProfileReset', 'RefreshFilters')
 end
 
 function filters:Validate(lootFilter, itemId)
