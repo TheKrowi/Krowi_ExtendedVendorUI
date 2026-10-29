@@ -79,13 +79,6 @@ L["Plugin_GW2UI_Desc"] = [=[This plugin gives the vendor items GW2 UI's merchant
 
 There are no options.]=]
 L["Plugin_GW2UI_Name"] = "GW2 UI"
-L["Plugin_Plumber_Desc"] = [=[This plugin tells you once a session, at a vendor, when Plumber's Merchant Price hides the token banner. With Merchant Price on, the bottom of the vendor window shows only your gold.
-
-To see the costs of the listed items again, turn off Merchant Price in Plumber's settings.
-
-There are no options.]=]
-L["Plugin_Plumber_MerchantPriceHidesTokenBanner"] = "Plumber's Merchant Price hides the token banner of Extended Vendor UI, so the vendor window shows only your gold. To see the costs of the listed items again, turn off Merchant Price in Plumber's settings."
-L["Plugin_Plumber_Name"] = "Plumber"
 L["Plugin_TransmogLootHelper_Desc"] = [=[This plugin keeps Transmog Loot Helper's overlay icons on the vendor items up to date when the page, filter or search changes. It needs Transmog Loot Helper 12.1.5-02 or later.
 
 There are no options.]=]

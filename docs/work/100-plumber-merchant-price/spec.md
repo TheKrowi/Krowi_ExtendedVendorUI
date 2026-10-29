@@ -87,3 +87,7 @@ Krowi, 2026-10-25:
 - A zhCN draft, with the strings on CurseForge.
 - No change to the description.
 - The findings and the player workaround are posted on Plumber [#533](https://github.com/Peterodox/Plumber/issues/533#issuecomment-6395438882).
+
+
+## Follow-up, 2026-10-29
+Plumber 1.9.7 (Peterodox, on [#533](https://github.com/Peterodox/Plumber/issues/533)) no longer starts Merchant Price while Krowi_ExtendedVendorUI is loaded (`C_AddOns.IsAddOnLoaded` in its `Modules/MerchantPrice.lua`). Krowi, 2026-10-29: drop the Plumber plugin, its three strings and its `/kevutest` check before 24.2 ships; keep the notice window's own close handlers and the `token banner visible` check. The strings are deleted from CurseForge from `main` after the merge.
