@@ -8,11 +8,9 @@ local mixin = KrowiEVU_BulkPurchaseMixin
 local ContainerGetNumFreeSlots = C_Container.GetContainerNumFreeSlots
 local ContainerGetNumSlots     = C_Container.GetContainerNumSlots
 local ContainerGetItemInfo     = C_Container.GetContainerItemInfo
+local ContainerIDToInventoryID = C_Container.ContainerIDToInventoryID
 local GetItemFamily_  = C_Item.GetItemFamily
 local GetItemCount_   = C_Item.GetItemCount
--- The global is deprecated on Retail 12.1.5 and Forever 1.60.1 and only there while loadDeprecationFallbacks is on; Classic has
--- only the global
-local GetInventorySlotInfo_ = C_PaperDollInfo and C_PaperDollInfo.GetInventorySlotInfo or GetInventorySlotInfo
 
 local function GetMerchantItemInfoNormalized(index)
     local info = addon.Gui.MerchantItemSlot.GetItemInfo(index)
@@ -54,9 +52,10 @@ local tooltipLines = {
     },
 }
 
-local function HasBagEquippedInSlot(slotID)
-    local inventorySlotId = GetInventorySlotInfo_('Bag' .. (slotID - 1) .. 'Slot')
-    return GetInventoryItemID('player', inventorySlotId) ~= nil
+-- Blizzard's own mapping: bag 5, Retail's reagent bag, sits in ReagentBag0Slot, not in a Bag4Slot, which does not exist
+local function HasBagEquippedInSlot(bag)
+    local inventorySlotId = ContainerIDToInventoryID(bag)
+    return inventorySlotId ~= nil and GetInventoryItemID('player', inventorySlotId) ~= nil
 end
 
 function mixin:GetFreeBagSpace(itemID)
