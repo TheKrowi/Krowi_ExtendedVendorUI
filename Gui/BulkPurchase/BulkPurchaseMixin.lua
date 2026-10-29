@@ -10,6 +10,9 @@ local ContainerGetNumSlots     = C_Container.GetContainerNumSlots
 local ContainerGetItemInfo     = C_Container.GetContainerItemInfo
 local GetItemFamily_  = C_Item.GetItemFamily
 local GetItemCount_   = C_Item.GetItemCount
+-- The global is deprecated on Retail 12.1.5 and Forever 1.60.1 and only there while loadDeprecationFallbacks is on; Classic has
+-- only the global
+local GetInventorySlotInfo_ = C_PaperDollInfo and C_PaperDollInfo.GetInventorySlotInfo or GetInventorySlotInfo
 
 local function GetMerchantItemInfoNormalized(index)
     local info = addon.Gui.MerchantItemSlot.GetItemInfo(index)
@@ -52,7 +55,7 @@ local tooltipLines = {
 }
 
 local function HasBagEquippedInSlot(slotID)
-    local inventorySlotId = GetInventorySlotInfo('Bag' .. (slotID - 1) .. 'Slot')
+    local inventorySlotId = GetInventorySlotInfo_('Bag' .. (slotID - 1) .. 'Slot')
     return GetInventoryItemID('player', inventorySlotId) ~= nil
 end
 
