@@ -602,16 +602,60 @@ local function CheckTutorialArrow()
     end
 end
 
--- Bulk Purchase's room in the bags for the vendor's first item, worked out as a shift-click does, without buying. Bag 5 is
--- Retail's reagent bag, whose slot the lookup before 24.2 asked for as Bag4Slot, which does not exist
+-- Room for an item counted from the bags: each bag that holds it gives its free slots times the stack size, plus what still
+-- fits on the stacks of it there. Bag 5, the reagent bag on Retail and WoW Forever, reports type 0 like a plain bag but
+-- takes crafting reagents only
+local function CountBagRoom(itemId, stack)
+    local isReagent = addon.Util.IsModern and select(17, C_Item.GetItemInfo(itemId)) == true
+    local family = C_Item.GetItemFamily(itemId) or 0
+    local room = 0
+    for bag = 0, addon.Util.IsModern and 5 or 4 do
+        local free, bagType = C_Container.GetContainerNumFreeSlots(bag)
+        local holds = free and bagType and (bagType == 0 or (family ~= 0 and bit.band(family, bagType) == bagType))
+        if holds and (bag ~= 5 or isReagent) then
+            room = room + free * stack
+            for slot = 1, C_Container.GetContainerNumSlots(bag) do
+                local info = C_Container.GetContainerItemInfo(bag, slot)
+                if info and info.itemID == itemId then
+                    room = room + stack - (info.stackCount or 0)
+                end
+            end
+        end
+    end
+    return room, isReagent
+end
+
+local function CheckBulkPurchaseRoom(index, itemId)
+    local mixin = KrowiEVU_BulkPurchaseMixin
+    local savedIndex = mixin.itemIndex
+    mixin.itemIndex = index
+    local ok, fit, stack = pcall(mixin.GetFreeBagSpace, mixin, itemId)
+    mixin.itemIndex = savedIndex
+    if not ok then
+        Add('FAIL', 'Bulk Purchase bag space: ' .. tostring(fit))
+        return
+    end
+    local room, isReagent = CountBagRoom(itemId, stack)
+    local text = ('Bulk Purchase: room for %s of item %d (stack %s%s), %d counted from the bags'):format(tostring(fit), itemId,
+        tostring(stack), isReagent and ', crafting reagent' or '', room)
+    Add(fit == room and 'PASS' or 'FAIL', text)
+end
+
+-- Bulk Purchase's room in the bags, worked out as a shift-click does, without buying: for the vendor's first item and, on
+-- Retail and WoW Forever, its first crafting reagent, the one kind the reagent bag takes
 local function CheckBulkPurchase()
-    local index, itemId
+    local index, itemId, reagentIndex, reagentId
     for i = 1, GetMerchantNumItems() do
         local link = GetMerchantItemLink(i)
         local id = link and tonumber(link:match('item:(%d+)'))
         if id then
-            index, itemId = i, id
-            break
+            if not index then
+                index, itemId = i, id
+            end
+            if addon.Util.IsModern and select(17, C_Item.GetItemInfo(id)) == true then
+                reagentIndex, reagentId = i, id
+                break
+            end
         end
     end
     if not index then
@@ -634,19 +678,9 @@ local function CheckBulkPurchase()
         tinsert(bags, text)
     end
     Note('bags ' .. table.concat(bags, '; '))
-    if addon.Util.IsModern and C_PaperDollInfo and C_PaperDollInfo.GetInventorySlotInfo then
-        local ok, slot = pcall(C_PaperDollInfo.GetInventorySlotInfo, 'Bag4Slot')
-        Note('the lookup before 24.2 for bag 5, Bag4Slot: ' .. (ok and ('slot ' .. tostring(slot)) or ('error ' .. tostring(slot))))
-    end
-    local mixin = KrowiEVU_BulkPurchaseMixin
-    local savedIndex = mixin.itemIndex
-    mixin.itemIndex = index
-    local ok, fit, stack = pcall(mixin.GetFreeBagSpace, mixin, itemId)
-    mixin.itemIndex = savedIndex
-    if ok then
-        Add('PASS', ('Bulk Purchase: room for %s of item %d (stack %s)'):format(tostring(fit), itemId, tostring(stack)))
-    else
-        Add('FAIL', 'Bulk Purchase bag space: ' .. tostring(fit))
+    CheckBulkPurchaseRoom(index, itemId)
+    if reagentIndex and reagentIndex ~= index then
+        CheckBulkPurchaseRoom(reagentIndex, reagentId)
     end
 end
 
