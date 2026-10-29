@@ -3,7 +3,11 @@ All notable changes to this project will be documented in this file.
 
 ## 24.2
 ### Added
+- Sorting by name, gold price, token price or quality, and in reverse, at the end of the filter menu
 - The repair buttons now say what they do when there is nothing to repair
+
+### Changed
+- The token banner now shows the vendor's currencies in the order the vendor uses them
 
 ### Fixed
 - The notice shown when EllesmereUI's list mode is on now closes with its X button in combat too

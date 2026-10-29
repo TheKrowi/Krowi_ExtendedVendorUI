@@ -238,12 +238,15 @@ function tokenBanner:Update()
 
     DrawGoldToken(goldCount)
 
-    for _, currency in pairs(currencyCounts) do
-        DrawCurrencyToken(currency.texture, currency.count, currency.link)
-    end
-
-    for _, item in pairs(itemCounts) do
-        DrawItemToken(item.texture, item.count, item.link)
+    -- Then each token in the order it first appears in the vendor's list, which the Token price sort follows too (#55); before,
+    -- pairs gave no order at all
+    for _, key in ipairs(addon.Filters:GetTokenOrder()) do
+        local currency, item = currencyCounts[key], itemCounts[key]
+        if currency then
+            DrawCurrencyToken(currency.texture, currency.count, currency.link)
+        elseif item then
+            DrawItemToken(item.texture, item.count, item.link)
+        end
     end
 
     HideRemainingTokens(tokenIndex + 1)
