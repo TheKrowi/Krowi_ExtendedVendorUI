@@ -36,10 +36,9 @@ local function IsForeverGamepadStyleOn()
     local ok, isOn = pcall(InputUtil.IsGamepadUIEnabled) -- Read at load on a beta client; a failure must not stop the addon
     return ok and isOn and true or false
 end
-addon.IsForeverGamepadStyleOn = IsForeverGamepadStyleOn -- Plugins/Plumber.lua
 
 -- [[ Notice window ]] --
--- For the not-loaded notices below and the Plumber one (Plugins/Plumber.lua)
+-- For the not-loaded notices below
 local notice, noticeText
 local function ShowNotice(text)
     if not notice then
@@ -71,7 +70,6 @@ local function ShowNotice(text)
     notice:SetHeight(noticeText:GetStringHeight() + 96)
     notice:Show()
 end
-addon.ShowNotice = ShowNotice
 
 if IsEllesmereUIListModeOn() then
     addon.NotLoaded = 'EllesmereUIListMode'

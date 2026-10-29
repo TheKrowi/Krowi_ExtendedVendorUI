@@ -2,8 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 ## 24.2
-### Added
-- A notice when Plumber's Merchant Price hides the token banner, with how to get it back, and a Plumber entry on the Plugins page (Retail, WoW Forever)
+### Fixed
+- The notice shown when EllesmereUI's list mode is on now closes with its X button in combat too
 
 ## 24.1 - 2026-10-24
 ### Added

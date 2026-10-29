@@ -322,29 +322,13 @@ end
 -- The token banner against the costs of the items in the list, worked out here the way the banner should: each cost shown
 -- once and nothing left from an earlier vendor or list, the token banner options followed. With the whole vendor in the
 -- list, also every currency Blizzard's own row shows.
-local plumberNoticeChecked -- The notice is one fact of the session, checked once a run
 local function CheckTokenBanner()
-    -- Shown is not enough: the banner is a child of Blizzard's MerchantMoneyInset, which Plumber's Merchant Price moves into a
-    -- hidden frame of its own. The addon only tells the player then (Plugins/Plumber.lua), so that case passes on the notice.
+    -- Shown is not enough: the banner is a child of Blizzard's MerchantMoneyInset, which another addon can hide (Plumber's
+    -- Merchant Price before 1.9.7 moved it into a hidden frame of its own)
     if KrowiEVU_TokenBanner:IsVisible() then
         Add('PASS', 'token banner visible')
     else
-        local plumber = KrowiEVU.PluginsApi.Plugins.Plumber
-        if plumber and plumber:IsHidingTokenBanner() then
-            Note('token banner hidden by Plumber\'s Merchant Price')
-            if not plumberNoticeChecked then
-                plumberNoticeChecked = true
-                if plumber.NoticeShown then
-                    Add('PASS', 'Plumber notice shown this session')
-                elseif plumber.HidingAtVendorOpen == false then
-                    Note('Merchant Price came on after this vendor opened, so the notice comes at the next vendor')
-                else
-                    Add('FAIL', 'Plumber notice not shown this session')
-                end
-            end
-        else
-            Add('FAIL', 'token banner not visible')
-        end
+        Add('FAIL', 'token banner not visible')
     end
 
     local options = addon.Options.db.profile.TokenBanner
@@ -1120,7 +1104,6 @@ function tests.Start(onOpen)
     HookBlizzard()
     skins = GetSkinStates()
     counts = { PASS = 0, FAIL = 0, SKIP = 0 }
-    plumberNoticeChecked = nil
     local profile = addon.Options.db.profile
     saved = {
         Filter = filters:GetFilter(),
