@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 
 ## 24.2
+### Added
+- The repair buttons now say what they do when there is nothing to repair
+
 ### Fixed
 - The notice shown when EllesmereUI's list mode is on now closes with its X button in combat too
 - Opening a vendor in a raid, dungeon, delve or PvP match no longer gives an error with Remember search on
