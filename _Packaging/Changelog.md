@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 24.2
+## 24.2 - 2026-10-30
 ### Added
 - Sorting by name, gold price, token price or quality, and in reverse, at the end of the filter menu
 - The repair buttons now say what they do when there is nothing to repair
