@@ -11,6 +11,8 @@ local ContainerGetItemInfo     = C_Container.GetContainerItemInfo
 local ContainerIDToInventoryID = C_Container.ContainerIDToInventoryID
 local GetItemFamily_  = C_Item.GetItemFamily
 local GetItemCount_   = C_Item.GetItemCount
+local GetItemInfo_    = C_Item.GetItemInfo
+local ReagentBag      = 5
 
 local function GetMerchantItemInfoNormalized(index)
     local info = addon.Gui.MerchantItemSlot.GetItemInfo(index)
@@ -58,33 +60,34 @@ local function HasBagEquippedInSlot(bag)
     return inventorySlotId ~= nil and GetInventoryItemID('player', inventorySlotId) ~= nil
 end
 
+-- The reagent bag (bag 5, Retail and WoW Forever) reports bag type 0 like a plain bag, but takes crafting reagents only.
+-- An item without data yet counts as no reagent: better too little room than purchases that fail with Inventory is full
+local function IsCraftingReagent(itemID)
+    return select(17, GetItemInfo_(itemID)) == true
+end
+
 function mixin:GetFreeBagSpace(itemID)
     local canFit   = 0
     local itemType = GetItemFamily_(itemID) or 0
     local stackSize = GetMerchantItemMaxStack(self.itemIndex) or 1
+    local isReagent = addon.Util.IsModern and IsCraftingReagent(itemID)
 
     local maxBag = addon.Util.IsModern and 5 or 4
     for bag = 0, maxBag do
         local freeSpace, bagType = ContainerGetNumFreeSlots(bag)
-        if freeSpace and bagType then
+        if freeSpace and bagType and (bag ~= ReagentBag or isReagent) then
             if bagType == 0
             or (HasBagEquippedInSlot(bag)
                 and (bagType == itemType or (itemType ~= 0 and bit.band(itemType, bagType) == bagType)))
             then
                 canFit = canFit + (freeSpace * stackSize)
 
+                -- C_Container.GetContainerItemInfo returns a table on every client
                 local totalSlots = ContainerGetNumSlots(bag)
                 for slot = 1, totalSlots do
-                    if addon.Util.IsModern then
-                        local itemInfo = ContainerGetItemInfo(bag, slot)
-                        if itemInfo and itemInfo.itemID == itemID then
-                            canFit = canFit + (stackSize - (itemInfo.stackCount or 0))
-                        end
-                    else
-                        local _, count, _, _, _, _, _, _, _, slotItemID = ContainerGetItemInfo(bag, slot)
-                        if slotItemID == itemID then
-                            canFit = canFit + (stackSize - (count or 0))
-                        end
+                    local itemInfo = ContainerGetItemInfo(bag, slot)
+                    if itemInfo and itemInfo.itemID == itemID then
+                        canFit = canFit + (stackSize - (itemInfo.stackCount or 0))
                     end
                 end
             end
