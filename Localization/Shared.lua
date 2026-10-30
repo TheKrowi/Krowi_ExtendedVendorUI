@@ -9,6 +9,7 @@ L['All'] = ALL
 L['Search'] = SEARCH
 L['All Specs'] = ALL_SPECS
 L['Bind on Equip'] = ITEM_BIND_ON_EQUIP
+L['Sort_Name'] = NAME
 
 local l = addon.Localization.GetLocale(addon)
 L['Appearance Sets'] = WARDROBE .. ' (' .. l['Ensembles'] .. ', ' .. l['Arsenals'] .. ', ...)'

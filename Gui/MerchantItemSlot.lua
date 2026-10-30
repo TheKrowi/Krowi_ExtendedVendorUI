@@ -112,6 +112,13 @@ function merchantItemSlot.StopQualityUpdates()
     qualityEventFrame:UnregisterEvent('GET_ITEM_INFO_RECEIVED')
 end
 
+-- The Name and Quality sorts wait for item data too (Filters.lua, SortList), on every client
+function merchantItemSlot.WaitForItemInfo()
+    if not qualityEventFrame:IsEventRegistered('GET_ITEM_INFO_RECEIVED') then
+        qualityEventFrame:RegisterEvent('GET_ITEM_INFO_RECEIVED')
+    end
+end
+
 -- [[ Tint ]] --
 -- The same on every client
 local function Tint(slot, numAvailable, isKnownHeirloom, tintRed)

@@ -705,6 +705,113 @@ local function CheckRepairTooltip()
     end
 end
 
+-- [[ Sort (#55) ]] --
+-- Each token's place in the order it first appears in the vendor's full list
+local function GetTokenPositions()
+    local position, count = {}, 0
+    for index = 1, GetMerchantNumItems() do
+        for costIndex = 1, GetMerchantItemCostInfo(index) or 0 do
+            local _, _, link = GetMerchantItemCostItem(index, costIndex)
+            local key = link and GetCostKey(link)
+            if key and not position[key] then
+                count = count + 1
+                position[key] = count
+            end
+        end
+    end
+    return position
+end
+
+-- Worked out here from the merchant API, not with the filter's own comparison; for Token price the first token, in the
+-- vendor's order, that the item costs and its amount
+local function GetSortValue(index, by, position)
+    if by == 'Quality' then
+        local itemId = GetMerchantItemID(index)
+        return itemId and C_Item.GetItemQualityByID(itemId)
+    elseif by == 'TokenPrice' then
+        local first, amount
+        for costIndex = 1, GetMerchantItemCostInfo(index) or 0 do
+            local _, value, link = GetMerchantItemCostItem(index, costIndex)
+            local key = link and GetCostKey(link)
+            if key and position[key] and (not first or position[key] < first) then
+                first, amount = position[key], value
+            end
+        end
+        return first and { first, amount }
+    end
+    local info = merchantItemSlot.GetItemInfo(index)
+    if by == 'Name' then
+        return info and info.name
+    end
+    return info and info.price and info.price > 0 and info.price or nil
+end
+
+-- Whether a may come right before b: no value last, then name A to Z, prices cheapest first, quality best first, Reverse
+-- flipping the direction but not where the items without a value go, nor the token groups' order
+local function MayPrecede(a, b, by, reverse)
+    if a == nil then
+        return b == nil
+    elseif b == nil then
+        return true
+    end
+    if by == 'TokenPrice' then
+        if a[1] ~= b[1] then
+            return a[1] < b[1]
+        end
+        a, b = a[2], b[2]
+    elseif by == 'Name' then
+        a, b = strcmputf8i(a, b), 0
+    elseif by == 'Quality' then
+        a, b = b, a
+    end
+    if reverse then
+        return a >= b
+    end
+    return a <= b
+end
+
+local function CheckSort(by, reverse)
+    local list = container:GetIndices()
+    local position = GetTokenPositions()
+    local values, withValue = {}, 0
+    for _, index in ipairs(list) do
+        values[index] = GetSortValue(index, by, position)
+        if values[index] ~= nil then
+            withValue = withValue + 1
+        end
+    end
+    local wrong
+    for i = 1, #list - 1 do
+        if not MayPrecede(values[list[i]], values[list[i + 1]], by, reverse) then
+            wrong = i
+            break
+        end
+    end
+    local text = ('sort by %s%s: %d of %d items have a value'):format(by, reverse and ', reversed' or '', withValue, #list)
+    if wrong then
+        Add('FAIL', text .. (', out of order at %d and %d (vendor items %d and %d)'):format(wrong, wrong + 1, list[wrong], list[wrong + 1]))
+    else
+        Add('PASS', text .. ', in order')
+    end
+    if by ~= 'TokenPrice' then
+        return
+    end
+    -- The token banner shows its tokens in the same order, after gold
+    local last, misplaced, i = 0, {}, 1
+    while _G['KrowiEVU_TokenBannerToken' .. i] do
+        local token = _G['KrowiEVU_TokenBannerToken' .. i]
+        if token:IsShown() and not token.IsGold and token.Link then
+            local place = position[GetCostKey(token.Link)]
+            if not place or place <= last then
+                tinsert(misplaced, GetCostKey(token.Link) or tostring(token.Link))
+            end
+            last = place or last
+        end
+        i = i + 1
+    end
+    Add(#misplaced == 0 and 'PASS' or 'FAIL', 'token banner in the vendor\'s token order' .. (#misplaced > 0 and (', out of place: ' .. table.concat(misplaced, ', ')) or ''))
+end
+
 -- The best armor each class wears (Cloth 1, Leather 2, Mail 3, Plate 4), and the one it wears before level 40 where the
 -- client has the old proficiencies; written out here so the check does not use the filter's own proficiency spells
 local CLASS_ARMOR = {
@@ -963,6 +1070,24 @@ local function RestoreOptions()
     local tokenBanner = addon.Options.db.profile.TokenBanner
     tokenBanner.GoldTotal, tokenBanner.HideNone = saved.GoldTotal, saved.HideNone
     filters.db.profile.HideCollected.Illusions = saved.HideIllusions
+    filters.db.profile.Sort.By, filters.db.profile.Sort.Reverse = saved.Sort.By, saved.Sort.Reverse
+end
+
+-- A step that sorts the list under filter All (#55)
+local function SortStep(by, reverse)
+    return {
+        Name = 'sort-' .. by:lower() .. (reverse and '-reverse' or ''),
+        Text = 'filter All, sort by ' .. addon.L['Sort_' .. by] .. (reverse and ', ' .. addon.L['Reverse order'] or ''),
+        Run = function()
+            RestoreOptions()
+            filters.db.profile.Sort.By, filters.db.profile.Sort.Reverse = by, reverse
+            KrowiEVU_FilterButton:SetFilter(LE_LOOT_FILTER_ALL)
+        end,
+        Check = function()
+            CheckMerchantTab()
+            CheckSort(by, reverse)
+        end,
+    }
 end
 
 local function Restore()
@@ -1078,6 +1203,11 @@ steps = {
             KrowiEVU_FilterButton:SetFilter(LE_LOOT_FILTER_ALL)
         end,
     },
+    SortStep('Name', false),
+    SortStep('GoldPrice', false),
+    SortStep('GoldPrice', true),
+    SortStep('TokenPrice', false),
+    SortStep('Quality', false),
     {
         Name = 'illusions',
         Text = 'filter All, Hide collected: Illusions on',
@@ -1463,6 +1593,7 @@ function tests.Start(onOpen)
         GoldTotal = profile.TokenBanner.GoldTotal,
         HideNone = profile.TokenBanner.HideNone,
         HideIllusions = filters.db.profile.HideCollected.Illusions,
+        Sort = CopyTable(filters.db.profile.Sort),
     }
 
     run = { Time = date('%Y-%m-%d %H:%M:%S'), Steps = {}, OnOpen = onOpen }
@@ -1491,7 +1622,8 @@ function tests.Start(onOpen)
             mouseSteps = mouseSteps + 1
         end
     end
-    print(prefix .. ('%d steps, about 30 s, then %d that need the mouse; /kevutest again stops it'):format(#steps, mouseSteps))
+    local seconds = math.ceil((#steps - mouseSteps) * (SETTLE + AFTER_SHOT) / 5) * 5
+    print(prefix .. ('%d steps, about %d s, then %d that need the mouse; /kevutest again stops it'):format(#steps, seconds, mouseSteps))
     RunStep(1)
 end
 

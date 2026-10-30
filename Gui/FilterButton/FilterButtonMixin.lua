@@ -281,6 +281,23 @@ function KrowiEVU_FilterButtonMixin:CreateMenu(menu)
 		)
 	end
 	mb:AddChildMenu(menu, minQuality)
+
+	mb:CreateDivider(menu)
+
+	-- Sort section: the order of the list after the filters (#55)
+	mb:CreateTitle(menu, addon.L['Sort by'])
+	for _, by in ipairs(addon.Filters.SortKeys) do
+		mb:CreateCustomRadio(menu, addon.L['Sort_' .. by],
+			function()
+				return addon.Filters.db.profile.Sort.By == by
+			end,
+			function()
+				addon.Filters.db.profile.Sort.By = by
+				addon.Filters:SetFilter(addon.Filters:GetFilter())
+			end
+		)
+	end
+	self:CreateCheckbox(menu, addon.L['Reverse order'], {'Sort', 'Reverse'})
 end
 
 -- Hooks

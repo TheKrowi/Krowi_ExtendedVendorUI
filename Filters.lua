@@ -97,6 +97,10 @@ local defaults = {
 			HideSubOptimalArmor = false,
 			MinQuality = 0, -- An Enum.ItemQuality value; 0 is off
 		},
+		Sort = { -- The order of the list, at every vendor (#55)
+			By = 'Vendor', -- One of filters.SortKeys
+			Reverse = false,
+		},
 	}
 }
 
@@ -165,7 +169,140 @@ function filters:BuildList(list)
 			self.RecordRecipe(itemId)
 		end
 	end
+	self:SortList(list)
 	return list
+end
+
+-- [[ Sort ]] --
+-- The order of the list after the filters (#55, Krowi's choices of 2026-10-29). Each key has a natural direction, which
+-- Reverse flips: name A to Z, prices cheapest first, quality best first, the vendor's own order. An item without a value for
+-- the key goes last either way, and ties keep the vendor's order.
+filters.SortKeys = { 'Vendor', 'Name', 'GoldPrice', 'TokenPrice', 'Quality' }
+
+local function GetCostKey(link)
+	return link and (link:match('currency:%d+') or link:match('item:%d+'))
+end
+
+-- The tokens a vendor takes, as 'currency:<id>' or 'item:<id>', in the order they first appear in its full list: the token
+-- banner's order and the Token price sort's. The full list, so a filter does not reorder the banner.
+function filters:GetTokenOrder()
+	local order = {}
+	local seen = {}
+	for index = 1, GetMerchantNumItems() do
+		for costIndex = 1, GetMerchantItemCostInfo(index) or 0 do
+			local _, _, link = GetMerchantItemCostItem(index, costIndex)
+			local key = GetCostKey(link)
+			if key and not seen[key] then
+				seen[key] = true
+				tinsert(order, key)
+			end
+		end
+	end
+	return order
+end
+
+local function GetSortValue(index, by)
+	if by == 'TokenPrice' then
+		local costs = {}
+		for costIndex = 1, GetMerchantItemCostInfo(index) or 0 do
+			local _, value, link = GetMerchantItemCostItem(index, costIndex)
+			local key = GetCostKey(link)
+			if key and value then
+				costs[key] = (costs[key] or 0) + value
+			end
+		end
+		return costs
+	elseif by == 'Quality' then
+		local itemId = GetMerchantItemID(index)
+		return itemId and C_Item.GetItemQualityByID(itemId)
+	end
+	local info = addon.Gui.MerchantItemSlot.GetItemInfo(index)
+	if by == 'Name' then
+		return info and info.name
+	end
+	return info and info.price and info.price > 0 and info.price or nil -- GoldPrice: as the slot shows it, for its stack
+end
+
+-- -1 when a goes first, 1 when b does, 0 for a tie; nil goes last in both directions
+local function CompareValues(a, b, reverse)
+	if a == nil or b == nil then
+		if a == b then
+			return 0
+		end
+		return a == nil and 1 or -1
+	end
+	if a == b then
+		return 0
+	end
+	return (a < b) ~= reverse and -1 or 1
+end
+
+local function CompareNames(a, b, reverse)
+	if a == nil or b == nil then
+		return CompareValues(a, b, reverse)
+	end
+	local result = strcmputf8i(a, b) -- Case-insensitive and in the client's alphabet
+	if result == 0 then
+		return 0
+	end
+	return (result < 0) ~= reverse and -1 or 1
+end
+
+-- Grouped by the first token in banner order that only one of the two costs, cheapest first among those that cost it; items
+-- without a token cost last
+local function CompareTokens(a, b, reverse, order)
+	for _, key in ipairs(order) do
+		local result = CompareValues(a[key], b[key], reverse)
+		if result ~= 0 then
+			return result
+		end
+	end
+	return 0
+end
+
+function filters:SortList(list)
+	local by, reverse = self.db.profile.Sort.By, self.db.profile.Sort.Reverse and true or false
+	if by == 'Vendor' or not by then
+		if reverse then
+			for i = 1, math.floor(#list / 2) do
+				list[i], list[#list - i + 1] = list[#list - i + 1], list[i]
+			end
+		end
+		return
+	end
+	local values = {}
+	local waiting
+	for _, index in ipairs(list) do
+		values[index] = GetSortValue(index, by)
+		-- A name or quality is missing until the item's data has arrived: ask for it and sort again then, so the order settles
+		-- as the window opens and not after a purchase, when a second click on the slot would buy another item (taint review
+		-- of 2026-10-29). Only for data not cached yet, or an item without a quality would ask forever.
+		local itemId = values[index] == nil and (by == 'Name' or by == 'Quality') and GetMerchantItemID(index)
+		if itemId and not C_Item.IsItemDataCachedByID(itemId) then
+			C_Item.RequestLoadItemDataByID(itemId)
+			waiting = true
+		end
+	end
+	if waiting then
+		addon.Gui.MerchantItemSlot.WaitForItemInfo()
+	end
+	local order = by == 'TokenPrice' and self:GetTokenOrder()
+	table.sort(list, function(a, b)
+		local result
+		if by == 'Name' then
+			result = CompareNames(values[a], values[b], reverse)
+		elseif by == 'Quality' then
+			result = CompareValues(values[a], values[b], not reverse) -- Best first
+		elseif by == 'TokenPrice' then
+			result = CompareTokens(values[a], values[b], reverse, order)
+		else
+			result = CompareValues(values[a], values[b], reverse)
+		end
+		if result ~= 0 then
+			return result < 0
+		end
+		return a < b
+	end)
 end
 
 -- [[ Gear ]] --
