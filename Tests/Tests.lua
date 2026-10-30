@@ -45,7 +45,7 @@ local function Join(list)
 end
 
 -- [[ Environment ]] --
-local ADDONS = { 'ElvUI', 'GW2_UI', 'EllesmereUI', 'EllesmereUIBlizzardSkin', 'CanIMogIt', 'TransmogLootHelper', 'Auctionator', 'Krowi_Vendorer', 'Plumber' }
+local ADDONS = { 'ElvUI', 'GW2_UI', 'EllesmereUI', 'EllesmereUIBlizzardSkin', 'CanIMogIt', 'TransmogLootHelper', 'Auctionator', 'Krowi_Vendorer', 'Plumber', 'Scrap' }
 local PLUGINS = { 'ElvUI', 'GW2_UI', 'EllesmereUI', 'EllesmereUIItemLevel', 'CanIMogIt', 'TransmogLootHelper' }
 
 -- The Krowi_Util client flags and the ones each client's WOW_PROJECT_ID should make true; the expansion flags follow the
@@ -726,6 +726,34 @@ local function CheckGear()
     Add(#wrong == 0 and 'PASS' or 'FAIL', ('Gear: %d of %d weapon and armor pieces hidden'):format(hidden, pieces) .. (#wrong > 0 and ('; shown though they should not be: ' .. table.concat(wrong, ', ')) or ''))
 end
 
+-- Scrap's merchant button on the Classic clients (#80, Plugins/Scrap.lua): inside the window, and Blizzard's repair-all
+-- button with this addon's one anchor, not Scrap's second
+local function CheckScrap()
+    local button = not addon.Util.IsModern and C_AddOns.IsAddOnLoaded('Scrap') and Scrap and Scrap.Merchant
+    if not (button and button:IsVisible()) then
+        return
+    end
+    local placed = KrowiEVU.PluginsApi.Plugins.Scrap.LastPlaced
+    if placed then
+        Note(('Scrap had anchored its button to %s and the repair-all button had %d anchor(s), before the plugin placed them'):format(tostring(placed.ScrapAnchor), placed.RepairAllPoints))
+    end
+    local left, right, frameLeft, frameRight = button:GetLeft(), button:GetRight(), MerchantFrame:GetLeft(), MerchantFrame:GetRight()
+    if not (left and right and frameLeft and frameRight) then
+        Add('SKIP', 'Scrap: its button has no position')
+        return
+    end
+    local scale, frameScale = button:GetEffectiveScale(), MerchantFrame:GetEffectiveScale()
+    local inside = left * scale >= frameLeft * frameScale - 1 and right * scale <= frameRight * frameScale + 1
+    Add(inside and 'PASS' or 'FAIL', 'Scrap: its button is ' .. (inside and 'inside' or 'outside') .. ' the window')
+    -- Scrap makes it 37 wide; two anchors left over from another vendor stretch it
+    local width = right - left
+    Add(math.abs(width - 37) < 1 and 'PASS' or 'FAIL', ('Scrap: its button is %.0f wide (37 unstretched)'):format(width))
+    if MerchantRepairAllButton:IsShown() then
+        local points = MerchantRepairAllButton:GetNumPoints()
+        Add(points == 1 and 'PASS' or 'FAIL', ('Scrap: the repair-all button has %d anchor(s)'):format(points))
+    end
+end
+
 local function CheckMerchantTab()
     CheckGrid()
     CheckBlizzardHidden()
@@ -735,6 +763,7 @@ local function CheckMerchantTab()
     CheckServerList()
     CheckHousing()
     CheckRecipes()
+    CheckScrap()
 end
 
 local function CheckTooltip()

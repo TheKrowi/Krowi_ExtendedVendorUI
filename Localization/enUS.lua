@@ -79,6 +79,10 @@ L["Plugin_GW2UI_Desc"] = [=[This plugin gives the vendor items GW2 UI's merchant
 
 There are no options.]=]
 L["Plugin_GW2UI_Name"] = "GW2 UI"
+L["Plugin_Scrap_Desc"] = [=[This plugin keeps Scrap's button inside the vendor window, next to the repair buttons, on the Classic clients.
+
+There are no options.]=]
+L["Plugin_Scrap_Name"] = "Scrap"
 L["Plugin_TransmogLootHelper_Desc"] = [=[This plugin keeps Transmog Loot Helper's overlay icons on the vendor items up to date when the page, filter or search changes. It needs Transmog Loot Helper 12.1.5-02 or later.
 
 There are no options.]=]
