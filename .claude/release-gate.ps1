@@ -45,9 +45,20 @@
     $changed = $newest.LastWriteTime
     $changedName = $newest.FullName.Substring($repo.Length + 1)
 
+    # A client the release may go out without, on Krowi's word, until the date its servers can be tested again; past
+    # that date the check applies again by itself. Remove an entry once that client has its run
+    $untested = @{
+        Forever = @{ Until = [datetime]'2026-11-05'; Why = 'servers offline until 2026-11-04 (Krowi, 2026-10-30, 24.2)' }
+    }
+
     $reader = Join-Path $repo '.claude\tools\read-tests.lua'
     $deploy = Join-Path $KitRoot 'tools\Deploy.ps1'
     foreach ($client in $clients) {
+        if ($untested.ContainsKey($client) -and (Get-Date) -lt $untested[$client].Until) {
+            Warn "${client}: /kevutest not checked: $($untested[$client].Why); run it there once it is back"
+            continue
+        }
+
         # The installed copy is this checkout
         try { $out = (& $deploy -Repo $repo -Client $client -WhatIf 2>&1 | ForEach-Object { "$_" }) -join "`n" }
         catch { Fail "${client}: could not compare its AddOns folder with this checkout: $_"; continue }
