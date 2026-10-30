@@ -8,6 +8,7 @@ local mixin = KrowiEVU_BulkPurchaseMixin
 local ContainerGetNumFreeSlots = C_Container.GetContainerNumFreeSlots
 local ContainerGetNumSlots     = C_Container.GetContainerNumSlots
 local ContainerGetItemInfo     = C_Container.GetContainerItemInfo
+local ContainerIDToInventoryID = C_Container.ContainerIDToInventoryID
 local GetItemFamily_  = C_Item.GetItemFamily
 local GetItemCount_   = C_Item.GetItemCount
 
@@ -51,9 +52,10 @@ local tooltipLines = {
     },
 }
 
-local function HasBagEquippedInSlot(slotID)
-    local inventorySlotId = GetInventorySlotInfo('Bag' .. (slotID - 1) .. 'Slot')
-    return GetInventoryItemID('player', inventorySlotId) ~= nil
+-- Blizzard's own mapping: bag 5, Retail's reagent bag, sits in ReagentBag0Slot, not in a Bag4Slot, which does not exist
+local function HasBagEquippedInSlot(bag)
+    local inventorySlotId = ContainerIDToInventoryID(bag)
+    return inventorySlotId ~= nil and GetInventoryItemID('player', inventorySlotId) ~= nil
 end
 
 function mixin:GetFreeBagSpace(itemID)
@@ -98,6 +100,9 @@ local function IsItemUnique(itemID)
     if not tooltipData then return false end
     local uniqueString = ITEM_UNIQUE or 'Unique'
     for _, line in ipairs(tooltipData.lines) do
+        if issecretvalue and issecretvalue(line.leftText) then
+            return false -- Tooltip text can be secret under restrictions (12.x); comparing it errors
+        end
         if line.leftText == uniqueString then
             return true
         end

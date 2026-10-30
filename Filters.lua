@@ -224,17 +224,8 @@ function filters:ValidateGear(index, itemId)
 	return true
 end
 
-function filters:RefreshFilters()
-    -- for t, _ in next, addon.Tabs do
-    --     addon.Tabs[t].Filters = self.db.profile.Tabs[t]
-    -- end
-end
-
 function filters:Load()
 	self.db = LibStub('AceDB-3.0'):New('KrowiEVU_Filters', defaults, true)
-    self.db.RegisterCallback(self, 'OnProfileChanged', 'RefreshFilters')
-    self.db.RegisterCallback(self, 'OnProfileCopied', 'RefreshFilters')
-    self.db.RegisterCallback(self, 'OnProfileReset', 'RefreshFilters')
 end
 
 function filters:Validate(lootFilter, itemId)
@@ -462,10 +453,18 @@ if addon.Util.IsModern then -- Illusion
 		return classId == Enum.ItemClass.Consumable and subclassId == Enum.ItemConsumableSubclass.Other
 	end
 
+	-- A collected illusion shows Blizzard's Already known line, as a known recipe does. No API maps an item to its illusion,
+	-- and the line type this used to look for, RestrictedSpellKnown, does not exist (live and forever UI source, 2026-10-29)
 	function filters.IsIllusionCollected(itemId)
 		local tooltipInfo = C_TooltipInfo.GetItemByID(itemId)
+		if not tooltipInfo then
+			return false
+		end
 		for _, line in next, tooltipInfo.lines do
-			if line.type == Enum.TooltipDataLineType.RestrictedSpellKnown then
+			if issecretvalue and issecretvalue(line.leftText) then
+				return false -- Tooltip text is secret under some restrictions (12.x): the item stays
+			end
+			if line.leftText == ITEM_SPELL_KNOWN then
 				return true
 			end
 		end

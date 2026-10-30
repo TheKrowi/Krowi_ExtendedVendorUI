@@ -1,5 +1,5 @@
 -- [[ Namespaces ]] --
-local _, addon = ...
+local addonName, addon = ...
 if addon.NotLoaded then return end
 local merchantItemsContainer = addon.Gui.MerchantItemsContainer
 
@@ -47,7 +47,7 @@ function KrowiEVU_OptionsButtonMixin:ShowHide()
     self:Hide()
 end
 
-local media = 'Interface\\AddOns\\Krowi_MerchantFrameExtended\\Media\\'
+local media = 'Interface\\AddOns\\' .. addonName .. '\\Media\\'
 local function ReplaceVarsWithMenu(str, vars)
     if not vars then
         vars = type(str) == 'table' and str or {str}

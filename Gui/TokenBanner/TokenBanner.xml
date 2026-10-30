@@ -1,7 +1,6 @@
 <Ui>
     <Script file='TokenMixin.lua'/>
     <Script file='TokenBanner.lua'/>
-    <Script file='TokenBannerMixin.lua'/>
 
     <Button name='KrowiEVU_Token_Template' mixin='KrowiEVU_TokenMixin' hidden='true' virtual='true'>
         <Size x='50' y='12'/>
