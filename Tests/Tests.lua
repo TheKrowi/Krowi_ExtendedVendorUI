@@ -690,7 +690,13 @@ local function CheckKnown()
     end
     Note(#nestedKnown == 0 and 'no Already known among the lines of an item a recipe makes'
         or ('Already known among the lines of the item made, not counted, for %d: %s'):format(#nestedKnown, table.concat(nestedKnown, ', ')))
-    Add(#wrong == 0 and 'PASS' or 'FAIL', 'Hide collected, Recipes and Other: ' .. (#wrong == 0 and 'Already known ones hidden, the rest shown' or ('wrong for ' .. table.concat(wrong, ', '))))
+    if #wrong > 0 then
+        Add('FAIL', 'Hide collected, Recipes and Other: wrong for ' .. table.concat(wrong, ', '))
+    elseif kinds.Recipe.All + kinds.Other.All == 0 then
+        Add('SKIP', 'Hide collected, Recipes and Other: no readable recipe or item in no category at this vendor')
+    else
+        Add('PASS', 'Hide collected, Recipes and Other: Already known ones hidden, the rest shown')
+    end
     if #disagree > 0 then
         Add('FAIL', 'Already known: the tooltip and the collection disagree for ' .. table.concat(disagree, ', '))
     elseif #checked > 0 then

@@ -449,7 +449,8 @@ local function GetScanTooltip()
 end
 
 -- The item's tooltip as { Text, Type } lines (Type only where C_TooltipInfo is read), or nil when it cannot be read yet: item
--- data not cached (asked for, and the list is built again when it arrives, as the sorts do) or a secret line (12.x)
+-- data not cached (asked for, and the list is built again when it arrives, as the sorts do), a secret line (12.x) or a scan
+-- that drew no line
 function filters.GetTooltipLines(itemId)
 	if not C_Item.IsItemDataCachedByID(itemId) then
 		C_Item.RequestLoadItemDataByID(itemId)
@@ -479,6 +480,9 @@ function filters.GetTooltipLines(itemId)
 		tinsert(lines, { Text = fontString and fontString:GetText() })
 	end
 	tooltip:Hide() -- Shown by SetItemByID; it has no scripts, so this only keeps it out of the way
+	if #lines == 0 then
+		return nil -- Not taken for "not known": the recipe record keeps what it had (code review of 2026-11-04)
+	end
 	return lines
 end
 
@@ -488,7 +492,9 @@ end
 -- (/kevutest, Retail 12.1.5, 2026-11-04, Recipe: Loa's Gathering: ItemName, ItemBinding, NestedBlock, "\nLoa's Gathering",
 -- its Use line, then the recipe's Teaches you line, reagents, Requires, Already known). The Classic clients start it with a
 -- line break and end it with the tooltip (Already Known #19, TBC 2.5.5: "Already known", then "Use: Teaches you how to make
--- a Rage Potion.", then "\nRage Potion", its own lines to the end).
+-- a Rage Potion.", then "\nRage Potion", its own lines to the end; /kevutest, Mists 5.5.4 and Era 1.15.9, 2026-11-04: the
+-- same order, Requires and Teaches you above "\nWhitecrest Gumbo"). Without a Teaches you line after the NestedBlock line
+-- the rest of the tooltip is left out, so a known item reads as not known and stays shown, never the other way round.
 function filters.GetNestedLines(lines)
 	local first
 	for i = 2, #lines do

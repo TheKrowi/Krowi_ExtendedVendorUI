@@ -1,5 +1,5 @@
 # Plan: Hide collected for everything the game calls Already known, on every client
-Spec: [spec.md](spec.md). Status: accepted (Krowi, 2026-11-04)
+Spec: [spec.md](spec.md). Status: done (2026-11-04; WoW Forever's run after the release)
 
 ## Files that change
 - `Filters.lua` (tabs):
@@ -21,6 +21,12 @@ Spec: [spec.md](spec.md). Status: accepted (Krowi, 2026-11-04)
 1. ~~Evidence build~~: dropped (Krowi, 2026-11-04: no character with known recipes on those clients). The line rule comes from Already Known #19 and the `NestedBlock` reference (spec, Current state). The first Retail run (2026-11-04) showed `C_TooltipInfo` inlining the crafted item after the `NestedBlock` line, so `filters.GetNestedLines` leaves those lines out on every client; `/kevutest` marks them `[ ]` in its notes and lists any Already known line it left out.
 2. **The feature with its checks:** `GetTooltipLines`, `IsKnown`, `IsOther`, the validate tails, the Recipes and Illusions blocks, the defaults, the menu; `CheckKnown` with the reader-against-collections check. Deploy to every client; Krowi runs `/kevutest` on each at a recipe vendor, and on Retail also at a vendor selling mounts or toys the account has.
 3. **Write-up and reviews:** changelog, description, `CLAUDE.md`; `Find-DeprecatedApi.ps1` (live and `-Branch classic`), `krowi:taint-reviewer`, `/code-review`.
+
+## Departures (2026-11-04)
+- The Retail run showed the crafted item inlined after `NestedBlock` (spec, Current state): `filters.GetNestedLines`.
+- The `known` step asks for every item's data in the first step, names each mount and toy it compares and each item it finds hidden with its category, and SKIPs when it judged nothing: at Jan'sari it first said "no mount or toy" without saying it had read nothing, and passed where a vendor had nothing to judge.
+- `Find-DeprecatedApi.ps1`: no new use (the one hit, `GetMerchantCurrencies` in `Tests/Tests.lua`, is the fallback main already has).
+- `/code-review` (2026-11-04), fixed: a Classic scan that draws no line reads as not readable instead of not known, so the recipe record keeps what it had; the test's empty PASS; `CLAUDE.md` and a comment in `Gui/MerchantItemSlot.lua`. Not changed, with the reason: the Classic line-break rule and the Retail fallback (the Mists and Era runs show the recipe's lines above the crafted item; where the rule is wrong a known item stays shown, never an unknown one hidden); `IsOther` repeating the category tests and no "known" cache (4.3 ms for 44 items on Retail, 6.8 ms for 31 on Mists; the Risks entry stands); `IsRecipe`'s own `C_TooltipInfo` loop, the category list in four places, `DescribeTooltipLines` without a per-line secret mark, the test's own data requests (test and code tidiness, not player-facing).
 
 ## Risks
 - Uncached items on the Classic clients would read as not known: `GetTooltipLines` returns nil for them and asks for the data, and the list rebuilds when it arrives, as the sorts do (taint review of 2026-10-29).

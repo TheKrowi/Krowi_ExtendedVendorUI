@@ -1,5 +1,5 @@
 # Intent: Hide collected for everything the game calls Already known, on every client
-Author: Krowi (chat, 2026-11-04), from a report that Already Known's tint no longer shows on the vendor grid; #62 (ndev88, 2025-08-05) asks for Already known filtering on Classic. Status: accepted (Krowi, 2026-11-04: "1, 2, 4 seem a logic standalone extension of existing systems, 3 is a new feature")
+Author: Krowi (chat, 2026-11-04), from a report that Already Known's tint no longer shows on the vendor grid; #62 (ndev88, 2025-08-05) asks for Already known filtering on Classic. Status: done (2026-11-04; accepted by Krowi that day: "1, 2, 4 seem a logic standalone extension of existing systems, 3 is a new feature")
 
 ## Problem
 - Hide collected knows "collected" per category, and the item's Already known tooltip line only for recipes and illusions. An item outside the categories that the game marks Already known (a spell book, an item that teaches a spell) cannot be hidden.
