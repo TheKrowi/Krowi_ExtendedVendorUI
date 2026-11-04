@@ -430,11 +430,8 @@ end
 
 -- [[ Already known ]] --
 -- Whether the game marks an item Already known (ITEM_SPELL_KNOWN) on its own tooltip, for Hide collected Recipes, Illusions
--- and Other (#62). Retail and Forever read C_TooltipInfo, where an item shown inside another (the item a recipe makes) is one
--- NestedBlock line that points at its own tooltip, so every line is the item's own. The Classic clients have no C_TooltipInfo
--- item getters and read a hidden tooltip of the addon's own, which inlines a recipe's crafted item below the recipe's lines,
--- starting with a line break (Already Known #19, TBC 2.5.5: "Already known", then "Use: Teaches you how to make a Rage
--- Potion.", then "\nRage Potion").
+-- and Other (#62). Retail and Forever read C_TooltipInfo, the Classic clients, which have no C_TooltipInfo item getters, a
+-- hidden tooltip of the addon's own. Both inline the item a recipe makes, whose lines must not count (GetNestedLines).
 local canReadTooltipInfo = C_TooltipInfo and C_TooltipInfo.GetItemByID and true or false
 
 -- No template: GameTooltipTemplate's OnLoad keeps Blizzard's shared ShoppingTooltip1 and 2 on the tooltip and its OnHide
@@ -485,21 +482,46 @@ function filters.GetTooltipLines(itemId)
 	return lines
 end
 
+-- The lines of the item shown inside a tooltip (the item a recipe makes) as first and last index, or nil when there is none.
+-- C_TooltipInfo starts it with a NestedBlock line and follows it with the recipe's own lines from its Use: Teaches you line
+-- (ItemSpellTriggerLearn); the item made can have such a line too (a mount, a pet, a toy), so it ends before the last one
+-- (/kevutest, Retail 12.1.5, 2026-11-04, Recipe: Loa's Gathering: ItemName, ItemBinding, NestedBlock, "\nLoa's Gathering",
+-- its Use line, then the recipe's Teaches you line, reagents, Requires, Already known). The Classic clients start it with a
+-- line break and end it with the tooltip (Already Known #19, TBC 2.5.5: "Already known", then "Use: Teaches you how to make
+-- a Rage Potion.", then "\nRage Potion", its own lines to the end).
+function filters.GetNestedLines(lines)
+	local first
+	for i = 2, #lines do
+		local line = lines[i]
+		if canReadTooltipInfo and line.Type == Enum.TooltipDataLineType.NestedBlock
+			or not canReadTooltipInfo and line.Text and line.Text:sub(1, 1) == '\n' then
+			first = i
+			break
+		end
+	end
+	if not first then
+		return
+	end
+	if canReadTooltipInfo then
+		for i = #lines, first + 1, -1 do
+			if lines[i].Type == Enum.TooltipDataLineType.ItemSpellTriggerLearn then
+				return first, i - 1
+			end
+		end
+	end
+	return first, #lines
+end
+
 -- Known, and whether the tooltip could be read at all
 function filters.IsKnown(itemId)
 	local lines = filters.GetTooltipLines(itemId)
 	if not lines then
 		return false, false
 	end
+	local first, last = filters.GetNestedLines(lines)
 	for i, line in ipairs(lines) do
-		local text = line.Text
-		if text then
-			if i > 1 and not canReadTooltipInfo and text:sub(1, 1) == '\n' then
-				break -- The item a recipe makes starts here, with lines of its own
-			end
-			if text == ITEM_SPELL_KNOWN then
-				return true, true
-			end
+		if line.Text == ITEM_SPELL_KNOWN and not (first and i >= first and i <= last) then
+			return true, true
 		end
 	end
 	return false, true

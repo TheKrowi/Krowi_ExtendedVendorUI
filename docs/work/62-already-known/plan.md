@@ -18,7 +18,7 @@ Spec: [spec.md](spec.md). Status: accepted (Krowi, 2026-11-04)
 - `CLAUDE.md`: Clients and loading ("The Pets, Sets, Illusions and Recipes filters run on Retail and Forever"), Filters paragraph (the check, the scanning tooltip, Hide collected Other), Testing paragraph (the `known` step).
 
 ## Order of work
-1. ~~Evidence build~~: dropped (Krowi, 2026-11-04: no character with known recipes on those clients). The line rule comes from Already Known #19 and the `NestedBlock` reference (spec, Current state).
+1. ~~Evidence build~~: dropped (Krowi, 2026-11-04: no character with known recipes on those clients). The line rule comes from Already Known #19 and the `NestedBlock` reference (spec, Current state). The first Retail run (2026-11-04) showed `C_TooltipInfo` inlining the crafted item after the `NestedBlock` line, so `filters.GetNestedLines` leaves those lines out on every client; `/kevutest` marks them `[ ]` in its notes and lists any Already known line it left out.
 2. **The feature with its checks:** `GetTooltipLines`, `IsKnown`, `IsOther`, the validate tails, the Recipes and Illusions blocks, the defaults, the menu; `CheckKnown` with the reader-against-collections check. Deploy to every client; Krowi runs `/kevutest` on each at a recipe vendor, and on Retail also at a vendor selling mounts or toys the account has.
 3. **Write-up and reviews:** changelog, description, `CLAUDE.md`; `Find-DeprecatedApi.ps1` (live and `-Branch classic`), `krowi:taint-reviewer`, `/code-review`.
 

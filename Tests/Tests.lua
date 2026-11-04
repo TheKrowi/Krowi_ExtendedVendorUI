@@ -514,18 +514,38 @@ local function GetCollectedIllusionsByName()
 end
 
 -- The item's tooltip as the filters read it (Filters.lua, GetTooltipLines): type:text where C_TooltipInfo gives line types,
--- text alone on the Classic clients, line breaks shown as \n
+-- text alone on the Classic clients, line breaks shown as \n, the lines of the item a recipe makes in [ ] (GetNestedLines)
 local function DescribeTooltipLines(itemId)
     local lines = filters.GetTooltipLines(itemId)
     if not lines then
         return 'not readable yet (data not loaded, or secret text)'
     end
+    local first, last = filters.GetNestedLines(lines)
     local described = {}
-    for _, line in ipairs(lines) do
+    for i, line in ipairs(lines) do
         local text = (tostring(line.Text):gsub('\n', '\\n')):sub(1, 40)
-        tinsert(described, line.Type and ('%s:%s'):format(tostring(line.Type), text) or text)
+        text = line.Type and ('%s:%s'):format(tostring(line.Type), text) or text
+        if i == first then
+            text = '[' .. text
+        end
+        if i == last then
+            text = text .. ']'
+        end
+        tinsert(described, text)
     end
     return table.concat(described, ' | ')
+end
+
+-- Whether the lines of the item a recipe makes carry Already known, which IsKnown leaves out
+local function IsNestedKnown(itemId)
+    local lines = filters.GetTooltipLines(itemId)
+    local first, last = filters.GetNestedLines(lines or {})
+    for i = first or 1, last or 0 do
+        if lines[i].Text == ITEM_SPELL_KNOWN then
+            return true
+        end
+    end
+    return false
 end
 
 -- Hide collected, Illusions under filter All, which the step turned on: an illusion the filter finds collected (Blizzard's
@@ -592,7 +612,7 @@ local function CheckKnown()
     filters:BuildList({})
     Note(('building the list of %d items took %.1f ms'):format(GetMerchantNumItems(), debugprofilestop() - start))
     local kinds = { Recipe = { All = 0, Known = 0 }, Other = { All = 0, Known = 0 } }
-    local wrong, disagree, unreadable, checked, noted = {}, {}, 0, 0, 0
+    local wrong, disagree, unreadable, checked, noted, nestedKnown = {}, {}, 0, 0, 0, {}
     for index = 1, GetMerchantNumItems() do
         local itemId = GetMerchantItemID(index)
         if itemId then
@@ -612,7 +632,11 @@ local function CheckKnown()
                 if shown ~= expected and #wrong < 10 then
                     tinsert(wrong, ('%s (%s, %s)'):format(name, known and 'known' or 'not known', shown and 'shown' or 'hidden'))
                 end
-                if noted < MAX_TOOLTIP_NOTES and (kind == 'Recipe' or known) then
+                local isNestedKnown = IsNestedKnown(itemId)
+                if isNestedKnown then
+                    tinsert(nestedKnown, name)
+                end
+                if (noted < MAX_TOOLTIP_NOTES and (kind == 'Recipe' or known)) or isNestedKnown then
                     noted = noted + 1
                     Note(('%s (item %d, %s, %s): %s'):format(name, itemId, kind, known and 'Already known' or 'not known', DescribeTooltipLines(itemId)))
                 end
@@ -633,6 +657,8 @@ local function CheckKnown()
     end
     Note(('%d recipes (%d Already known), %d items in no category (%d Already known), %d of them not readable yet'):format(
         kinds.Recipe.All, kinds.Recipe.Known, kinds.Other.All, kinds.Other.Known, unreadable))
+    Note(#nestedKnown == 0 and 'no Already known among the lines of an item a recipe makes'
+        or ('Already known among the lines of the item made, not counted, for %d: %s'):format(#nestedKnown, table.concat(nestedKnown, ', ')))
     Add(#wrong == 0 and 'PASS' or 'FAIL', 'Hide collected, Recipes and Other: ' .. (#wrong == 0 and 'Already known ones hidden, the rest shown' or ('wrong for ' .. table.concat(wrong, ', '))))
     if #disagree > 0 then
         Add('FAIL', 'Already known: the tooltip and the collection disagree for ' .. table.concat(disagree, ', '))
