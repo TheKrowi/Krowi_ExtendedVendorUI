@@ -603,6 +603,19 @@ end
 -- hidden exactly when the game marks it Already known (gear the Gear options hide excepted); the other categories follow
 -- their own options and are not judged here. The reader is also checked against the mount and toy collections, which
 -- proves it without a known recipe. The first recipes' lines are noted, on the Classic clients up to the item a recipe makes.
+-- The filter category an item falls in, in IsOther's order, for the notes
+local CATEGORIES = { 'Pet', 'Mount', 'Toy', 'Transmog', 'TransmogSet', 'Illusion', 'Recipe', 'Housing' }
+local function GetCategory(itemId)
+    for _, category in ipairs(CATEGORIES) do
+        if filters['Is' .. category](itemId) then
+            return category
+        end
+    end
+    return 'Other'
+end
+
+local MAX_HIDDEN_NOTED = 15
+
 local function CheckKnown()
     local inList = {}
     for _, index in ipairs(container:GetIndices()) do
@@ -613,7 +626,7 @@ local function CheckKnown()
     Note(('building the list of %d items took %.1f ms'):format(GetMerchantNumItems(), debugprofilestop() - start))
     local kinds = { Recipe = { All = 0, Known = 0 }, Other = { All = 0, Known = 0 } }
     local wrong, disagree, unreadable, noted, nestedKnown = {}, {}, 0, 0, {}
-    local checked, unchecked, collectionNoted = {}, {}, 0
+    local checked, unchecked, collectionNoted, hidden = {}, {}, 0, {}
     for index = 1, GetMerchantNumItems() do
         local itemId = GetMerchantItemID(index)
         if itemId then
@@ -621,6 +634,9 @@ local function CheckKnown()
             local info = merchantItemSlot.GetItemInfo(index)
             local name = info and info.name or tostring(itemId)
             local kind = filters.IsRecipe(itemId) and 'Recipe' or filters.IsOther(itemId) and 'Other' or nil
+            if not inList[index] then
+                tinsert(hidden, ('%s (item %d, %s%s)'):format(name, itemId, GetCategory(itemId), known and ', Already known' or ''))
+            end
             if kind and not readable then
                 unreadable = unreadable + 1
             elseif kind then
@@ -667,6 +683,11 @@ local function CheckKnown()
     end
     Note(('%d recipes (%d Already known), %d items in no category (%d Already known), %d of them not readable yet'):format(
         kinds.Recipe.All, kinds.Recipe.Known, kinds.Other.All, kinds.Other.Known, unreadable))
+    if #hidden > 0 then
+        local more = #hidden - MAX_HIDDEN_NOTED
+        Note(('%d hidden: %s%s'):format(#hidden, table.concat(hidden, ', ', 1, math.min(#hidden, MAX_HIDDEN_NOTED)),
+            more > 0 and (', and %d more'):format(more) or ''))
+    end
     Note(#nestedKnown == 0 and 'no Already known among the lines of an item a recipe makes'
         or ('Already known among the lines of the item made, not counted, for %d: %s'):format(#nestedKnown, table.concat(nestedKnown, ', ')))
     Add(#wrong == 0 and 'PASS' or 'FAIL', 'Hide collected, Recipes and Other: ' .. (#wrong == 0 and 'Already known ones hidden, the rest shown' or ('wrong for ' .. table.concat(wrong, ', '))))
