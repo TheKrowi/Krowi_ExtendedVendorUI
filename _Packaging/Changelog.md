@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 24.3
+### Added
+- Hide collected option Other: hides any other item the game shows as Already known, such as spell books
+- The Recipes filter, Hide collected Recipes and Recipes my other characters know on Mists Classic, TBC Anniversary and Classic Era
+
 ## 24.2 - 2026-10-30
 ### Added
 - Sorting by name, gold price, token price or quality, and in reverse, at the end of the filter menu

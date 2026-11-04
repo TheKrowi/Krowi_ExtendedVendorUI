@@ -73,6 +73,7 @@ local defaults = {
 			Recipes = false,
 			RecipesOtherCharacters = false,
 			Housing = false,
+			Other = false, -- Items in no category that the game marks Already known (#62)
 		},
 		Custom = {
 			Pets = true,
@@ -418,9 +419,124 @@ function filters:Validate(lootFilter, itemId)
 		if self.IsHousing(itemId) and addon.Filters.db.profile.HideCollected.Housing then
 			return not self.IsHousingCollected(itemId)
 		end
+
+		if addon.Filters.db.profile.HideCollected.Other and self.IsOther(itemId) and self.IsKnown(itemId) then
+			return false
+		end
 	end
 
 	return true
+end
+
+-- [[ Already known ]] --
+-- Whether the game marks an item Already known (ITEM_SPELL_KNOWN) on its own tooltip, for Hide collected Recipes, Illusions
+-- and Other (#62). Retail and Forever read C_TooltipInfo, the Classic clients, which have no C_TooltipInfo item getters, a
+-- hidden tooltip of the addon's own. Both inline the item a recipe makes, whose lines must not count (GetNestedLines).
+local canReadTooltipInfo = C_TooltipInfo and C_TooltipInfo.GetItemByID and true or false
+
+-- No template: GameTooltipTemplate's OnLoad keeps Blizzard's shared ShoppingTooltip1 and 2 on the tooltip and its OnHide
+-- hides and resets them (classic GameTooltipTemplate.lua:3-6, GameTooltip.lua GameTooltip_OnHide), from addon code (taint
+-- review of 2026-11-04). Without one no Blizzard script runs, and the engine adds the lines as <name>TextLeft<n> itself.
+local scanTooltip
+local function GetScanTooltip()
+	if not scanTooltip then
+		scanTooltip = CreateFrame('GameTooltip', addon.Metadata.Prefix .. '_ScanTooltip')
+		scanTooltip:AddFontStrings(scanTooltip:CreateFontString('$parentTextLeft1', nil, 'GameTooltipText'),
+			scanTooltip:CreateFontString('$parentTextRight1', nil, 'GameTooltipText'))
+	end
+	scanTooltip:SetOwner(UIParent, 'ANCHOR_NONE') -- Never anchored, so never seen
+	return scanTooltip
+end
+
+-- The item's tooltip as { Text, Type } lines (Type only where C_TooltipInfo is read), or nil when it cannot be read yet: item
+-- data not cached (asked for, and the list is built again when it arrives, as the sorts do), a secret line (12.x) or a scan
+-- that drew no line
+function filters.GetTooltipLines(itemId)
+	if not C_Item.IsItemDataCachedByID(itemId) then
+		C_Item.RequestLoadItemDataByID(itemId)
+		addon.Gui.MerchantItemSlot.WaitForItemInfo()
+		return nil
+	end
+	local lines = {}
+	if canReadTooltipInfo then
+		local tooltipInfo = C_TooltipInfo.GetItemByID(itemId)
+		if not tooltipInfo then
+			return nil
+		end
+		for _, line in ipairs(tooltipInfo.lines) do
+			if issecretvalue and issecretvalue(line.leftText) then
+				return nil
+			end
+			tinsert(lines, { Text = line.leftText, Type = line.type })
+		end
+		return lines
+	end
+	local tooltip = GetScanTooltip()
+	tooltip:ClearLines()
+	tooltip:SetItemByID(itemId)
+	local name = tooltip:GetName()
+	for i = 1, tooltip:NumLines() do
+		local fontString = _G[name .. 'TextLeft' .. i]
+		tinsert(lines, { Text = fontString and fontString:GetText() })
+	end
+	tooltip:Hide() -- Shown by SetItemByID; it has no scripts, so this only keeps it out of the way
+	if #lines == 0 then
+		return nil -- Not taken for "not known": the recipe record keeps what it had (code review of 2026-11-04)
+	end
+	return lines
+end
+
+-- The lines of the item shown inside a tooltip (the item a recipe makes) as first and last index, or nil when there is none.
+-- C_TooltipInfo starts it with a NestedBlock line and follows it with the recipe's own lines from its Use: Teaches you line
+-- (ItemSpellTriggerLearn); the item made can have such a line too (a mount, a pet, a toy), so it ends before the last one
+-- (/kevutest, Retail 12.1.5, 2026-11-04, Recipe: Loa's Gathering: ItemName, ItemBinding, NestedBlock, "\nLoa's Gathering",
+-- its Use line, then the recipe's Teaches you line, reagents, Requires, Already known). The Classic clients start it with a
+-- line break and end it with the tooltip (Already Known #19, TBC 2.5.5: "Already known", then "Use: Teaches you how to make
+-- a Rage Potion.", then "\nRage Potion", its own lines to the end; /kevutest, Mists 5.5.4 and Era 1.15.9, 2026-11-04: the
+-- same order, Requires and Teaches you above "\nWhitecrest Gumbo"). Without a Teaches you line after the NestedBlock line
+-- the rest of the tooltip is left out, so a known item reads as not known and stays shown, never the other way round.
+function filters.GetNestedLines(lines)
+	local first
+	for i = 2, #lines do
+		local line = lines[i]
+		if canReadTooltipInfo and line.Type == Enum.TooltipDataLineType.NestedBlock
+			or not canReadTooltipInfo and line.Text and line.Text:sub(1, 1) == '\n' then
+			first = i
+			break
+		end
+	end
+	if not first then
+		return
+	end
+	if canReadTooltipInfo then
+		for i = #lines, first + 1, -1 do
+			if lines[i].Type == Enum.TooltipDataLineType.ItemSpellTriggerLearn then
+				return first, i - 1
+			end
+		end
+	end
+	return first, #lines
+end
+
+-- Known, and whether the tooltip could be read at all
+function filters.IsKnown(itemId)
+	local lines = filters.GetTooltipLines(itemId)
+	if not lines then
+		return false, false
+	end
+	local first, last = filters.GetNestedLines(lines)
+	for i, line in ipairs(lines) do
+		if line.Text == ITEM_SPELL_KNOWN and not (first and i >= first and i <= last) then
+			return true, true
+		end
+	end
+	return false, true
+end
+
+-- In none of the categories, as ValidateCustom ends: what Hide collected, Other and Custom, Other take
+function filters.IsOther(itemId)
+	return not (filters.IsPet(itemId) or filters.IsMount(itemId) or filters.IsToy(itemId) or filters.IsTransmog(itemId)
+		or filters.IsTransmogSet(itemId) or filters.IsIllusion(itemId) or filters.IsRecipe(itemId) or filters.IsHousing(itemId))
 end
 
 if addon.Util.IsModern then -- Pets
@@ -591,21 +707,10 @@ if addon.Util.IsModern then -- Illusion
 	end
 
 	-- A collected illusion shows Blizzard's Already known line, as a known recipe does. No API maps an item to its illusion,
-	-- and the line type this used to look for, RestrictedSpellKnown, does not exist (live and forever UI source, 2026-10-29)
+	-- and the line type this used to look for, RestrictedSpellKnown, does not exist (live and forever UI source, 2026-10-29).
+	-- An unreadable tooltip (12.x secret text, data not loaded yet) keeps the item.
 	function filters.IsIllusionCollected(itemId)
-		local tooltipInfo = C_TooltipInfo.GetItemByID(itemId)
-		if not tooltipInfo then
-			return false
-		end
-		for _, line in next, tooltipInfo.lines do
-			if issecretvalue and issecretvalue(line.leftText) then
-				return false -- Tooltip text is secret under some restrictions (12.x): the item stays
-			end
-			if line.leftText == ITEM_SPELL_KNOWN then
-				return true
-			end
-		end
-		return false
+		return (filters.IsKnown(itemId))
 	end
 else
 	function filters.IsIllusion(itemId)
@@ -617,7 +722,7 @@ else
 	end
 end
 
-if addon.Util.IsModern then -- Recipes
+do -- Recipes, on every client since #62
 	function filters:ValidateRecipesOnly(itemId)
 		if not self.IsRecipe(itemId) then
 			return false
@@ -625,12 +730,14 @@ if addon.Util.IsModern then -- Recipes
 		return not self.IsRecipeHidden(itemId)
 	end
 
+	-- A consumable that teaches is told by its line type, which only C_TooltipInfo gives: on the Classic clients a recipe is an
+	-- item of class Recipe
 	function filters.IsRecipe(itemId)
 		local classId, subclassId = select(6, C_Item.GetItemInfoInstant(itemId))
 		if classId == Enum.ItemClass.Recipe then
 			return true
 		end
-		if classId == Enum.ItemClass.Consumable and subclassId ~= Enum.ItemConsumableSubclass.Other then
+		if canReadTooltipInfo and classId == Enum.ItemClass.Consumable and subclassId ~= Enum.ItemConsumableSubclass.Other then
 			local tooltipInfo = C_TooltipInfo.GetItemByID(itemId)
 			if tooltipInfo then
 				for _, line in next, tooltipInfo.lines do
@@ -663,19 +770,7 @@ if addon.Util.IsModern then -- Recipes
 
 	-- Also returns whether the tooltip could be read at all
 	function filters.IsRecipeCollected(itemId)
-		local tooltipInfo = C_TooltipInfo.GetItemByID(itemId)
-		if not tooltipInfo then
-			return false, false
-		end
-		for _, line in next, tooltipInfo.lines do
-			if issecretvalue and issecretvalue(line.leftText) then
-				return false, false -- Tooltip text is secret under some restrictions (12.x)
-			end
-			if line.leftText == ITEM_SPELL_KNOWN then
-                return true, true
-            end
-		end
-		return false, true
+		return filters.IsKnown(itemId)
 	end
 
 	function filters.IsRecipeKnownByOtherCharacter(itemId)
@@ -715,21 +810,6 @@ if addon.Util.IsModern then -- Recipes
 				Record(itemId, known)
 			end
 		end
-	end
-else
-	function filters.IsRecipe(itemId)
-		return false
-	end
-
-	function filters.IsRecipeCollected(itemId)
-		return false
-	end
-
-	function filters.IsRecipeHidden(itemId)
-		return false
-	end
-
-	function filters.RecordRecipe(itemId)
 	end
 end
 
@@ -853,7 +933,10 @@ do -- Custom
 			return false
 		end
 
-		return addon.Filters.db.profile.Custom.Other
+		if not addon.Filters.db.profile.Custom.Other then
+			return false
+		end
+		return not (addon.Filters.db.profile.HideCollected.Other and self.IsKnown(itemId))
 	end
 end
 

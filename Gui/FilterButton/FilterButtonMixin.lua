@@ -198,10 +198,10 @@ function KrowiEVU_FilterButtonMixin:CreateMenu(menu)
 	if isModern then
 		self:CreateRadio(menu, addon.L['Appearance Sets'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_TRANSMOG_SETS'])
 		self:CreateRadio(menu, addon.L['Illusions'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_ILLUSIONS'])
-		self:CreateRadio(menu, addon.L['Recipes'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_RECIPES'])
-		if addon.Util.IsMainline then -- No housing on WoW Forever
-			self:CreateRadio(menu, addon.L['Housing'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_HOUSING'])
-		end
+	end
+	self:CreateRadio(menu, addon.L['Recipes'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_RECIPES'])
+	if addon.Util.IsMainline then -- No housing on WoW Forever
+		self:CreateRadio(menu, addon.L['Housing'], _G[addon.Metadata.Prefix .. '_LE_LOOT_FILTER_HOUSING'])
 	end
 
 	-- Custom filter section
@@ -234,10 +234,10 @@ function KrowiEVU_FilterButtonMixin:CreateMenu(menu)
 	if isModern then
 		self:CreateCheckbox(custom, addon.L['Appearance Sets'], {'Custom', 'TransmogSets'})
 		self:CreateCheckbox(custom, addon.L['Illusions'], {'Custom', 'Illusions'})
-		self:CreateCheckbox(custom, addon.L['Recipes'], {'Custom', 'Recipes'})
-		if addon.Util.IsMainline then
-			self:CreateCheckbox(custom, addon.L['Housing'], {'Custom', 'Housing'})
-		end
+	end
+	self:CreateCheckbox(custom, addon.L['Recipes'], {'Custom', 'Recipes'})
+	if addon.Util.IsMainline then
+		self:CreateCheckbox(custom, addon.L['Housing'], {'Custom', 'Housing'})
 	end
 	self:CreateCheckbox(custom, addon.L['Other'], {'Custom', 'Other'})
 	mb:AddChildMenu(menu, custom)
@@ -255,12 +255,13 @@ function KrowiEVU_FilterButtonMixin:CreateMenu(menu)
 	if isModern then
 		self:CreateCheckbox(menu, addon.L['Appearance Sets'], {'HideCollected', 'TransmogSets'})
 		self:CreateCheckbox(menu, addon.L['Illusions'], {'HideCollected', 'Illusions'})
-		self:CreateCheckbox(menu, addon.L['Recipes'], {'HideCollected', 'Recipes'})
-		self:CreateCheckbox(menu, addon.L['Recipes my other characters know'], {'HideCollected', 'RecipesOtherCharacters'})
-		if addon.Util.IsMainline then
-			self:CreateCheckbox(menu, addon.L['Housing'], {'HideCollected', 'Housing'})
-		end
 	end
+	self:CreateCheckbox(menu, addon.L['Recipes'], {'HideCollected', 'Recipes'})
+	self:CreateCheckbox(menu, addon.L['Recipes my other characters know'], {'HideCollected', 'RecipesOtherCharacters'})
+	if addon.Util.IsMainline then
+		self:CreateCheckbox(menu, addon.L['Housing'], {'HideCollected', 'Housing'})
+	end
+	self:CreateCheckbox(menu, addon.L['Other'], {'HideCollected', 'Other'}) -- Items in no category that the game marks Already known (#62)
 
 	mb:CreateDivider(menu)
 

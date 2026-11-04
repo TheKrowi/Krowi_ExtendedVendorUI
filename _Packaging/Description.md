@@ -19,13 +19,14 @@ Works on Retail, Mists of Pandaria Classic, Burning Crusade Anniversary, Classic
   - Appearance sets (ensembles and arsenals)
   - Recipes, and optionally recipes your other characters know once they have opened a vendor that sells them
   - Housing decor, in storage or placed (with configurable quantity threshold from 1-999)
+  - Anything else the game shows as Already known, such as spell books
 - **Gear Filters**: For weapons and armor: only usable items, hide armor below the best type your class can wear, and a minimum quality.
 - **Sorting**: Sort the list by name, gold price, token price or quality, or reverse it. Your choice is kept for every vendor.
 - **Token Banner**: The total cost of the items in the list (it follows the filter and search) and what you have, for gold, currencies and items. Choose need, have or both and how money and currencies are formatted, show only the gold you have, or hide currencies you have none of.
 - **Bulk Purchase**: Shift-click an item to buy several stacks at once. Shows how many you can afford, how many fit in your bags and how many the vendor has, with an optional confirmation.
 - **Easy Access**: Options button on the vendor window for quick adjustments, or use the full options menu via minimap/addon compartment icon.
 
-The pet, appearance set, illusion and recipe filters are on Retail and WoW Forever, the housing filter on Retail only.
+The pet, appearance set and illusion filters are on Retail and WoW Forever, the housing filter on Retail only.
 
 ### Fully translated into Chinese (Simplified), mostly into Russian, and partly into German, French and Italian
 
