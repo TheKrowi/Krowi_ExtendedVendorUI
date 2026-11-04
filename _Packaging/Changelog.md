@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 24.3
+## 24.3 - 2026-11-04
 ### Added
 - Hide collected option Other: hides any other item the game shows as Already known, such as spell books
 - The Recipes filter, Hide collected Recipes and Recipes my other characters know on Mists Classic, TBC Anniversary and Classic Era

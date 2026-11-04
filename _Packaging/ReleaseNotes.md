@@ -35,3 +35,7 @@
 - Bulk Purchase no longer counts the reagent bag's free slots for items that do not go in it, so buying the maximum no longer ends with Inventory is full (Retail, WoW Forever)
 - Bulk Purchase now counts the room left on stacks you already have (Mists Classic, TBC Anniversary, Classic Era)
 - With Scrap, its button now sits next to the repair buttons inside the vendor window, and the repair button no longer stretches (Mists Classic, TBC Anniversary, Classic Era)
+
+### Added (24.3)
+- Hide collected option Other: hides any other item the game shows as Already known, such as spell books
+- The Recipes filter, Hide collected Recipes and Recipes my other characters know on Mists Classic, TBC Anniversary and Classic Era
