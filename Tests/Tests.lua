@@ -612,7 +612,8 @@ local function CheckKnown()
     filters:BuildList({})
     Note(('building the list of %d items took %.1f ms'):format(GetMerchantNumItems(), debugprofilestop() - start))
     local kinds = { Recipe = { All = 0, Known = 0 }, Other = { All = 0, Known = 0 } }
-    local wrong, disagree, unreadable, checked, noted, nestedKnown = {}, {}, 0, 0, 0, {}
+    local wrong, disagree, unreadable, noted, nestedKnown = {}, {}, 0, 0, {}
+    local checked, unchecked, collectionNoted = {}, {}, 0
     for index = 1, GetMerchantNumItems() do
         local itemId = GetMerchantItemID(index)
         if itemId then
@@ -641,16 +642,25 @@ local function CheckKnown()
                     Note(('%s (item %d, %s, %s): %s'):format(name, itemId, kind, known and 'Already known' or 'not known', DescribeTooltipLines(itemId)))
                 end
             end
-            local collected
+            -- A mount or toy the run could not compare is named, never passed over: a hidden collected one is never drawn,
+            -- so its data may still be on its way (the first step asks for every item's)
+            local collection, collected
             if filters.IsMount(itemId) then
-                collected = filters.IsMountCollected(itemId)
+                collection, collected = 'mount', filters.IsMountCollected(itemId)
             elseif filters.IsToy(itemId) then
-                collected = filters.IsToyCollected(itemId)
+                collection, collected = 'toy', filters.IsToyCollected(itemId)
             end
-            if collected ~= nil and readable then
-                checked = checked + 1
-                if (collected and true or false) ~= known then
+            if collection and (collected == nil or not readable) then
+                tinsert(unchecked, ('%s (%s, %s)'):format(name, collection, collected == nil and 'not in the collection' or 'tooltip not readable yet'))
+            elseif collection then
+                collected = collected and true or false
+                tinsert(checked, ('%s (%s, %s)'):format(name, collection, collected and 'collected' or 'not collected'))
+                if collected ~= known then
                     tinsert(disagree, ('%s (collection: %s, tooltip: %s)'):format(name, tostring(collected), tostring(known)))
+                end
+                if collectionNoted < MAX_TOOLTIP_NOTES then
+                    collectionNoted = collectionNoted + 1
+                    Note(('%s (item %d, %s, %s): %s'):format(name, itemId, collection, known and 'Already known' or 'not known', DescribeTooltipLines(itemId)))
                 end
             end
         end
@@ -662,9 +672,12 @@ local function CheckKnown()
     Add(#wrong == 0 and 'PASS' or 'FAIL', 'Hide collected, Recipes and Other: ' .. (#wrong == 0 and 'Already known ones hidden, the rest shown' or ('wrong for ' .. table.concat(wrong, ', '))))
     if #disagree > 0 then
         Add('FAIL', 'Already known: the tooltip and the collection disagree for ' .. table.concat(disagree, ', '))
-    elseif checked > 0 then
-        Add('PASS', ('Already known: the tooltip agrees with the collection for the %d mounts and toys'):format(checked))
-    else
+    elseif #checked > 0 then
+        Add('PASS', ('Already known: the tooltip agrees with the collection for %d mounts and toys: %s'):format(#checked, table.concat(checked, ', ')))
+    end
+    if #unchecked > 0 then
+        Note('Already known: not checked against the collection: ' .. table.concat(unchecked, ', '))
+    elseif #checked == 0 then
         Note('Already known: no mount or toy at this vendor to check the tooltip against the collection')
     end
 end
@@ -1233,6 +1246,13 @@ steps = {
         Text = 'the window as it opened',
         Run = function()
             Note(run.OnOpen and 'started as the vendor opened: this is the first draw' or 'started at an open vendor: not its first draw')
+            -- Every item's data, for the tooltip reads of the known step: an item a Hide collected option hides is never drawn
+            for index = 1, GetMerchantNumItems() do
+                local itemId = GetMerchantItemID(index)
+                if itemId and not C_Item.IsItemDataCachedByID(itemId) then
+                    C_Item.RequestLoadItemDataByID(itemId)
+                end
+            end
         end,
     },
     {
