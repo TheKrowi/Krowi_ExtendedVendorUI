@@ -462,9 +462,9 @@ local function CheckHousing()
     end
 end
 
--- The recipe record behind Hide collected, Recipes my other characters know, under filter All
+-- The recipe record behind Hide collected, Recipes my other characters know, under filter All; every client since #62
 local function CheckRecipes()
-    if not addon.Util.IsModern or filters:GetFilter() ~= LE_LOOT_FILTER_ALL then
+    if filters:GetFilter() ~= LE_LOOT_FILTER_ALL then
         return
     end
     local inList = {}
@@ -513,20 +513,19 @@ local function GetCollectedIllusionsByName()
     return byName
 end
 
+-- The item's tooltip as the filters read it (Filters.lua, GetTooltipLines): type:text where C_TooltipInfo gives line types,
+-- text alone on the Classic clients, line breaks shown as \n
 local function DescribeTooltipLines(itemId)
-    local tooltipInfo = C_TooltipInfo.GetItemByID(itemId)
-    if not tooltipInfo then
-        return 'no tooltip data'
+    local lines = filters.GetTooltipLines(itemId)
+    if not lines then
+        return 'not readable yet (data not loaded, or secret text)'
     end
-    local lines = {}
-    for _, line in ipairs(tooltipInfo.lines) do
-        local text = line.leftText
-        if issecretvalue and issecretvalue(text) then
-            text = '<secret>'
-        end
-        tinsert(lines, ('%s:%s'):format(tostring(line.type), tostring(text):sub(1, 40)))
+    local described = {}
+    for _, line in ipairs(lines) do
+        local text = (tostring(line.Text):gsub('\n', '\\n')):sub(1, 40)
+        tinsert(described, line.Type and ('%s:%s'):format(tostring(line.Type), text) or text)
     end
-    return table.concat(lines, ' | ')
+    return table.concat(described, ' | ')
 end
 
 -- Hide collected, Illusions under filter All, which the step turned on: an illusion the filter finds collected (Blizzard's
@@ -577,6 +576,70 @@ local function CheckIllusions()
         Add('FAIL', 'Illusions: the tooltip and the collection disagree for ' .. table.concat(disagree, ', '))
     elseif matched > 0 then
         Add('PASS', ('Illusions: the tooltip agrees with the collection for the %d found there by name'):format(matched))
+    end
+end
+
+-- Hide collected, Recipes and Other under filter All, which the step turned on (#62): a recipe or an item in no category is
+-- hidden exactly when the game marks it Already known (gear the Gear options hide excepted); the other categories follow
+-- their own options and are not judged here. The reader is also checked against the mount and toy collections, which
+-- proves it without a known recipe. The first recipes' lines are noted, on the Classic clients up to the item a recipe makes.
+local function CheckKnown()
+    local inList = {}
+    for _, index in ipairs(container:GetIndices()) do
+        inList[index] = true
+    end
+    local start = debugprofilestop()
+    filters:BuildList({})
+    Note(('building the list of %d items took %.1f ms'):format(GetMerchantNumItems(), debugprofilestop() - start))
+    local kinds = { Recipe = { All = 0, Known = 0 }, Other = { All = 0, Known = 0 } }
+    local wrong, disagree, unreadable, checked, noted = {}, {}, 0, 0, 0
+    for index = 1, GetMerchantNumItems() do
+        local itemId = GetMerchantItemID(index)
+        if itemId then
+            local known, readable = filters.IsKnown(itemId)
+            local info = merchantItemSlot.GetItemInfo(index)
+            local name = info and info.name or tostring(itemId)
+            local kind = filters.IsRecipe(itemId) and 'Recipe' or filters.IsOther(itemId) and 'Other' or nil
+            if kind and not readable then
+                unreadable = unreadable + 1
+            elseif kind then
+                kinds[kind].All = kinds[kind].All + 1
+                if known then
+                    kinds[kind].Known = kinds[kind].Known + 1
+                end
+                local shown = inList[index] or false
+                local expected = not known and filters:ValidateGear(index, itemId)
+                if shown ~= expected and #wrong < 10 then
+                    tinsert(wrong, ('%s (%s, %s)'):format(name, known and 'known' or 'not known', shown and 'shown' or 'hidden'))
+                end
+                if noted < MAX_TOOLTIP_NOTES and (kind == 'Recipe' or known) then
+                    noted = noted + 1
+                    Note(('%s (item %d, %s, %s): %s'):format(name, itemId, kind, known and 'Already known' or 'not known', DescribeTooltipLines(itemId)))
+                end
+            end
+            local collected
+            if filters.IsMount(itemId) then
+                collected = filters.IsMountCollected(itemId)
+            elseif filters.IsToy(itemId) then
+                collected = filters.IsToyCollected(itemId)
+            end
+            if collected ~= nil and readable then
+                checked = checked + 1
+                if (collected and true or false) ~= known then
+                    tinsert(disagree, ('%s (collection: %s, tooltip: %s)'):format(name, tostring(collected), tostring(known)))
+                end
+            end
+        end
+    end
+    Note(('%d recipes (%d Already known), %d items in no category (%d Already known), %d of them not readable yet'):format(
+        kinds.Recipe.All, kinds.Recipe.Known, kinds.Other.All, kinds.Other.Known, unreadable))
+    Add(#wrong == 0 and 'PASS' or 'FAIL', 'Hide collected, Recipes and Other: ' .. (#wrong == 0 and 'Already known ones hidden, the rest shown' or ('wrong for ' .. table.concat(wrong, ', '))))
+    if #disagree > 0 then
+        Add('FAIL', 'Already known: the tooltip and the collection disagree for ' .. table.concat(disagree, ', '))
+    elseif checked > 0 then
+        Add('PASS', ('Already known: the tooltip agrees with the collection for the %d mounts and toys'):format(checked))
+    else
+        Note('Already known: no mount or toy at this vendor to check the tooltip against the collection')
     end
 end
 
@@ -1103,7 +1166,9 @@ local function RestoreOptions()
     gear.UsableOnly, gear.HideSubOptimalArmor, gear.MinQuality = saved.Gear.UsableOnly, saved.Gear.HideSubOptimalArmor, saved.Gear.MinQuality
     local tokenBanner = addon.Options.db.profile.TokenBanner
     tokenBanner.GoldTotal, tokenBanner.HideNone = saved.GoldTotal, saved.HideNone
-    filters.db.profile.HideCollected.Illusions = saved.HideIllusions
+    local hideCollected = filters.db.profile.HideCollected
+    hideCollected.Illusions = saved.HideIllusions
+    hideCollected.Recipes, hideCollected.RecipesOtherCharacters, hideCollected.Other = saved.HideRecipes, saved.HideRecipesOtherCharacters, saved.HideOther
     filters.db.profile.Sort.By, filters.db.profile.Sort.Reverse = saved.Sort.By, saved.Sort.Reverse
 end
 
@@ -1267,6 +1332,21 @@ steps = {
         Check = function()
             CheckMerchantTab()
             CheckIllusions()
+        end,
+    },
+    {
+        -- Recipes my other characters know is off here, so a recipe is hidden only for this character's Already known (#62)
+        Name = 'known',
+        Text = 'filter All, Hide collected: Recipes and Other on',
+        Run = function()
+            RestoreOptions()
+            local hideCollected = filters.db.profile.HideCollected
+            hideCollected.Recipes, hideCollected.RecipesOtherCharacters, hideCollected.Other = true, false, true
+            KrowiEVU_FilterButton:SetFilter(LE_LOOT_FILTER_ALL)
+        end,
+        Check = function()
+            CheckMerchantTab()
+            CheckKnown()
         end,
     },
     {
@@ -1627,6 +1707,9 @@ function tests.Start(onOpen)
         GoldTotal = profile.TokenBanner.GoldTotal,
         HideNone = profile.TokenBanner.HideNone,
         HideIllusions = filters.db.profile.HideCollected.Illusions,
+        HideRecipes = filters.db.profile.HideCollected.Recipes,
+        HideRecipesOtherCharacters = filters.db.profile.HideCollected.RecipesOtherCharacters,
+        HideOther = filters.db.profile.HideCollected.Other,
         Sort = CopyTable(filters.db.profile.Sort),
     }
 
