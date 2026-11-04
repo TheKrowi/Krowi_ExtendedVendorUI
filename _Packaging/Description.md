@@ -35,6 +35,8 @@ The pet, appearance set and illusion filters are on Retail and WoW Forever, the 
 - EllesmereUI (with its merchant list mode on, Extended Vendor UI stays off)
 - Can I Mog It? (CIMI)
 - Transmog Loot Helper (12.1.5-02 or later)
+- Scrap (its button sits next to the repair buttons on Mists, TBC and Classic Era)
+- Plumber (1.9.7 or later keeps its Merchant Price off, since the token banner shows the costs)
 - Auctionator, TradeSkillMaster (TSM) and Zygor read every item of the vendor, also while a filter is active
 
 More features can be requested via the issues system or discord.
