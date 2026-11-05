@@ -46,10 +46,9 @@
     $changedName = $newest.FullName.Substring($repo.Length + 1)
 
     # A client the release may go out without, on Krowi's word, until the date its servers can be tested again; past
-    # that date the check applies again by itself. Remove an entry once that client has its run
-    $untested = @{
-        Forever = @{ Until = [datetime]'2026-11-05'; Why = 'servers offline until 2026-11-04 (Krowi, 2026-10-30, 24.2)' }
-    }
+    # that date the check applies again by itself. Remove an entry once that client has its run.
+    # Entries: <Client> = @{ Until = [datetime]'<yyyy-MM-dd>'; Why = '<reason> (Krowi, <date>, <version>)' }
+    $untested = @{}
 
     $reader = Join-Path $repo '.claude\tools\read-tests.lua'
     $deploy = Join-Path $KitRoot 'tools\Deploy.ps1'
