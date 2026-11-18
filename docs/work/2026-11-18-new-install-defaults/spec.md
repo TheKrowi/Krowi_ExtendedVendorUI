@@ -10,7 +10,7 @@ Intent: [intent.md](intent.md). Status: accepted
 ## Design
 - `Krowi_ExtendedVendorUI.lua`: `freshInstall = KrowiEVU_Options == nil` before `addon.Options:Load`, then the three writes. AceDB saves `profileKeys` for every character, so an existing install never has a nil table.
 - `Options/Defaults.lua`: `HighlightOptionsButton = false`.
-- `Gui/OptionsButton/OptionsButtonMixin.lua`: `UpdateHighlight` creates, on first need, an OVERLAY texture (`Interface\Buttons\UI-ActionButton-Border`, ADD blend, 1.8 × the button) with a bouncing Alpha animation (0.25 to 1, 0.8 s); `ClearHighlight` is hooked on `OnMouseDown` with `HookScript` on the addon's own button. `OptionsButton:Load` calls `UpdateHighlight`.
+- `Gui/OptionsButton/OptionsButtonMixin.lua`: `UpdateHighlight` creates, on first need, two OVERLAY layers of `Interface\Minimap\UI-Minimap-ZoomButton-Highlight` (the minimap buttons' round highlight, desaturated and tinted Blizzard's gold, ADD blend, 2 × the button; one layer was too faint). `UI-ActionButton-Border` and `CheckButtonGlow` were tried first and read as squares on Retail (Krowi, 2026-11-18: "that's a square") with a bouncing Alpha animation (0.25 to 1, 0.8 s); `ClearHighlight` is hooked on `OnMouseDown` with `HookScript` on the addon's own button. `OptionsButton:Load` calls `UpdateHighlight`.
 - `Tests/Tests.lua`: step `gear-highlight` after `arrow`.
 
 ## Options considered
