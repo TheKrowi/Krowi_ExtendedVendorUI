@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 24.4
+### Fixed
+- Hide collected now also hides items whose tooltip says Already Known with a capital K
+
 ## 24.3 - 2026-11-04
 ### Added
 - Hide collected option Other: hides any other item the game shows as Already known, such as spell books

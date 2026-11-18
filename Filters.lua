@@ -518,6 +518,20 @@ function filters.GetNestedLines(lines)
 	return first, #lines
 end
 
+-- The game writes Already known with more than one string (GlobalStrings.db2, 2026-11-18): ITEM_SPELL_KNOWN "Already known",
+-- ERR_COSMETIC_KNOWN (Retail only) and USED "Already Known" (#126). A line counts when it is one of them, case ignored;
+-- string.lower folds only ASCII, so other letters must match exactly, as before
+local knownTexts = {}
+for _, text in next, { ITEM_SPELL_KNOWN, ERR_COSMETIC_KNOWN, USED } do
+	if type(text) == 'string' then
+		knownTexts[text:lower()] = true
+	end
+end
+
+function filters.IsKnownLine(text)
+	return type(text) == 'string' and knownTexts[text:lower()] or false
+end
+
 -- Known, and whether the tooltip could be read at all
 function filters.IsKnown(itemId)
 	local lines = filters.GetTooltipLines(itemId)
@@ -526,7 +540,7 @@ function filters.IsKnown(itemId)
 	end
 	local first, last = filters.GetNestedLines(lines)
 	for i, line in ipairs(lines) do
-		if line.Text == ITEM_SPELL_KNOWN and not (first and i >= first and i <= last) then
+		if filters.IsKnownLine(line.Text) and not (first and i >= first and i <= last) then
 			return true, true
 		end
 	end
