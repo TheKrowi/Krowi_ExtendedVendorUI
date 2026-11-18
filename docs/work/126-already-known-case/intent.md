@@ -1,5 +1,5 @@
 # Intent: Hide collected misses items whose tooltip says "Already Known"
-Author: jrowles (reporter). Source: GitHub issue #126. Status: accepted
+Author: jrowles (reporter). Source: GitHub issue #126. Status: done
 
 ## Problem
 Hide collected (Recipes, Illusions, Other) hides an item only when one of its tooltip lines is exactly `ITEM_SPELL_KNOWN`, "Already known" in English. Some items show "Already Known" with a capital K instead, so they are not taken for known and stay in the list. The reporter found both comparisons false: the filter's (`Filters.lua`, `filters.IsKnown`) and `/kevutest`'s (`Tests/Tests.lua`, `IsNestedKnown`). Client, locale and item are not given.

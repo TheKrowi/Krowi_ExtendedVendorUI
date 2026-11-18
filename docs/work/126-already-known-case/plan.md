@@ -1,5 +1,5 @@
 # Plan: Hide collected misses items whose tooltip says "Already Known"
-Spec: [spec.md](spec.md). Status: built; the in-game check is pending
+Spec: [spec.md](spec.md). Status: done
 
 ## Files that change
 - `Tests/Tests.lua`: `CheckKnown` fails for an item with a line matching an "already known" string ignoring case that `IsKnown` reads as not known, and notes the items matched through a line other than `ITEM_SPELL_KNOWN` exactly; `IsNestedKnown` uses the test's own matcher (`MatchKnownGlobal`), not `filters.IsKnownLine` as first planned (code review of 2026-11-18).

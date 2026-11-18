@@ -1,5 +1,5 @@
 # Spec: Hide collected misses items whose tooltip says "Already Known"
-Intent: [intent.md](intent.md). Status: accepted
+Intent: [intent.md](intent.md). Status: done
 
 ## Requirements
 1. `filters.IsKnown` counts a tooltip line (outside the lines of the item a recipe makes) as Already known when its text, ignoring case, is one of Blizzard's "already known" strings that exist on the client: `ITEM_SPELL_KNOWN` and `ERR_COSMETIC_KNOWN` (Retail). Not `USED` (see Decision).
