@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 24.4
+## 24.4 - 2026-11-18
 ### Added
 - On a new install the options button (the gear next to the search box) glows until you first click it
 

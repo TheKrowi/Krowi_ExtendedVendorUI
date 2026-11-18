@@ -39,3 +39,12 @@
 ### Added (24.3)
 - Hide collected option Other: hides any other item the game shows as Already known, such as spell books
 - The Recipes filter, Hide collected Recipes and Recipes my other characters know on Mists Classic, TBC Anniversary and Classic Era
+
+### Added (24.4)
+- On a new install the options button (the gear next to the search box) glows until you first click it
+
+### Changed (24.4)
+- New installs start with 7 rows and 4 columns of items
+
+### Fixed (24.4)
+- Hide collected now also hides items whose tooltip says Already Known with a capital K
