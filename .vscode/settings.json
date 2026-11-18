@@ -1162,7 +1162,9 @@
         "ITEM_COSMETIC",
         "TOY",
         "ChatFrame4",
-        "ChatFrame3"
+        "ChatFrame3",
+        "ERR_COSMETIC_KNOWN",
+        "USED"
     ],
     "fsdeploy.nodes": [
         {
