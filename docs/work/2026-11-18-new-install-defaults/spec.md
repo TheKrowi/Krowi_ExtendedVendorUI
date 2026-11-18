@@ -1,5 +1,5 @@
 # Spec: A bigger first grid and a glowing gear for new players
-Intent: [intent.md](intent.md). Status: accepted
+Intent: [intent.md](intent.md). Status: done
 
 ## Requirements
 1. When `KrowiEVU_Options` is nil at `ADDON_LOADED` (no saved settings on the account), the profile gets `NumRows = 7`, `NumColumns = 4` and `HighlightOptionsButton = true` before the slots are created.

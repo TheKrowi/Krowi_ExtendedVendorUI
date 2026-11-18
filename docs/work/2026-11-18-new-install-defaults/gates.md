@@ -8,3 +8,5 @@ Class: feature
 | 2026-11-18 | design | What the highlight looks like | Pulsing glow | Pulsing glow | took |
 | 2026-11-18 | look | The gear glow on Retail (UI-ActionButton-Border) | | "that's a square" | correction |
 | 2026-11-18 | test | Krowi could not open a vendor for the Retail look check; I stopped instead of running the other clients | | "Start on the other clients, we do retail later. This should have been your intuitive next step" | correction |
+| 2026-11-18 | look | The round gold glow (artifact New Install Look) | Ship it | "forever done, merge and dry run" | took |
+| 2026-11-18 | merge | PR #128 | Merge | "forever done, merge and dry run" | took |

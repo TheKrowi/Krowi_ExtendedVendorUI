@@ -1,5 +1,5 @@
 # Plan: A bigger first grid and a glowing gear for new players
-Spec: [spec.md](spec.md). Status: built; the in-game check is pending
+Spec: [spec.md](spec.md). Status: done
 
 The plan gate (`ask` for a feature) was not asked on its own: the build followed the design answers, as Krowi's "together with the fix ... after this, the pc is free and you can run your tests" read as a go. Said in the PR.
 

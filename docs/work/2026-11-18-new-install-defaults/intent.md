@@ -1,5 +1,5 @@
 # Intent: A bigger first grid and a glowing gear for new players
-Author: Krowi (maintainer), from the CurseForge comments on the WoW Forever release analysed in another session on 2026-11-18. Source: idea. Status: accepted
+Author: Krowi (maintainer), from the CurseForge comments on the WoW Forever release analysed in another session on 2026-11-18. Source: idea. Status: done
 
 ## Problem
 A new player gets Blizzard's own 5 rows × 2 columns, so the addon looks like it does nothing, and does not find the gear (options button, left of the search box) where the grid size is set.
