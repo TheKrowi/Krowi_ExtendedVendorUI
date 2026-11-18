@@ -23,6 +23,7 @@ function optionsButton:Load()
         CreateClassic(self)
     end
     KrowiEVU_OptionsButton:ShowHide()
+    KrowiEVU_OptionsButton:UpdateHighlight()
 end
 
 function optionsButton:SetPointOffset(x, y)

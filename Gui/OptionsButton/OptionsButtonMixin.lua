@@ -37,6 +37,49 @@ function KrowiEVU_OptionsButtonMixin:OnLoad()
 	if addon.Util.IsModern then
 		menuBuilder:SetupMenuForModern(self)
 	end
+
+	self:HookScript('OnMouseDown', self.ClearHighlight) -- After the menu's own handler, on every client
+end
+
+-- [[ First-time highlight ]] --
+-- A glow pulsing around the gear while HighlightOptionsButton is set (a fresh install, Krowi_ExtendedVendorUI.lua), so new
+-- players find the grid size and other options; the first click on the gear clears it for good. Own texture and animation
+-- on the addon's own button: no Blizzard glow template or help tip, which would run Blizzard code from here
+local GLOW_SCALE = 1.8 -- UI-ActionButton-Border's glow fills about the middle half of its square
+function KrowiEVU_OptionsButtonMixin:UpdateHighlight()
+	local show = addon.Options.db.profile.HighlightOptionsButton and true or false
+	if show and not self.HighlightGlow then
+		local glow = self:CreateTexture(nil, 'OVERLAY')
+		glow:SetTexture('Interface\\Buttons\\UI-ActionButton-Border')
+		glow:SetBlendMode('ADD')
+		local size = math.max(self:GetSize()) * GLOW_SCALE
+		glow:SetSize(size, size)
+		glow:SetPoint('CENTER')
+		local pulse = glow:CreateAnimationGroup()
+		pulse:SetLooping('BOUNCE')
+		local fade = pulse:CreateAnimation('Alpha')
+		fade:SetFromAlpha(0.25)
+		fade:SetToAlpha(1)
+		fade:SetDuration(0.8)
+		self.HighlightGlow, self.HighlightPulse = glow, pulse
+	end
+	if not self.HighlightGlow then
+		return
+	end
+	self.HighlightGlow:SetShown(show)
+	if show then
+		self.HighlightPulse:Play()
+	else
+		self.HighlightPulse:Stop()
+	end
+end
+
+function KrowiEVU_OptionsButtonMixin:ClearHighlight()
+	if not addon.Options.db.profile.HighlightOptionsButton then
+		return
+	end
+	addon.Options.db.profile.HighlightOptionsButton = false
+	self:UpdateHighlight()
 end
 
 function KrowiEVU_OptionsButtonMixin:ShowHide()

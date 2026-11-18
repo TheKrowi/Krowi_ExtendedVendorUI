@@ -1311,6 +1311,23 @@ local function Restore()
     end
     KrowiEVU_FilterButton:SetFilter(saved.Filter)
     KrowiEVU_Filters.LastFilter = saved.LastFilter
+    addon.Options.db.profile.HighlightOptionsButton = saved.HighlightOptionsButton
+    KrowiEVU_OptionsButton:UpdateHighlight()
+end
+
+-- The gear's first-time highlight (a fresh install): shown and pulsing while HighlightOptionsButton is set, gone and the
+-- setting cleared after ClearHighlight, which a click on the gear runs (OptionsButtonMixin OnLoad)
+local function CheckHighlight()
+    local button = KrowiEVU_OptionsButton
+    local glow, pulse = button.HighlightGlow, button.HighlightPulse
+    local shown = glow and glow:IsVisible() and pulse:IsPlaying() or false
+    Add(shown and 'PASS' or 'FAIL', 'gear highlight: ' .. (shown and 'shown and pulsing' or 'not shown')
+        .. (glow and (' (%dx%d around a %dx%d gear)'):format(glow:GetWidth(), glow:GetHeight(), button:GetWidth(), button:GetHeight()) or ''))
+    button:ClearHighlight()
+    local cleared = not (glow and glow:IsShown()) and addon.Options.db.profile.HighlightOptionsButton == false
+    Add(cleared and 'PASS' or 'FAIL', 'gear highlight: ' .. (cleared and 'gone after the click handler, setting cleared' or 'still there after the click handler'))
+    addon.Options.db.profile.HighlightOptionsButton = true -- Shown again for the screenshot; Restore puts the saved value back
+    button:UpdateHighlight()
 end
 
 -- [[ Steps ]] --
@@ -1479,6 +1496,18 @@ steps = {
         Check = function()
             Note('the banner shows the arrow; a missing file shows a green square or nothing')
         end,
+    },
+    {
+        Name = 'gear-highlight',
+        Text = 'the gear\'s first-time highlight, as a fresh install shows it',
+        Run = function()
+            if not KrowiEVU_OptionsButton:IsVisible() then
+                return 'the options button is hidden (Show options button off)'
+            end
+            addon.Options.db.profile.HighlightOptionsButton = true
+            KrowiEVU_OptionsButton:UpdateHighlight()
+        end,
+        Check = CheckHighlight,
     },
     {
         Name = 'currency',
@@ -1832,6 +1861,7 @@ function tests.Start(onOpen)
         HideRecipesOtherCharacters = filters.db.profile.HideCollected.RecipesOtherCharacters,
         HideOther = filters.db.profile.HideCollected.Other,
         Sort = CopyTable(filters.db.profile.Sort),
+        HighlightOptionsButton = profile.HighlightOptionsButton,
     }
 
     run = { Time = date('%Y-%m-%d %H:%M:%S'), Steps = {}, OnOpen = onOpen }

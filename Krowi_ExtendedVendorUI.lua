@@ -111,7 +111,15 @@ function loadHelper:OnEvent(event, arg1, arg2)
     if event == 'ADDON_LOADED' then
         if arg1 == addonName then -- This always needs to load
             KrowiEVU.PluginsApi:InjectPluginOptions()
+            local freshInstall = KrowiEVU_Options == nil -- No saved settings yet: the addon's first load on this account
             addon.Options:Load(true)
+            if freshInstall then
+                -- New players start with a bigger grid than the 5 x 2 default, and the gear glows until its first click;
+                -- existing players and new or reset profiles keep the defaults (Krowi, 2026-11-18)
+                local profile = addon.Options.db.profile
+                profile.NumRows, profile.NumColumns = 7, 4
+                profile.HighlightOptionsButton = true
+            end
 
             KrowiEVU.PluginsApi:LoadPlugins()
 
