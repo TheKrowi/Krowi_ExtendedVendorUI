@@ -20,12 +20,15 @@ foreach ($term in $Terms) {
         -ContentType 'application/x-www-form-urlencoded' -UseBasicParsing
     $json = $resp.Content | ConvertFrom-Json
     Write-Host "== '$term': $($json.recordsFiltered) row(s)"
+    if ($json.recordsFiltered -gt $json.data.Count) {
+        Write-Warning "only the first $($json.data.Count) rows are shown; narrow the term"
+    }
     foreach ($row in $json.data) {
+        # Columns: ID, BaseTag, TagText_lang, Flags
         $cells = @($row | ForEach-Object { [System.Net.WebUtility]::HtmlDecode([string]$_) })
-        $line = $cells -join ' | '
-        if ($CaseSensitive -and -not $line.Contains($term)) {
+        if ($CaseSensitive -and -not ($cells.Count -gt 2 -and $cells[2].Contains($term))) {
             continue
         }
-        Write-Host $line
+        Write-Host ($cells -join ' | ')
     }
 }

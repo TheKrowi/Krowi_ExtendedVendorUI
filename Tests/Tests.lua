@@ -536,12 +536,27 @@ local function DescribeTooltipLines(itemId)
     return table.concat(described, ' | ')
 end
 
+-- Blizzard's "already known" strings (GlobalStrings.db2, #126): ITEM_SPELL_KNOWN reads "Already known", ERR_COSMETIC_KNOWN
+-- (Retail) and USED "Already Known". Kept apart from Filters.lua's own list, so the check does not lean on the code it checks
+local KNOWN_GLOBALS = { 'ITEM_SPELL_KNOWN', 'ERR_COSMETIC_KNOWN', 'USED' }
+local function MatchKnownGlobal(text)
+    if type(text) ~= 'string' then
+        return
+    end
+    for _, global in ipairs(KNOWN_GLOBALS) do
+        local value = _G[global]
+        if type(value) == 'string' and text:lower() == value:lower() then
+            return global
+        end
+    end
+end
+
 -- Whether the lines of the item a recipe makes carry Already known, which IsKnown leaves out
 local function IsNestedKnown(itemId)
     local lines = filters.GetTooltipLines(itemId)
     local first, last = filters.GetNestedLines(lines or {})
     for i = first or 1, last or 0 do
-        if filters.IsKnownLine(lines[i].Text) then
+        if MatchKnownGlobal(lines[i].Text) then
             return true
         end
     end
@@ -615,21 +630,6 @@ local function GetCategory(itemId)
 end
 
 local MAX_HIDDEN_NOTED = 15
-
--- Blizzard's "already known" strings (GlobalStrings.db2, #126): ITEM_SPELL_KNOWN reads "Already known", ERR_COSMETIC_KNOWN
--- (Retail) and USED "Already Known". Kept apart from Filters.lua's own list, so the check does not lean on the code it checks
-local KNOWN_GLOBALS = { 'ITEM_SPELL_KNOWN', 'ERR_COSMETIC_KNOWN', 'USED' }
-local function MatchKnownGlobal(text)
-    if type(text) ~= 'string' then
-        return
-    end
-    for _, global in ipairs(KNOWN_GLOBALS) do
-        local value = _G[global]
-        if type(value) == 'string' and text:lower() == value:lower() then
-            return global
-        end
-    end
-end
 
 -- The first line outside the item a recipe makes that is one of those strings without being ITEM_SPELL_KNOWN exactly, as
 -- GLOBAL "text", or nil

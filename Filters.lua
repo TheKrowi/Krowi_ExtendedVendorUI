@@ -429,7 +429,7 @@ function filters:Validate(lootFilter, itemId)
 end
 
 -- [[ Already known ]] --
--- Whether the game marks an item Already known (ITEM_SPELL_KNOWN) on its own tooltip, for Hide collected Recipes, Illusions
+-- Whether the game marks an item Already known (filters.IsKnownLine) on its own tooltip, for Hide collected Recipes, Illusions
 -- and Other (#62). Retail and Forever read C_TooltipInfo, the Classic clients, which have no C_TooltipInfo item getters, a
 -- hidden tooltip of the addon's own. Both inline the item a recipe makes, whose lines must not count (GetNestedLines).
 local canReadTooltipInfo = C_TooltipInfo and C_TooltipInfo.GetItemByID and true or false
@@ -521,15 +521,19 @@ end
 -- The game writes Already known with more than one string (GlobalStrings.db2, 2026-11-18): ITEM_SPELL_KNOWN "Already known",
 -- ERR_COSMETIC_KNOWN (Retail only) and USED "Already Known" (#126). A line counts when it is one of them, case ignored;
 -- string.lower folds only ASCII, so other letters must match exactly, as before
-local knownTexts = {}
+local knownTexts, knownLengths = {}, {}
 for _, text in next, { ITEM_SPELL_KNOWN, ERR_COSMETIC_KNOWN, USED } do
 	if type(text) == 'string' then
 		knownTexts[text:lower()] = true
+		knownLengths[#text] = true -- string.lower keeps the length; most lines are skipped before a lower-cased copy is made
 	end
 end
 
 function filters.IsKnownLine(text)
-	return type(text) == 'string' and knownTexts[text:lower()] or false
+	if type(text) ~= 'string' or issecretvalue and issecretvalue(text) then -- A secret string errors when compared (12.x)
+		return false
+	end
+	return knownLengths[#text] and knownTexts[text:lower()] or false
 end
 
 -- Known, and whether the tooltip could be read at all
