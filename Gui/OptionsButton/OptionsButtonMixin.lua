@@ -37,6 +37,60 @@ function KrowiEVU_OptionsButtonMixin:OnLoad()
 	if addon.Util.IsModern then
 		menuBuilder:SetupMenuForModern(self)
 	end
+
+	self:HookScript('OnMouseDown', self.ClearHighlight) -- After the menu's own handler, on every client
+end
+
+-- [[ First-time highlight ]] --
+-- A glow pulsing around the gear while HighlightOptionsButton is set (a fresh install, Krowi_ExtendedVendorUI.lua), so new
+-- players find the grid size and other options; the first click on the gear clears it for good. Own texture and animation
+-- on the addon's own button: no Blizzard glow template or help tip, which would run Blizzard code from here
+-- The minimap buttons' round highlight (every client; LibDBIcon's too), made white and then gold: it is pale blue, which
+-- tints olive. UI-ActionButton-Border and CheckButtonGlow read as square boxes on Retail (Krowi, 2026-11-18: "that's a
+-- square")
+local GLOW_TEXTURE = 'Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight'
+local GLOW_SCALE = 2
+local GLOW_R, GLOW_G, GLOW_B = 1, 0.82, 0 -- Blizzard's gold (NORMAL_FONT_COLOR)
+local GLOW_LAYERS = 2 -- One copy is too faint to catch the eye (Retail, 2026-11-18); additive copies add up
+function KrowiEVU_OptionsButtonMixin:UpdateHighlight()
+	local show = addon.Options.db.profile.HighlightOptionsButton and true or false
+	if show and not self.HighlightLayers then
+		self.HighlightLayers = {}
+		local size = math.max(self:GetSize()) * GLOW_SCALE
+		for i = 1, GLOW_LAYERS do
+			local glow = self:CreateTexture(nil, 'OVERLAY', nil, i)
+			glow:SetTexture(GLOW_TEXTURE)
+			glow:SetDesaturated(true)
+			glow:SetVertexColor(GLOW_R, GLOW_G, GLOW_B)
+			glow:SetBlendMode('ADD')
+			glow:SetSize(size, size)
+			glow:SetPoint('CENTER')
+			local pulse = glow:CreateAnimationGroup()
+			pulse:SetLooping('BOUNCE')
+			local fade = pulse:CreateAnimation('Alpha')
+			fade:SetFromAlpha(0.35)
+			fade:SetToAlpha(1)
+			fade:SetDuration(0.8)
+			self.HighlightLayers[i] = { Glow = glow, Pulse = pulse }
+		end
+		self.HighlightGlow, self.HighlightPulse = self.HighlightLayers[1].Glow, self.HighlightLayers[1].Pulse -- For /kevutest
+	end
+	for _, layer in ipairs(self.HighlightLayers or {}) do
+		layer.Glow:SetShown(show)
+		if show then
+			layer.Pulse:Play()
+		else
+			layer.Pulse:Stop()
+		end
+	end
+end
+
+function KrowiEVU_OptionsButtonMixin:ClearHighlight()
+	if not addon.Options.db.profile.HighlightOptionsButton then
+		return
+	end
+	addon.Options.db.profile.HighlightOptionsButton = false
+	self:UpdateHighlight()
 end
 
 function KrowiEVU_OptionsButtonMixin:ShowHide()

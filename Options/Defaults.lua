@@ -10,6 +10,7 @@ addon.Options.Defaults = {
             hide = true -- not ShowMinimapIcon
         },
         ShowOptionsButton = true,
+        HighlightOptionsButton = false, -- True from a fresh install (Krowi_ExtendedVendorUI.lua) until the gear's first click
         ShowHideOption = true,
         RememberFilter = false,
         RememberSearch = false,

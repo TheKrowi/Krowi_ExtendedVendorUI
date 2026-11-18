@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 
 ## 24.4
+### Added
+- On a new install the options button (the gear next to the search box) glows until you first click it
+
+### Changed
+- New installs start with 7 rows and 4 columns of items
+
 ### Fixed
 - Hide collected now also hides items whose tooltip says Already Known with a capital K
 
