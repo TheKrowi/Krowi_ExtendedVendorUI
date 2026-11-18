@@ -537,8 +537,8 @@ local function DescribeTooltipLines(itemId)
 end
 
 -- Blizzard's "already known" strings (GlobalStrings.db2, #126): ITEM_SPELL_KNOWN reads "Already known", ERR_COSMETIC_KNOWN
--- (Retail) and USED "Already Known". Kept apart from Filters.lua's own list, so the check does not lean on the code it checks
-local KNOWN_GLOBALS = { 'ITEM_SPELL_KNOWN', 'ERR_COSMETIC_KNOWN', 'USED' }
+-- (Retail) "Already Known". Kept apart from Filters.lua's own list, so the check does not lean on the code it checks
+local KNOWN_GLOBALS = { 'ITEM_SPELL_KNOWN', 'ERR_COSMETIC_KNOWN' }
 local function MatchKnownGlobal(text)
     if type(text) ~= 'string' then
         return

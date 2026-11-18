@@ -518,11 +518,12 @@ function filters.GetNestedLines(lines)
 	return first, #lines
 end
 
--- The game writes Already known with more than one string (GlobalStrings.db2, 2026-11-18): ITEM_SPELL_KNOWN "Already known",
--- ERR_COSMETIC_KNOWN (Retail only) and USED "Already Known" (#126). A line counts when it is one of them, case ignored;
--- string.lower folds only ASCII, so other letters must match exactly, as before
+-- The game writes Already known with more than one string (GlobalStrings.db2, 2026-11-18): ITEM_SPELL_KNOWN "Already known"
+-- and ERR_COSMETIC_KNOWN (Retail only) "Already Known" (#126). A line counts when it is one of them, case ignored;
+-- string.lower folds only ASCII, so other letters must match exactly, as before. USED, also "Already Known" in English, is
+-- the trainer filter's label and may be a looser word in other languages, so it is left out (Krowi, 2026-11-18)
 local knownTexts, knownLengths = {}, {}
-for _, text in next, { ITEM_SPELL_KNOWN, ERR_COSMETIC_KNOWN, USED } do
+for _, text in next, { ITEM_SPELL_KNOWN, ERR_COSMETIC_KNOWN } do
 	if type(text) == 'string' then
 		knownTexts[text:lower()] = true
 		knownLengths[#text] = true -- string.lower keeps the length; most lines are skipped before a lower-cased copy is made
