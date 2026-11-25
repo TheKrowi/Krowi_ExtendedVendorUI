@@ -180,6 +180,69 @@ local bulkPurchase = {
     }
 }
 
+-- Mark collected items lives in KrowiEVU_Filters (Filters.lua), next to Hide collected; the filter menu writes the same
+-- values. Filters.lua loads after this file, so addon.Filters is only read inside the functions.
+-- Once per frame, outside Blizzard's ColorPickerFrame handler, which calls the swatch's set on every tick of a drag
+local function RedrawVendor()
+    if MerchantFrame:IsShown() then
+        addon.Gui.MerchantItemsContainer:RequestUpdate()
+    end
+end
+
+local collectedItems = {
+    order = OrderPP(), type = 'group',
+    name = addon.L['Collected items'],
+    args = {
+        MarkCollectedGroup = {
+            order = OrderPP(), type = 'group', inline = true,
+            name = addon.L['Collected items'],
+            args = {
+                Enabled = {
+                    order = OrderPP(), type = 'toggle', width = AdjustedWidth(),
+                    name = addon.L['Mark collected items'],
+                    desc = addon.L['Mark collected items Desc'],
+                    get = function() return addon.Filters:IsMarkCollectedOn() end,
+                    set = function(_, value)
+                        addon.Filters.db.profile.MarkCollected.Enabled = value
+                        RedrawVendor()
+                    end
+                },
+                Look = {
+                    order = OrderPP(), type = 'select', width = AdjustedWidth(),
+                    name = addon.L['Mark look'],
+                    desc = addon.L['Mark look Desc'],
+                    values = {
+                        Color = addon.L['MarkLook_Color'],
+                        Gray = addon.L['MarkLook_Gray'],
+                        Custom = addon.L['MarkLook_Custom'],
+                    },
+                    sorting = {'Color', 'Gray', 'Custom'},
+                    get = function() return addon.Filters.db.profile.MarkCollected.Look end,
+                    set = function(_, value)
+                        addon.Filters.db.profile.MarkCollected.Look = value
+                        RedrawVendor()
+                    end
+                },
+                Color = {
+                    order = OrderPP(), type = 'color', width = AdjustedWidth(),
+                    name = addon.L['Mark color'],
+                    desc = addon.L['Custom color Desc'],
+                    disabled = function() return addon.Filters.db.profile.MarkCollected.Look ~= 'Custom' end,
+                    get = function()
+                        local color = addon.Filters.db.profile.MarkCollected.Color
+                        return color.r, color.g, color.b
+                    end,
+                    set = function(_, r, g, b)
+                        local color = addon.Filters.db.profile.MarkCollected.Color
+                        color.r, color.g, color.b = r, g, b
+                        RedrawVendor()
+                    end
+                },
+            }
+        }
+    }
+}
+
 options.OptionsTable.args['General'] = {
     type = 'group', childGroups = 'tab',
     name = addon.Util.L['General'],
@@ -188,6 +251,7 @@ options.OptionsTable.args['General'] = {
         Icon = icon,
         Options = optionsButton,
         BulkPurchase = bulkPurchase,
+        CollectedItems = collectedItems,
     }
 }
 

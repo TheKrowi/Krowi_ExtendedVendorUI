@@ -150,6 +150,33 @@ local function Tint(slot, numAvailable, isKnownHeirloom, tintRed)
     end
 end
 
+-- [[ Mark collected ]] --
+-- The same on every client, after Tint, so a collected item's mark replaces Blizzard's red or gray as Already Known's tint
+-- did (AlreadyKnown.lua:461-481, 1.107). Blizzard's draw above resets the four colors and the desaturation of every slot
+-- it draws, so nothing has to undo a mark.
+local function MarkCollected(slot, itemId)
+    if not itemId or not addon.Filters:IsMarkCollectedOn() or not addon.Filters.IsCollected(itemId) then
+        return
+    end
+    local itemButton = slot.ItemButton
+    local r, g, b, gray = addon.Filters:GetMarkColor()
+    if not r then
+        -- Gray: Blizzard's own look for a known heirloom
+        SetItemButtonNameFrameVertexColor(slot, 0.5, 0.5, 0.5)
+        SetItemButtonSlotVertexColor(slot, 0.5, 0.5, 0.5)
+        SetItemButtonTextureVertexColor(itemButton, 0.5, 0.5, 0.5)
+        SetItemButtonNormalTextureVertexColor(itemButton, 0.5, 0.5, 0.5)
+        SetItemButtonDesaturated(itemButton, true)
+        return
+    end
+    SetItemButtonNameFrameVertexColor(slot, r, g, b)
+    SetItemButtonSlotVertexColor(slot, r, g, b)
+    SetItemButtonTextureVertexColor(itemButton, 0.9 * r, 0.9 * g, 0.9 * b)
+    SetItemButtonNormalTextureVertexColor(itemButton, 0.9 * r, 0.9 * g, 0.9 * b)
+    -- Both ways, as Already Known does: a known heirloom Blizzard drew gray keeps its colors unless gray is on
+    SetItemButtonDesaturated(itemButton, gray and true or false)
+end
+
 -- [[ Empty slot ]] --
 -- The same on every client. hasItem is false where Blizzard sets nil: Blizzard only tests it for truth (live
 -- MerchantFrame.lua:718), while Transmog Loot Helper retries every frame as long as the first slot's is nil.
@@ -259,6 +286,7 @@ local function DrawMainline(slot, index)
 
     SetItemButtonDesaturated(itemButton, isKnownHeirloom)
     Tint(slot, info.numAvailable, isKnownHeirloom, tintRed)
+    MarkCollected(slot, merchantItemID)
 end
 
 -- [[ Classic ]] --
@@ -355,6 +383,7 @@ local function DrawClassic(slot, index)
 
     SetItemButtonDesaturated(itemButton, isKnownHeirloom)
     Tint(slot, numAvailable, isKnownHeirloom, tintRed)
+    MarkCollected(slot, merchantItemID)
 end
 
 -- index is the vendor's real index, or nil for an empty slot
