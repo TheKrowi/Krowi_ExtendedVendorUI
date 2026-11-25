@@ -6,16 +6,16 @@ KrowiEVU.PluginsApi:LoadPluginLocalization(L)
 
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2026-06-28 15-11-05 ]] --
+-- [[ Exported at 2026-11-25 21-44-00 ]] --
 L["Are you sure you want to hide the options button?"] = [=[Vuoi davvero nascondere il pulsante opzioni?
 Il pulsante può essere mostrato di nuovo da {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options}]=]
+L["Collected items"] = "Oggetti collezionati"
 L["Columns"] = "Colonne"
 L["Columns first"] = "Prima colonne"
-L["Icon Left click"] = "Per le opzioni veloci."
-L["Icon Right click"] = "Per opzioni."
-L["Collected items"] = "Oggetti collezionati"
 L["Custom color Desc"] = "Imposta il colore degli oggetti collezionati quando l'aspetto è Colore personalizzato."
 L["Hide collected"] = "Nascondi collezionati"
+L["Icon Left click"] = "Per le opzioni veloci."
+L["Icon Right click"] = "Per opzioni."
 L["Mark collected items"] = "Evidenzia gli oggetti collezionati"
 L["Mark collected items Desc"] = "Evidenzia gli oggetti collezionati che le opzioni Nascondi collezionati lasciano nell'elenco del mercante. Attivo per impostazione predefinita finché Already Known è caricato."
 L["Mark color"] = "Colore"

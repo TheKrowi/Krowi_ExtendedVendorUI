@@ -6,19 +6,19 @@ KrowiEVU.PluginsApi:LoadPluginLocalization(L)
 
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2026-06-28 15-11-04 ]] --
+-- [[ Exported at 2026-11-25 21-44-00 ]] --
 L["Are you sure you want to hide the options button?"] = "Êtes-vous sûr de vouloir cacher le bouton des options ?"
+L["Collected items"] = "Objets collectés"
 L["Columns"] = "Colonnes"
 L["Columns first"] = "Colonnes d'abord"
 L["Custom"] = "Personnalisé"
+L["Custom color Desc"] = "Définit la couleur des objets collectés quand l'apparence est Couleur personnalisée."
 L["Default filters"] = "Filtres par défaut"
 L["Deselect All"] = "Tout désélectionner"
 L["Filters"] = "Filtres"
 L["Hide collected"] = "Masquer les collectés"
 L["Icon Left click"] = "pour ouvrir la fenêtre des hauts faits"
 L["Icon Right click"] = "pour les options."
-L["Collected items"] = "Objets collectés"
-L["Custom color Desc"] = "Définit la couleur des objets collectés quand l'apparence est Couleur personnalisée."
 L["Mark collected items"] = "Marquer les objets collectés"
 L["Mark collected items Desc"] = "Marque les objets collectés que les options Masquer les collectés laissent dans la liste du marchand. Activé par défaut tant qu'Already Known est chargé."
 L["Mark color"] = "Couleur"

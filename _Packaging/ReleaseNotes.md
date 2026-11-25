@@ -48,3 +48,6 @@
 
 ### Fixed (24.4)
 - Hide collected now also hides items whose tooltip says Already Known with a capital K
+
+### Added (24.5)
+- Mark collected items, under Collected items in the filter menu: items you already have stay in the list, marked in green, gray or a color you pick on the options page. With Already Known it is on by default and uses Already Known's color, as before 23.0

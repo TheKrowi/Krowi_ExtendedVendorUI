@@ -5,16 +5,18 @@ KrowiEVU.PluginsApi:LoadPluginLocalization(L)
 
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2026-10-25 09-47-27 ]] --
+-- [[ Exported at 2026-11-25 21-44-00 ]] --
 L["Are you sure you want to hide the options button?"] = [=[Are you sure you want to hide the options button?
 The options button can be shown again via {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options}]=]
 L["Arsenals"] = true
 L["Both"] = true
 L["Bulk Purchase"] = true
 L["Buy"] = true
+L["Collected items"] = true
 L["Columns"] = true
 L["Columns first"] = true
 L["Custom"] = true
+L["Custom color Desc"] = "Sets the color collected items are marked in when the look is Custom color."
 L["Default filters"] = true
 L["Deselect All"] = true
 L["Direction"] = true
@@ -38,8 +40,6 @@ L["Housing Quantity"] = true
 L["Icon Left click"] = "Open Merchant Window Options"
 L["Icon Right click"] = "Open Options"
 L["Illusions"] = "Illusions (experimental)"
-L["Collected items"] = true
-L["Custom color Desc"] = "Sets the color collected items are marked in when the look is Custom color."
 L["Mark collected items"] = true
 L["Mark collected items Desc"] = "Marks the collected items that the Hide collected options leave in the vendor list. On by default while Already Known is loaded."
 L["Mark color"] = "Color"

@@ -6,12 +6,14 @@ KrowiEVU.PluginsApi:LoadPluginLocalization(L)
 
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2026-06-28 15-11-03 ]] --
+-- [[ Exported at 2026-11-25 21-44-00 ]] --
 L["Are you sure you want to hide the options button?"] = "Bist du sicher, dass du die Schaltfläche \"Optionen\" ausblenden möchtest? Die Schaltfläche \"Optionen\" kann wieder eingeblendet werden über {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options} "
 L["Arsenals"] = "Arsenal"
+L["Collected items"] = "Gesammelte Gegenstände"
 L["Columns"] = "Spalten"
 L["Columns first"] = "Spalten zuerst"
 L["Custom"] = "Benutzerdefiniert"
+L["Custom color Desc"] = "Legt die Farbe fest, in der gesammelte Gegenstände markiert werden, wenn das Aussehen Eigene Farbe ist."
 L["Default filters"] = "Standard Filter"
 L["Deselect All"] = "Alle abwählen"
 L["Ensembles"] = "Esemble"
@@ -20,8 +22,6 @@ L["Hide collected"] = "Gesammelt ausblenden"
 L["Icon Left click"] = "für schnelle Layout-Optionen."
 L["Icon Right click"] = "für die Optionen. "
 L["Illusions"] = "Illusionen (experimentell)"
-L["Collected items"] = "Gesammelte Gegenstände"
-L["Custom color Desc"] = "Legt die Farbe fest, in der gesammelte Gegenstände markiert werden, wenn das Aussehen Eigene Farbe ist."
 L["Mark collected items"] = "Gesammelte Gegenstände markieren"
 L["Mark collected items Desc"] = "Markiert die gesammelten Gegenstände, die die Optionen unter Gesammelt ausblenden in der Händlerliste lassen. Standardmäßig an, solange Already Known geladen ist."
 L["Mark color"] = "Farbe"
