@@ -182,9 +182,10 @@ local bulkPurchase = {
 
 -- Mark collected items lives in KrowiEVU_Filters (Filters.lua), next to Hide collected; the filter menu writes the same
 -- values. Filters.lua loads after this file, so addon.Filters is only read inside the functions.
+-- Once per frame, outside Blizzard's ColorPickerFrame handler, which calls the swatch's set on every tick of a drag
 local function RedrawVendor()
     if MerchantFrame:IsShown() then
-        addon.Gui.MerchantItemsContainer:Update()
+        addon.Gui.MerchantItemsContainer:RequestUpdate()
     end
 end
 
