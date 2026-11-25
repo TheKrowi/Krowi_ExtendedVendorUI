@@ -38,7 +38,7 @@ Spec: [spec.md](spec.md). Status: accepted (Krowi, 2026-11-25); building
 | Mists 5.5.4 | Bario Matalli | 101 passed, 0 failed, 7 skipped | on: SKIP (0 of 4); off: PASS |
 | Forever 1.60.1 | Brother Danil | 97 passed, 0 failed, 7 skipped | on: SKIP (0 of 10); off: PASS |
 
-No vendor in reach sold anything the character has, so the "collected items are marked" half is still unproven in a run (the screenshots only proved the drawing). It needs a vendor with collected items: Jan'sari on Retail (3 of 10 recipes known), or the Arcantina's Decor Specialist. No Lua errors from this addon in any run.
+No vendor in reach sold anything the character has, so those runs proved only the "nothing marked with the option off" half. Krowi walked to Morta Gage (the Arcantina's decor vendor, Retail, 2026-11-25 19:13, same build): 123 passed, 0 failed, 6 skipped; mark-collected: all 14 decor items owned and all 14 marked in Already Known's green (PASS on), none marked with the option off (PASS off), and Hide collected Housing hid the same 14 in the step before, so the two agree. A vendor with a mix of owned and unowned items was not run. No Lua errors from this addon in any run.
 
 ## Proof
 `/kevutest`'s new step passing on all five clients, the look approved on Retail, `Read-GameErrors.ps1` clean after each run, the taint reviewer's verdict in the PR.
