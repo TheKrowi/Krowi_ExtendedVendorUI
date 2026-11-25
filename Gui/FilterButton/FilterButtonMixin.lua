@@ -262,6 +262,30 @@ function KrowiEVU_FilterButtonMixin:CreateMenu(menu)
 		self:CreateCheckbox(menu, addon.L['Housing'], {'HideCollected', 'Housing'})
 	end
 	self:CreateCheckbox(menu, addon.L['Other'], {'HideCollected', 'Other'}) -- Items in no category that the game marks Already known (#62)
+	-- Collected items the options above leave in the list, marked; nil until the first click follows Already Known. The custom
+	-- color is picked on the options page (Krowi_Menu has no color swatch)
+	mb:CreateDivider(menu)
+	mb:CreateTitle(menu, addon.L['Collected items'])
+	mb:CreateCustomCheckbox(menu, addon.L['Mark collected items'],
+		function()
+			return addon.Filters:IsMarkCollectedOn()
+		end,
+		function()
+			addon.Filters.db.profile.MarkCollected.Enabled = not addon.Filters:IsMarkCollectedOn()
+			addon.Filters:SetFilter(addon.Filters:GetFilter())
+		end
+	)
+	for _, look in ipairs(addon.Filters.MarkLooks) do
+		mb:CreateCustomRadio(menu, addon.L['MarkLook_' .. look],
+			function()
+				return addon.Filters.db.profile.MarkCollected.Look == look
+			end,
+			function()
+				addon.Filters.db.profile.MarkCollected.Look = look
+				addon.Filters:SetFilter(addon.Filters:GetFilter())
+			end
+		)
+	end
 
 	mb:CreateDivider(menu)
 

@@ -757,6 +757,66 @@ local function CheckKnown()
     end
 end
 
+-- Mark collected items under filter All with every Hide collected option off, which the step set (highlight-known): each
+-- shown slot carries the mark's color on its name frame exactly when filters.IsCollected says the item is collected; with
+-- the option off no slot does. Look Color, so the mark is green or Already Known's color, never Blizzard's gray or red.
+local function GetNameFrameColor(slot)
+    local nameFrame = slot.NameFrame or _G[slot:GetName() .. 'NameFrame']
+    return nameFrame:GetVertexColor()
+end
+
+local function IsMarked(slot, r, g, b)
+    local sr, sg, sb = GetNameFrameColor(slot)
+    return math.abs(sr - r) < 0.01 and math.abs(sg - g) < 0.01 and math.abs(sb - b) < 0.01
+end
+
+local function CountMarked(r, g, b)
+    local marked, collected, wrong, shown = {}, 0, {}, 0
+    local _, perPage = GetGrid()
+    for i = 1, perPage do
+        local slot = GetItemSlot(i)
+        local button = slot and slot.ItemButton
+        if slot and slot:IsShown() and button.hasItem then
+            shown = shown + 1
+            local index = button:GetID()
+            local itemId = GetMerchantItemID(index)
+            local isCollected = itemId and filters.IsCollected(itemId) or false
+            local isMarked = IsMarked(slot, r, g, b)
+            if isCollected then
+                collected = collected + 1
+            end
+            if isMarked then
+                tinsert(marked, button.name or tostring(itemId))
+            end
+            if isMarked ~= isCollected and #wrong < 10 then
+                tinsert(wrong, ('%s (%s, %s)'):format(button.name or tostring(itemId), isCollected and 'collected' or 'not collected', isMarked and 'marked' or 'not marked'))
+            end
+        end
+    end
+    return marked, collected, wrong, shown
+end
+
+local function CheckMarkCollected()
+    local markCollected = filters.db.profile.MarkCollected
+    local r, g, b = filters:GetMarkColor()
+    Note(('mark color %.2f, %.2f, %.2f%s'):format(r, g, b, C_AddOns.IsAddOnLoaded('AlreadyKnown') and ' (Already Known is loaded: its color)' or ''))
+    local marked, collected, wrong, shown = CountMarked(r, g, b)
+    Note(('%d of %d shown slots collected; marked: %s'):format(collected, shown, #marked == 0 and 'none' or table.concat(marked, ', ')))
+    if #wrong > 0 then
+        Add('FAIL', 'Mark collected items on: wrong for ' .. table.concat(wrong, ', '))
+    elseif collected == 0 then
+        Add('SKIP', 'Mark collected items on: nothing on this page is collected, so only the unmarked slots were checked')
+    else
+        Add('PASS', ('Mark collected items on: the %d collected items marked, the rest not'):format(collected))
+    end
+    markCollected.Enabled = false
+    container:Update()
+    local markedOff = CountMarked(r, g, b)
+    Add(#markedOff == 0 and 'PASS' or 'FAIL', 'Mark collected items off: ' .. (#markedOff == 0 and 'no slot marked' or ('still marked: ' .. table.concat(markedOff, ', '))))
+    markCollected.Enabled = true -- On again for the screenshot; RestoreOptions puts the saved value back
+    container:Update()
+end
+
 -- Retail's new-player tutorial points its buy arrow at Blizzard's hidden MerchantItem2 (live Blizzard_TutorialTutorials.lua
 -- :2397); with Direction Rows the addon's slot 2 sits in the same place (tutorial-buy-arrow)
 local function CheckTutorialArrow()
@@ -1283,6 +1343,11 @@ local function RestoreOptions()
     local hideCollected = filters.db.profile.HideCollected
     hideCollected.Illusions = saved.HideIllusions
     hideCollected.Recipes, hideCollected.RecipesOtherCharacters, hideCollected.Other = saved.HideRecipes, saved.HideRecipesOtherCharacters, saved.HideOther
+    for key, value in next, saved.HideCollected do
+        hideCollected[key] = value
+    end
+    local markCollected = filters.db.profile.MarkCollected
+    markCollected.Enabled, markCollected.Look = saved.MarkCollected.Enabled, saved.MarkCollected.Look
     filters.db.profile.Sort.By, filters.db.profile.Sort.Reverse = saved.Sort.By, saved.Sort.Reverse
 end
 
@@ -1485,6 +1550,25 @@ steps = {
         Check = function()
             CheckMerchantTab()
             CheckKnown()
+        end,
+    },
+    {
+        -- Every Hide collected option off, so collected items stay in the list to be marked (highlight-known)
+        Name = 'mark-collected',
+        Text = 'filter All, Hide collected all off, Mark collected items on (Color)',
+        Run = function()
+            RestoreOptions()
+            local hideCollected = filters.db.profile.HideCollected
+            for key in next, hideCollected do
+                hideCollected[key] = false
+            end
+            local markCollected = filters.db.profile.MarkCollected
+            markCollected.Enabled, markCollected.Look = true, 'Color'
+            KrowiEVU_FilterButton:SetFilter(LE_LOOT_FILTER_ALL)
+        end,
+        Check = function()
+            CheckMerchantTab()
+            CheckMarkCollected()
         end,
     },
     {
@@ -1860,6 +1944,8 @@ function tests.Start(onOpen)
         HideRecipes = filters.db.profile.HideCollected.Recipes,
         HideRecipesOtherCharacters = filters.db.profile.HideCollected.RecipesOtherCharacters,
         HideOther = filters.db.profile.HideCollected.Other,
+        HideCollected = CopyTable(filters.db.profile.HideCollected),
+        MarkCollected = CopyTable(filters.db.profile.MarkCollected), -- Enabled may be nil: it then follows Already Known
         Sort = CopyTable(filters.db.profile.Sort),
         HighlightOptionsButton = profile.HighlightOptionsButton,
     }

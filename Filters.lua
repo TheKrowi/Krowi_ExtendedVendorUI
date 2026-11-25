@@ -102,6 +102,11 @@ local defaults = {
 			By = 'Vendor', -- One of filters.SortKeys
 			Reverse = false,
 		},
+		MarkCollected = { -- Collected items stay in the list, marked (docs/work/2026-11-04-highlight-known)
+			Enabled = nil, -- nil follows Already Known: on while it is loaded; the player's tick or untick is saved as a boolean
+			Look = 'Color', -- One of filters.MarkLooks
+			Color = { r = 0, g = 1, b = 0 }, -- For Look 'Custom'
+		},
 	}
 }
 
@@ -556,6 +561,64 @@ end
 function filters.IsOther(itemId)
 	return not (filters.IsPet(itemId) or filters.IsMount(itemId) or filters.IsToy(itemId) or filters.IsTransmog(itemId)
 		or filters.IsTransmogSet(itemId) or filters.IsIllusion(itemId) or filters.IsRecipe(itemId) or filters.IsHousing(itemId))
+end
+
+-- [[ Mark collected ]] --
+-- Whether an item is collected by its category's own check, the one Hide collected uses, in Validate's order; an item in no
+-- category by the Already known line. Reads only, whatever the Hide collected switches say. The categories a client lacks
+-- (pets, sets, illusions and housing on the Classic clients) return false from their Is<Category> there, so those items
+-- count through the Already known line, as Other does.
+function filters.IsCollected(itemId)
+	if filters.IsPet(itemId) then
+		return filters.IsPetCollected(itemId) and true or false
+	elseif filters.IsMount(itemId) then
+		return filters.IsMountCollected(itemId) and true or false
+	elseif filters.IsToy(itemId) then
+		return filters.IsToyCollected(itemId) and true or false
+	elseif filters.IsTransmog(itemId) then
+		return filters.IsTransmogCollected(itemId) and true or false
+	elseif filters.IsTransmogSet(itemId) then
+		return filters.IsTransmogSetCollected(itemId) and true or false
+	elseif filters.IsIllusion(itemId) then
+		return filters.IsIllusionCollected(itemId) and true or false
+	elseif filters.IsRecipe(itemId) then
+		return (filters.IsRecipeCollected(itemId))
+	elseif filters.IsHousing(itemId) then
+		return filters.IsHousingCollected(itemId) and true or false
+	end
+	return (filters.IsKnown(itemId))
+end
+
+-- The saved choice, or while there is none, on exactly when Already Known is loaded: its players saw its vendor tint on
+-- the grid up to 22.2 (Krowi, 2026-11-25)
+function filters:IsMarkCollectedOn()
+	local enabled = self.db.profile.MarkCollected.Enabled
+	if enabled == nil then
+		return C_AddOns.IsAddOnLoaded('AlreadyKnown')
+	end
+	return enabled
+end
+
+-- How a collected item is marked (Krowi, 2026-11-25): Color tints it green, or in Already Known's own color and gray setting
+-- while it is loaded; Gray is Blizzard's look for a known heirloom; Custom tints it in the player's color
+filters.MarkLooks = {'Color', 'Gray', 'Custom'}
+
+-- The mark's color and whether the icon turns gray, or nil for Gray. Already Known's settings are its global
+-- AlreadyKnownSettings, read only; green and not gray are its defaults (AlreadyKnown.lua:24-31)
+function filters:GetMarkColor()
+	local markCollected = self.db.profile.MarkCollected
+	if markCollected.Look == 'Gray' then
+		return nil
+	elseif markCollected.Look == 'Custom' then
+		local color = markCollected.Color
+		return color.r, color.g, color.b, false
+	end
+	local settings = C_AddOns.IsAddOnLoaded('AlreadyKnown') and _G['AlreadyKnownSettings']
+	settings = type(settings) == 'table' and settings
+	if settings and type(settings.r) == 'number' and type(settings.g) == 'number' and type(settings.b) == 'number' then
+		return settings.r, settings.g, settings.b, settings.monochrome and true or false
+	end
+	return 0, 1, 0, false
 end
 
 if addon.Util.IsModern then -- Pets
