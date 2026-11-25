@@ -29,5 +29,16 @@ Spec: [spec.md](spec.md). Status: accepted (Krowi, 2026-11-25); building
 - `/kevutest`'s step turns every Hide collected option off first (Krowi keeps them all on but Other, so nothing collected would be in the list), checks with look Color, then checks with the option off; the saved `HideCollected` and `MarkCollected` go back in `RestoreOptions`.
 - itIT gained `Hide collected` ("Nascondi collezionati"), which the new description names.
 
+## Test results (2026-11-25, build 23f0ee3, Already Known 1.107 on Retail)
+| Client | Vendor | /kevutest | mark-collected |
+|---|---|---|---|
+| Retail 12.1.5 | Caregiver Breel (7 drinks) | 107 passed, 0 failed, 9 skipped | on: SKIP (0 of 7 collected); off: PASS |
+| Anniversary 2.5.6 | Shara Sunwing | 129 passed, 0 failed, 7 skipped | on: SKIP; off: PASS |
+| Era 1.15.9 | Tharynn Bouden | 103 passed, 0 failed, 6 skipped | on: SKIP (0 of 6); off: PASS |
+| Mists 5.5.4 | Bario Matalli | 101 passed, 0 failed, 7 skipped | on: SKIP (0 of 4); off: PASS |
+| Forever 1.60.1 | Brother Danil | 97 passed, 0 failed, 7 skipped | on: SKIP (0 of 10); off: PASS |
+
+No vendor in reach sold anything the character has, so the "collected items are marked" half is still unproven in a run (the screenshots only proved the drawing). It needs a vendor with collected items: Jan'sari on Retail (3 of 10 recipes known), or the Arcantina's Decor Specialist. No Lua errors from this addon in any run.
+
 ## Proof
 `/kevutest`'s new step passing on all five clients, the look approved on Retail, `Read-GameErrors.ps1` clean after each run, the taint reviewer's verdict in the PR.
