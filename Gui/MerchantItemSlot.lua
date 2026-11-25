@@ -173,9 +173,8 @@ local function MarkCollected(slot, itemId)
     SetItemButtonSlotVertexColor(slot, r, g, b)
     SetItemButtonTextureVertexColor(itemButton, 0.9 * r, 0.9 * g, 0.9 * b)
     SetItemButtonNormalTextureVertexColor(itemButton, 0.9 * r, 0.9 * g, 0.9 * b)
-    if gray then
-        SetItemButtonDesaturated(itemButton, true)
-    end
+    -- Both ways, as Already Known does: a known heirloom Blizzard drew gray keeps its colors unless gray is on
+    SetItemButtonDesaturated(itemButton, gray and true or false)
 end
 
 -- [[ Empty slot ]] --

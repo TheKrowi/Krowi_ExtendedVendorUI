@@ -18,6 +18,7 @@ L["Custom color Desc"] = "Imposta il colore degli oggetti collezionati quando l'
 L["Hide collected"] = "Nascondi collezionati"
 L["Mark collected items"] = "Evidenzia gli oggetti collezionati"
 L["Mark collected items Desc"] = "Evidenzia gli oggetti collezionati che le opzioni Nascondi collezionati lasciano nell'elenco del mercante. Attivo per impostazione predefinita finché Already Known è caricato."
+L["Mark color"] = "Colore"
 L["Mark look"] = "Aspetto"
 L["Mark look Desc"] = "Imposta come vengono evidenziati gli oggetti collezionati: a colori (verde, o il colore e l'impostazione grigio di Already Known finché è caricato), in grigio come un cimelio conosciuto, o in un colore a scelta."
 L["MarkLook_Color"] = "Colore"

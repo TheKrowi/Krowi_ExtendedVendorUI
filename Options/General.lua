@@ -224,7 +224,7 @@ local collectedItems = {
                 },
                 Color = {
                     order = OrderPP(), type = 'color', width = AdjustedWidth(),
-                    name = addon.L['MarkLook_Custom'],
+                    name = addon.L['Mark color'],
                     desc = addon.L['Custom color Desc'],
                     disabled = function() return addon.Filters.db.profile.MarkCollected.Look ~= 'Custom' end,
                     get = function()

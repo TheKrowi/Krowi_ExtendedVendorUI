@@ -42,6 +42,7 @@ L["Collected items"] = true
 L["Custom color Desc"] = "Sets the color collected items are marked in when the look is Custom color."
 L["Mark collected items"] = true
 L["Mark collected items Desc"] = "Marks the collected items that the Hide collected options leave in the vendor list. On by default while Already Known is loaded."
+L["Mark color"] = "Color"
 L["Mark look"] = "Look"
 L["Mark look Desc"] = "Sets how collected items are marked: in color (green, or Already Known's own color and gray setting while it is loaded), gray like a known heirloom, or in a color you pick."
 L["MarkLook_Color"] = "Color"

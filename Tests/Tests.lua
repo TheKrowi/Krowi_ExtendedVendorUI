@@ -758,16 +758,20 @@ local function CheckKnown()
 end
 
 -- Mark collected items under filter All with every Hide collected option off, which the step set (highlight-known): each
--- shown slot carries the mark's color on its name frame exactly when filters.IsCollected says the item is collected; with
--- the option off no slot does. Look Color, so the mark is green or Already Known's color, never Blizzard's gray or red.
-local function GetNameFrameColor(slot)
-    local nameFrame = slot.NameFrame or _G[slot:GetName() .. 'NameFrame']
-    return nameFrame:GetVertexColor()
+-- shown slot carries the mark's color on its name frame and 90 % of it on its icon exactly when filters.IsCollected says the
+-- item is collected; with the option off no slot does. Look Color, so the mark is green or Already Known's color. Both
+-- colors are read: the name frame alone cannot tell Already Known's gray preset (0.5) from Blizzard's normal slot, and a
+-- skin may hide the name frame.
+local function IsColor(texture, r, g, b)
+    local tr, tg, tb = texture:GetVertexColor()
+    return math.abs(tr - r) < 0.01 and math.abs(tg - g) < 0.01 and math.abs(tb - b) < 0.01
 end
 
 local function IsMarked(slot, r, g, b)
-    local sr, sg, sb = GetNameFrameColor(slot)
-    return math.abs(sr - r) < 0.01 and math.abs(sg - g) < 0.01 and math.abs(sb - b) < 0.01
+    local nameFrame = slot.NameFrame or _G[slot:GetName() .. 'NameFrame']
+    local button = slot.ItemButton
+    local icon = button.icon or _G[button:GetName() .. 'IconTexture']
+    return IsColor(nameFrame, r, g, b) and IsColor(icon, 0.9 * r, 0.9 * g, 0.9 * b)
 end
 
 local function CountMarked(r, g, b)
@@ -1341,8 +1345,6 @@ local function RestoreOptions()
     local tokenBanner = addon.Options.db.profile.TokenBanner
     tokenBanner.GoldTotal, tokenBanner.HideNone = saved.GoldTotal, saved.HideNone
     local hideCollected = filters.db.profile.HideCollected
-    hideCollected.Illusions = saved.HideIllusions
-    hideCollected.Recipes, hideCollected.RecipesOtherCharacters, hideCollected.Other = saved.HideRecipes, saved.HideRecipesOtherCharacters, saved.HideOther
     for key, value in next, saved.HideCollected do
         hideCollected[key] = value
     end
@@ -1940,10 +1942,6 @@ function tests.Start(onOpen)
         Gear = CopyTable(filters.db.profile.Gear),
         GoldTotal = profile.TokenBanner.GoldTotal,
         HideNone = profile.TokenBanner.HideNone,
-        HideIllusions = filters.db.profile.HideCollected.Illusions,
-        HideRecipes = filters.db.profile.HideCollected.Recipes,
-        HideRecipesOtherCharacters = filters.db.profile.HideCollected.RecipesOtherCharacters,
-        HideOther = filters.db.profile.HideCollected.Other,
         HideCollected = CopyTable(filters.db.profile.HideCollected),
         MarkCollected = CopyTable(filters.db.profile.MarkCollected), -- Enabled may be nil: it then follows Already Known
         Sort = CopyTable(filters.db.profile.Sort),
