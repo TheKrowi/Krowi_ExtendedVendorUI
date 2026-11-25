@@ -7,3 +7,4 @@ Class: feature
 | 2026-11-25 | scope | Which vendor items get marked? | Everything collected | "Everything collected (Recommended)" | took |
 | 2026-11-25 | design | Default, and Already Known's color and gray setting when it is loaded? | Off, on with Already Known | "Off, on with Already Known (Recommended)" | took |
 | 2026-11-25 | design | Where is the switch? | Filter menu, after Hide collected | "Filter menu, after Hide collected (Recommended)" | took |
+| 2026-11-25 | plan | Go with plan.md, and copy Already Known 1.107 into Retail's AddOns for the before/after check? | Go, and copy Already Known in | "Go, and copy Already Known in (Recommended)" | took |
