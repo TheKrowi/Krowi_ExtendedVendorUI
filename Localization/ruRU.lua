@@ -6,15 +6,17 @@ KrowiEVU.PluginsApi:LoadPluginLocalization(L)
 
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2026-10-21 20-08-49 ]] --
+-- [[ Exported at 2026-11-25 21-44-00 ]] --
 L["Are you sure you want to hide the options button?"] = "Вы уверены, что хотите скрыть кнопку настроек? Кнопку настроек можно заново вкоючить через {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options}"
 L["Arsenals"] = "Арсеналы"
 L["Both"] = "Вместе"
 L["Bulk Purchase"] = "Покупка Оптом"
 L["Buy"] = "Купить"
+L["Collected items"] = "Собранные предметы"
 L["Columns"] = "Столбцы"
 L["Columns first"] = "Сначала столбцы"
 L["Custom"] = "Разное"
+L["Custom color Desc"] = "Задаёт цвет отметки собранных предметов, когда выбран вид «Свой цвет»."
 L["Default filters"] = "Фильтры по-умолчанию"
 L["Deselect All"] = "Оратить всё выделение "
 L["Direction"] = "Точечно"
@@ -32,8 +34,6 @@ L["Housing Quantity"] = "Количество Жилья"
 L["Icon Left click"] = "для быстрой настройки слоёв"
 L["Icon Right click"] = "для Настроек"
 L["Illusions"] = "Иллюзии"
-L["Collected items"] = "Собранные предметы"
-L["Custom color Desc"] = "Задаёт цвет отметки собранных предметов, когда выбран вид «Свой цвет»."
 L["Mark collected items"] = "Отмечать собранные предметы"
 L["Mark collected items Desc"] = "Отмечает собранные предметы, которые опции «Спрятать собранные» оставляют в списке торговца. Включено по умолчанию, пока загружен Already Known."
 L["Mark color"] = "Цвет"

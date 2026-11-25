@@ -6,16 +6,18 @@ KrowiEVU.PluginsApi:LoadPluginLocalization(L)
 
 -- [[ 此行之后的所有内容均由 CurseForge 自动生成，请勿手动编辑 - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2026-11-04 15-41-46 ]] --
+-- [[ Exported at 2026-11-25 21-44-00 ]] --
 L["Are you sure you want to hide the options button?"] = [=[是否隐藏设置按钮？
 可在此重新显示：主菜单 → 选项 → 插件 → {addonName} → {general} → {options}]=]
 L["Arsenals"] = "军械库"
 L["Both"] = "全显示"
 L["Bulk Purchase"] = "批量购买"
 L["Buy"] = "购买"
+L["Collected items"] = "已收集物品"
 L["Columns"] = "列数"
 L["Columns first"] = "优先按列排列"
 L["Custom"] = "自定义"
+L["Custom color Desc"] = "设置外观为自定义颜色时已收集物品的标记颜色。"
 L["Default filters"] = "默认筛选器"
 L["Deselect All"] = "取消全选"
 L["Direction"] = "排列方向"
@@ -39,8 +41,6 @@ L["Housing Quantity"] = "住宅装饰数量"
 L["Icon Left click"] = "打开商人窗口选项"
 L["Icon Right click"] = "打开设置选项"
 L["Illusions"] = "幻象（实验性）"
-L["Collected items"] = "已收集物品"
-L["Custom color Desc"] = "设置外观为自定义颜色时已收集物品的标记颜色。"
 L["Mark collected items"] = "标记已收集物品"
 L["Mark collected items Desc"] = "标记“隐藏已收集物品”选项保留在商人列表中的已收集物品。加载 Already Known 时默认开启。"
 L["Mark color"] = "颜色"
