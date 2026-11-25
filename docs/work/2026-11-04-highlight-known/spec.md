@@ -48,3 +48,8 @@ Krowi, 2026-11-25, every question on the recommendation:
 - Default: off, but on while Already Known is loaded, then in Already Known's color and gray-icon setting; a player's own tick or untick wins from then on.
 - Switch: one checkbox in the filter menu, right after the Hide collected section.
 - The look (Already Known's tint against a gray icon) is judged in game on Retail at the `look` gate.
+
+Look gate, Krowi, 2026-11-25 (from screenshots on an Artifact page, away from the PC):
+- "both as a setting with a 3rd custom color control for the user to select": `MarkCollected.Look` Color (green, or Already Known's color and gray setting while it is loaded; the default), Gray (Blizzard's known-heirloom look), Custom (the player's color).
+- The checkbox gets its own title, Collected items, after the Hide collected section, with the three looks as radios under it.
+- The custom color is picked on the options page, a Collected items tab with the same checkbox, the look and the color swatch (enabled for Custom only): Krowi_Menu has no color swatch, and adding one is a library release of its own.

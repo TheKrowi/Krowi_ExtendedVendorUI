@@ -24,5 +24,10 @@ Spec: [spec.md](spec.md). Status: accepted (Krowi, 2026-11-25); building
 - A Classic transmog check (`C_TransmogCollection.PlayerHasTransmog`) may not exist on every Classic client; `IsTransmogCollected` is already called by Hide collected there, so the same guard holds, but `IsCollected` must not call a category check `Validate` never reaches on that client.
 - Skins (ElvUI, GW2_UI, EllesmereUI) may hide the slot textures the tint colors; the icon tint and gray stay. Checked at the look gate if Krowi has them on.
 
+## Departures during the build
+- The look became a setting after the look gate (spec, Decision): `MarkCollected.Look` and `Color`, `filters.MarkLooks`, `filters:GetMarkColor` (nil for Gray) instead of `GetMarkLook`; the filter menu got a Collected items title with the checkbox and three look radios; `Options/General.lua` got a Collected items tab (checkbox, look, color swatch). The temporary look radios and the preview switch used for the screenshots are gone.
+- `/kevutest`'s step turns every Hide collected option off first (Krowi keeps them all on but Other, so nothing collected would be in the list), checks with look Color, then checks with the option off; the saved `HideCollected` and `MarkCollected` go back in `RestoreOptions`.
+- itIT gained `Hide collected` ("Nascondi collezionati"), which the new description names.
+
 ## Proof
 `/kevutest`'s new step passing on all five clients, the look approved on Retail, `Read-GameErrors.ps1` clean after each run, the taint reviewer's verdict in the PR.
