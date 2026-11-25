@@ -1,5 +1,5 @@
 # Spec: Highlight known items on the vendor grid
-Intent: [intent.md](intent.md). Status: accepted (Krowi, 2026-11-25)
+Intent: [intent.md](intent.md). Status: done (accepted by Krowi, 2026-11-25)
 
 ## Requirements
 1. With the new option on, every item on the grid that counts as known (requirement 2) is marked; every other item looks exactly as it does today.

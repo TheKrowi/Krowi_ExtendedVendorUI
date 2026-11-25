@@ -1,5 +1,5 @@
 # Intent: Highlight known items on the vendor grid
-Author: Krowi (chat, 2026-11-04 and 2026-11-25), from sijil82's CurseForge comment of 2026-10-29: "The latest version seems to not play nice with Already Known (https://www.curseforge.com/wow/addons/alreadyknown) - that addon stops working when this one is enabled. It worked fine up until this week I think. No idea why though, there's no errors being thrown." (no reply yet). Source: idea, CurseForge comment. Status: accepted (Krowi, 2026-11-25)
+Author: Krowi (chat, 2026-11-04 and 2026-11-25), from sijil82's CurseForge comment of 2026-10-29: "The latest version seems to not play nice with Already Known (https://www.curseforge.com/wow/addons/alreadyknown) - that addon stops working when this one is enabled. It worked fine up until this week I think. No idea why though, there's no errors being thrown." (no reply yet). Source: idea, CurseForge comment. Status: done (accepted by Krowi, 2026-11-25)
 Caused by: 23.0's addon-owned grid (`docs/work/2026-10-18-addon-owned-grid/`), not a pull request of its own.
 
 ## Problem

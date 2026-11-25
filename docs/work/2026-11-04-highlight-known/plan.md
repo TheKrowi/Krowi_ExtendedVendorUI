@@ -1,5 +1,5 @@
 # Plan: Highlight known items on the vendor grid
-Spec: [spec.md](spec.md). Status: accepted (Krowi, 2026-11-25); building
+Spec: [spec.md](spec.md). Status: done (2026-11-25)
 
 ## Files that change
 1. `Filters.lua` (tabs): `defaults.profile.MarkCollected = { Enabled = nil }`, where nil means "follow Already Known": on while it is loaded. `filters.IsCollected(itemId)`: the category's own `Is<Category>Collected`, in `Validate`'s order, else `filters.IsKnown` for an item in no category. `filters:IsMarkCollectedOn()`: the saved value, or `C_AddOns.IsAddOnLoaded('AlreadyKnown')` while it is nil. `filters:GetMarkLook()`: Already Known's `r, g, b, monochrome` from `AlreadyKnownSettings` while it is loaded and has them, else the addon's own (`0, 1, 0`, gray off).
