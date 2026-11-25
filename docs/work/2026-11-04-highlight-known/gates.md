@@ -12,3 +12,4 @@ Class: feature
 | 2026-11-25 | look | Checkbox under the Hide collected title, or its own title below? | Own title below | "Own title below (Recommended)" | took |
 | 2026-11-25 | design | Where does the player pick the custom color (Krowi_Menu has no color swatch)? | Options page | "Options page (Recommended)" | took |
 | 2026-11-25 | look | Round 2 (Artifact page): Color, Gray, Custom color; Collected items title in the menu; options tab with the swatch. OK to run the full /kevutest? | OK, run the tests | "OK, run the tests (Recommended)" | took |
+| 2026-11-25 | merge | PR #130 | Merge | "merge and draft me a reply and open the curseforge page" | took |
