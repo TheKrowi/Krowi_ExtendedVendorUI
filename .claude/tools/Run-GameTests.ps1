@@ -40,12 +40,16 @@
 [CmdletBinding()]
 param(
     [ValidateSet('Retail', 'Ptr', 'Xptr', 'Beta', 'Classic', 'ClassicPtr', 'Era', 'EraPtr', 'Anniversary', 'Forever')][string]$Client = 'Retail',
-    [ValidatePattern('^\d+,\d+$')][string]$Vendor,
+    [string[]]$Vendor,   # x,y: PowerShell passes 935,495 as two values, so they are joined below
     [switch]$NoReload,
     [int]$Timeout = 600
 )
 
 $ErrorActionPreference = 'Stop'
+if ($Vendor) {
+    $Vendor = ($Vendor -join ',') -replace '\s', ''
+    if ($Vendor -notmatch '^\d+,\d+$') { throw "-Vendor takes x,y on a capture (got '$Vendor')" }
+}
 # The kit is Krowi_ClaudeKit next to this repo's main checkout; a worktree resolves to the same folder
 $common = git -C $PSScriptRoot rev-parse --path-format=absolute --git-common-dir 2>$null
 if ($LASTEXITCODE -ne 0 -or -not $common) { throw "$PSScriptRoot is not inside a git checkout." }

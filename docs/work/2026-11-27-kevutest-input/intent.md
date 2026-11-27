@@ -1,5 +1,5 @@
 # Intent: /kevutest asks the kit for its clicks and hovers
-Author: Krowi (chat, 2026-11-27: "2 first", after "ok to all" on making `/kevutest` ask the kit for its clicks). Source: idea, from the 107 runs. Status: accepted (Krowi, 2026-11-27)
+Author: Krowi (chat, 2026-11-27: "2 first", after "ok to all" on making `/kevutest` ask the kit for its clicks). Source: idea, from the 107 runs. Status: done (accepted by Krowi, 2026-11-27)
 
 ## Problem
 `/kevutest` ends with five steps that wait 30 s each for a person: click a currency in the token banner, hover the repair-all button, hover an item, click Buyback, click Merchant. The routine never tells the kit's marker addon (`KrowiGameInput`) what it needs, and never says the run is done, so:

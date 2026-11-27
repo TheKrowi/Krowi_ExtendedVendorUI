@@ -1,5 +1,5 @@
 # Spec: /kevutest asks the kit for its clicks and hovers
-Intent: [intent.md](intent.md). Status: accepted (Krowi, 2026-11-27)
+Intent: [intent.md](intent.md). Status: done (accepted by Krowi, 2026-11-27)
 
 ## Requirements
 1. With `KrowiGameInput` loaded, each mouse step asks the marker once when it starts waiting: currency, a left click on the first shown currency token of the banner; repair, a hover on `MerchantRepairAllButton`; tooltip, a hover on the first shown slot with an item; buyback, a left click on `MerchantFrameTab2`; merchant, a left click on `MerchantFrameTab1`.
