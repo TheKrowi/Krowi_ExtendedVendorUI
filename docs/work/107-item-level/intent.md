@@ -1,5 +1,5 @@
 # Intent: An item level range for vendor gear
-Author: Dubhe (CurseForge, 2026-05-09, filed by Krowi as #107), scoped by Krowi (chat, 2026-11-27: "add a min max item level range"). Source: GitHub issue #107; also #56. Status: accepted (Krowi, 2026-11-27: "Build, keep #56 open")
+Author: Dubhe (CurseForge, 2026-05-09, filed by Krowi as #107), scoped by Krowi (chat, 2026-11-27: "add a min max item level range"). Source: GitHub issue #107; also #56. Status: done (accepted by Krowi, 2026-11-27: "Build, keep #56 open")
 
 ## Problem
 The filters cannot narrow vendor gear by item level. Dubhe asked for an item level filter on the Transmog (Appearances) filter (#107; Krowi's question which of two needs they mean, posted 2026-10-24, is still unanswered). #56 (Unplayed, 2025-04-14) asks to hide items a player can no longer get, such as the Fated weapons at the Castle Nathria weapon vendors: they cost the same Abominable Anima Spherule as the normal ones (item 183893, still listed on every difficulty of Sun King's Salvation in the Adventure Guide, checked 2026-11-27), but the Fated item levels of that token no longer drop. The game marks nothing as no longer obtainable, so the addon cannot tell those rows apart today.

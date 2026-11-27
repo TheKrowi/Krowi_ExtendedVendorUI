@@ -1,5 +1,5 @@
 # Plan: An item level range for vendor gear
-Spec: [spec.md](spec.md). Status: accepted (Krowi, 2026-11-27: "Go")
+Spec: [spec.md](spec.md). Status: done (accepted by Krowi, 2026-11-27: "Go")
 
 ## Files that change
 - `Filters.lua` (tabs): `defaults.profile.Gear` gains `MinItemLevel = 0` and `MaxItemLevel = 0`. `filters.ItemLevelShown = addon.Util.IsModern or addon.Util.IsMistsClassic` (the clients that show item levels; both flags exist in Krowi_Util 2.8, `Krowi_Util.lua:22`). `ValidateGear`: the early return also passes when both bounds are 0 or the client is not one of those; after the weapons-and-armor test, the level from `C_Item.GetDetailedItemLevelInfo(GetMerchantItemLink(index))`, nil kept, below the minimum or above the maximum hidden. A helper `filters:SetItemLevelBound(key, value)` writes one bound, moves the other when the range would be inverted (requirement 4), and redraws with `self:SetFilter(self:GetFilter())`.
@@ -26,4 +26,5 @@ Spec: [spec.md](spec.md). Status: accepted (Krowi, 2026-11-27: "Go")
 ## Proof
 - Syntax hook clean; `Find-DeprecatedApi.ps1` nothing new; taint review with no new finding.
 - Retail screenshot of the filter menu's Gear section with both submenus and a value set; the grid without the gear outside the range.
+- Done: Retail, 2026-11-27 19:38, at Knight-Lord Bloodvalor: 63 of 63 pieces hidden with the minimum at 290; its one failed check was the step's own best-armor check, fixed in fee5aad. The other clients' runs come with the release gate (Krowi, "ok to all"; the characters there are not moved).
 - `/kevutest` on all five clients with no failed check; `gear-item-level` PASS on Retail, Forever and Mists and SKIP on Era and Anniversary; `Read-GameErrors.ps1` with no new row.

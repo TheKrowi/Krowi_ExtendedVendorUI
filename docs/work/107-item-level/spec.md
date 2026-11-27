@@ -1,5 +1,5 @@
 # Spec: An item level range for vendor gear
-Intent: [intent.md](intent.md). Status: accepted (Krowi, 2026-11-27)
+Intent: [intent.md](intent.md). Status: done (accepted by Krowi, 2026-11-27)
 
 ## Requirements
 1. Two Gear options in `KrowiEVU_Filters`, `Gear.MinItemLevel` and `Gear.MaxItemLevel`, each 0 (off) by default.
