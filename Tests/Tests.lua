@@ -1100,10 +1100,13 @@ local CLASS_ARMOR = {
 local function CheckGear()
     local gear = filters.db.profile.Gear
     local best = filters:GetBestArmorSubClass()
-    Note('best armor known: ' .. (best and C_Item.GetItemSubClassInfo(Enum.ItemClass.Armor, best) or 'cloth only, or no armor proficiency found'))
+    -- The filter looks the best armor up only while Hide sub-optimal armor is on (filters:PrepareGear)
+    if gear.HideSubOptimalArmor then
+        Note('best armor known: ' .. (best and C_Item.GetItemSubClassInfo(Enum.ItemClass.Armor, best) or 'cloth only, or no armor proficiency found'))
+    end
     -- Retail learns every proficiency at once; WoW Forever's rules are unknown, so only noted there
     local classArmor = CLASS_ARMOR[select(2, UnitClass('player'))]
-    if classArmor and not addon.Util.IsForever then
+    if gear.HideSubOptimalArmor and classArmor and not addon.Util.IsForever then
         local expected = (addon.Util.IsMainline or UnitLevel('player') >= 40) and classArmor[1] or classArmor[2]
         local actual = best or 1
         Add(actual == expected and 'PASS' or 'FAIL', ('best armor %d for this class and level, %d found from the proficiencies (1 cloth to 4 plate)'):format(expected, actual))
@@ -1508,8 +1511,10 @@ steps = {
         end,
     },
     {
-        -- A range from the vendor's own weapon and armor levels: above the lowest, and below the highest when there are three or more (#107)
+        -- A range from the vendor's own weapon and armor levels: above the lowest, and below the highest when there are three or more;
+        -- at a vendor whose gear has one level, a minimum just above it, so every piece goes (#107)
         Name = 'gear-item-level',
+        Text = 'filter All, Gear: an item level range from the vendor\'s own levels',
         Run = function()
             RestoreOptions()
             if not filters.ItemLevelShown then
@@ -1525,11 +1530,11 @@ steps = {
                 end
             end
             table.sort(levels)
-            if #levels < 2 then
-                return ('the vendor\'s weapons and armor have %d item level(s), a range needs two'):format(#levels)
+            if #levels == 0 then
+                return 'this vendor sells no weapons or armor with an item level'
             end
             local gear = filters.db.profile.Gear
-            gear.MinItemLevel = levels[2]
+            gear.MinItemLevel = levels[2] or levels[1] + 1
             gear.MaxItemLevel = #levels >= 3 and levels[#levels - 1] or 0
             current.Text = ('filter All, Gear: item level %d to %s (vendor levels %s)'):format(gear.MinItemLevel, gear.MaxItemLevel > 0 and gear.MaxItemLevel or 'any', table.concat(levels, ', '))
             KrowiEVU_FilterButton:SetFilter(LE_LOOT_FILTER_ALL)
