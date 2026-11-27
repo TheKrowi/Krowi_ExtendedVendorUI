@@ -1,5 +1,5 @@
 # Intent: Housekeeping after 24.5
-Author: Krowi (chat, 2026-11-27), from the status page of that day. Source: idea. Status: accepted (Krowi, 2026-11-27: "let's do housekeeping now. clean up work folders, forever is released so should pass before releases")
+Author: Krowi (chat, 2026-11-27), from the status page of that day. Source: idea. Status: done (accepted by Krowi, 2026-11-27: "let's do housekeeping now. clean up work folders, forever is released so should pass before releases"; merged 2026-11-27, PR #132)
 
 ## Problem
 Nine work folders shipped in 24.2 (2026-10-30) still read "accepted" or "built; the in-game check is pending", so `Get-RepoState.ps1` and the status page count them as open work. The release gate still holds the WoW Forever exception of 2026-10-30 (`$untested` in `.claude/release-gate.ps1`), expired on 2026-11-05, and `CLAUDE.md` still tells the next session to run Forever and remove the entry. Its removal sat on `chore/2026-11-05-forever-gate` without a pull request.
