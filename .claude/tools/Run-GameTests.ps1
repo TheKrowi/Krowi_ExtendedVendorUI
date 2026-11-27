@@ -65,9 +65,10 @@ function Invoke-Kit([string]$What, [hashtable]$Arguments) {
     $retryUntil = (Get-Date).AddMinutes(10)
     while ($true) {
         $script:lastAttempt = Get-Date
-        $out = @(& $send -Client $Client @Arguments 2>&1 | ForEach-Object { "$_" })
+        # Send-GameInput.ps1 calls exit only on failure: a success leaves $LASTEXITCODE as the last native command set it
+        $global:LASTEXITCODE = 0
+        $out = @(& $send -Client $Client @Arguments 2>&1 | ForEach-Object { Write-Host "  $_"; "$_" })
         $code = $LASTEXITCODE
-        $out | ForEach-Object { Write-Host "  $_" }
         $last = if ($out) { $out[-1] } else { '' }
         if ($code -eq 0 -or $last -notmatch 'try again in (\d+) s') { return $code }
         if ((Get-Date) -gt $retryUntil) { Write-Host "  $What gave up: still refused after 10 minutes"; return $code }
@@ -105,7 +106,7 @@ $null = & $send -Client $Client -Install
 $state = (& $send -Client $Client -State 2>&1 | Out-String)
 if ($state -notmatch 'state: in the world') {
     $stateLine = ((($state -split "`r?`n") | Where-Object { $_ -match 'client:|state:' }) -join '; ').Trim()
-    Stop-Run "the $Client client is not in the world ($stateLine): start it with Start-Game.ps1 -Wait and Send-GameInput.ps1 -EnterWorld first"
+    Stop-Run "the $Client client is not in the world with the marker addon loaded ($stateLine). A closed client: Start-Game.ps1 -Wait, then Send-GameInput.ps1 -EnterWorld. In the world without the marker (just installed): the client needs a restart to find it."
 }
 
 if (-not $NoReload) {
