@@ -7,3 +7,4 @@ Class: feature
 | 2026-11-27 | design | Where the player sets the item levels | Filter menu + number box | "Filter menu + number box (Recommended) an empty field is ignored so we can also only set a min or max ilvl if we want" | amended |
 | 2026-11-27 | design | Which clients show the options | Retail, Forever, Mists | "Retail, Forever, Mists (Recommended)" | took |
 | 2026-11-27 | scope | Equipped item level as a preset for the minimum | No, not now | "No, not now (Recommended)" | took |
+| 2026-11-27 | plan | plan.md, with the Gear section's older strings translated | Go | "Go (Recommended)" | took |
