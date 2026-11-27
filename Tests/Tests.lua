@@ -7,7 +7,8 @@ local tests = addon.Tests
 -- /kevutest at an open vendor sets each state through the addon's own functions (filter, page, search, grid size), checks
 -- what the frames show (the slots and their items, the page controls, Blizzard's hidden slots, the skins and icons of the
 -- plugin addons that are on) and takes a screenshot of each state, with the step named in a banner above the window.
--- Steps that need the mouse (a tooltip, the tabs) wait for the player: the routine never clicks or hovers by itself.
+-- Steps that need the mouse (a tooltip, the tabs) wait for a click or hover: the routine never clicks or hovers by
+-- itself, it asks Krowi_ClaudeKit's marker addon when that is loaded (Kit input, below) and otherwise waits for the player.
 -- The filter, search and grid size are put back at the end; /kevutest again stops early. The last 10 runs are kept in
 -- KrowiEVU_Debug.Tests.Runs, which the game writes on the next /reload or logout; .claude/tools/Read-GameTests.ps1
 -- prints them with the screenshot of each step.
@@ -1721,8 +1722,73 @@ local function Capture()
     After(AFTER_SHOT, NextStep)
 end
 
+-- [[ Kit input ]] --
+-- While Krowi_ClaudeKit's marker addon is loaded (KrowiGameInput, dev only; the kit's docs/work/2026-11-05-kit-test-runs
+-- and 2026-11-07-marker-click), a step that needs the mouse asks it for the click or hover once, and the kit decides
+-- under its own guard; the step's own hook still decides whether it happened, so a click by hand counts too. Without
+-- the marker a person does it, as before. The request is cleared as soon as the step is over, so a -WaitForDone started
+-- again never clicks twice (docs/work/2026-11-27-kevutest-input)
+local function ClearInput()
+    if KrowiGameInput then
+        KrowiGameInput.Clear()
+    end
+end
+
+local function FirstCurrencyToken()
+    local i = 1
+    while _G['KrowiEVU_TokenBannerToken' .. i] do
+        local token = _G['KrowiEVU_TokenBannerToken' .. i]
+        if token:IsVisible() and token.IsCurrency then
+            return token
+        end
+        i = i + 1
+    end
+end
+
+local function FirstItemButton()
+    local i = 1
+    while GetItemSlot(i) do
+        local button = GetItemSlot(i).ItemButton
+        if button:IsVisible() and button.link then
+            return button
+        end
+        i = i + 1
+    end
+end
+
+-- Per mouse step: ask the kit, true when it was asked
+local ASK_KIT = {
+    currency = function(kit)
+        local token = FirstCurrencyToken()
+        return token and kit.ClickAt and kit.ClickAt(token) or false
+    end,
+    repair = function(kit)
+        return kit.HoverAt and kit.HoverAt(MerchantRepairAllButton) or false
+    end,
+    hover = function(kit)
+        local button = FirstItemButton()
+        return button and kit.HoverAt and kit.HoverAt(button) or false
+    end,
+    buyback = function(kit)
+        return kit.ClickAt and kit.ClickAt(MerchantFrameTab2) or false
+    end,
+    merchant = function(kit)
+        return kit.ClickAt and kit.ClickAt(MerchantFrameTab1) or false
+    end,
+}
+local askedKit, askError
+
+-- A run that will not start tells the kit it is over, so its -WaitForDone does not wait out its timeout
+local function GiveUp(message)
+    print(prefix .. message)
+    if KrowiGameInput then
+        KrowiGameInput.Done()
+    end
+end
+
 local function Continue(delay)
     waitingFor = nil
+    ClearInput()
     if waitTimer then
         waitTimer:Cancel()
         waitTimer = nil
@@ -1737,10 +1803,21 @@ local function Wait(what)
         return
     end
     waitingFor = what
+    askedKit, askError = nil, nil
+    if KrowiGameInput and ASK_KIT[what] then
+        local ok, asked = pcall(ASK_KIT[what], KrowiGameInput)
+        askedKit = ok and asked or false
+        askError = not ok and tostring(asked) or nil
+    end
     waitTimer = C_Timer.NewTimer(MOUSE_WAIT, function()
         waitTimer = nil
         waitingFor = nil
-        Add('SKIP', ('not done within %d s'):format(MOUSE_WAIT))
+        ClearInput()
+        local why = not KrowiGameInput and 'nobody did it (the kit\'s marker addon is not loaded)'
+            or askedKit and 'the kit was asked, and it did not happen'
+            or askError and ('nobody did it (asking the kit failed: ' .. askError .. ')')
+            or 'nobody did it (the kit could not be asked: no place on the screen, or an older marker)'
+        Add('SKIP', ('not done within %d s: %s'):format(MOUSE_WAIT, why))
         NextStep()
     end)
 end
@@ -1912,6 +1989,7 @@ Stop = function(reason)
     end
     running = false
     waitingFor = nil
+    ClearInput()
     if waitTimer then
         waitTimer:Cancel()
         waitTimer = nil
@@ -1950,6 +2028,10 @@ Stop = function(reason)
         end
     end
     print(prefix .. ('%s%d passed, %d failed, %d skipped. /reload to save the results.'):format(reason and (reason .. '; ') or '', counts.PASS, counts.FAIL, counts.SKIP))
+    -- However the run ended: the kit's -WaitForDone returns, and Run-GameTests.ps1 types /reload
+    if KrowiGameInput then
+        KrowiGameInput.Done()
+    end
 end
 
 -- onOpen: started by the vendor window opening, so the first step sees its first draw
@@ -1957,8 +2039,9 @@ function tests.Start(onOpen)
     if running then
         return
     end
+    ClearInput() -- A done left by an earlier run never counts for this one, also while it waits for a vendor
     if InCombatLockdown() then
-        print(prefix .. 'not in combat')
+        GiveUp('not in combat')
         return
     end
     if not MerchantFrame:IsShown() then
@@ -1968,11 +2051,11 @@ function tests.Start(onOpen)
         return
     end
     if MerchantFrame.selectedTab ~= 1 then
-        print(prefix .. 'switch to the Merchant tab, then /kevutest again')
+        GiveUp('switch to the Merchant tab, then /kevutest again')
         return
     end
     if GetMerchantNumItems() == 0 then
-        print(prefix .. 'this vendor sells nothing')
+        GiveUp('this vendor sells nothing')
         return
     end
 
@@ -2033,7 +2116,7 @@ SlashCmdList.KEVUTEST = function()
     elseif armed or startPending then
         armed, startPending = nil, nil
         banner:UnregisterEvent('MERCHANT_SHOW')
-        print(prefix .. 'cancelled')
+        GiveUp('cancelled')
     else
         tests.Start()
     end
