@@ -134,6 +134,45 @@ function KrowiEVU_FilterButtonMixin:CreateSelectDeselectAllButtons(menu, filters
 	self.menuBuilder:CreateSelectDeselectAllButtons(menu, filters, filterType)
 end
 
+-- One bound of the item level range ('MinItemLevel' or 'MaxItemLevel'): Off, the value when one is set, and Set custom with
+-- the number box the options button uses for custom rows (#107)
+function KrowiEVU_FilterButtonMixin:CreateItemLevelSubmenu(menu, text, prompt, key)
+	local mb = self.menuBuilder
+	local submenu = mb:CreateSubmenuButton(menu, text)
+	mb:CreateCustomRadio(submenu, OFF, -- Blizzard's Off of its settings (Krowi, 2026-11-27)
+		function()
+			return addon.Filters.db.profile.Gear[key] == 0
+		end,
+		function()
+			addon.Filters:SetItemLevelBound(key, 0)
+		end
+	)
+	local value = addon.Filters.db.profile.Gear[key]
+	if value > 0 then
+		mb:CreateCustomRadio(submenu, tostring(value),
+			function()
+				return addon.Filters.db.profile.Gear[key] == value
+			end,
+			function()
+				addon.Filters:SetItemLevelBound(key, value)
+			end
+		)
+	end
+	mb:CreateDivider(submenu)
+	mb:CreateButtonAndAdd(submenu, addon.L['Set custom'], function()
+		LibStub('Krowi_PopupDialog_2').ShowNumericInput({
+			Text = prompt,
+			Min = 0,
+			Max = 9999,
+			Default = addon.Filters.db.profile.Gear[key],
+			Callback = function(newValue)
+				addon.Filters:SetItemLevelBound(key, newValue)
+			end
+		})
+	end)
+	mb:AddChildMenu(menu, submenu)
+end
+
 -- Menu Creation
 
 function KrowiEVU_FilterButtonMixin:CreateMenu(menu)
@@ -306,6 +345,10 @@ function KrowiEVU_FilterButtonMixin:CreateMenu(menu)
 		)
 	end
 	mb:AddChildMenu(menu, minQuality)
+	if addon.Filters.ItemLevelShown then -- Not on Classic Era and TBC Anniversary, which show no item levels (#107)
+		self:CreateItemLevelSubmenu(menu, addon.L['Minimum item level'], addon.L['Enter the minimum item level'], 'MinItemLevel')
+		self:CreateItemLevelSubmenu(menu, addon.L['Maximum item level'], addon.L['Enter the maximum item level'], 'MaxItemLevel')
+	end
 
 	mb:CreateDivider(menu)
 

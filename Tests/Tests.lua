@@ -1100,10 +1100,13 @@ local CLASS_ARMOR = {
 local function CheckGear()
     local gear = filters.db.profile.Gear
     local best = filters:GetBestArmorSubClass()
-    Note('best armor known: ' .. (best and C_Item.GetItemSubClassInfo(Enum.ItemClass.Armor, best) or 'cloth only, or no armor proficiency found'))
+    -- The filter looks the best armor up only while Hide sub-optimal armor is on (filters:PrepareGear)
+    if gear.HideSubOptimalArmor then
+        Note('best armor known: ' .. (best and C_Item.GetItemSubClassInfo(Enum.ItemClass.Armor, best) or 'cloth only, or no armor proficiency found'))
+    end
     -- Retail learns every proficiency at once; WoW Forever's rules are unknown, so only noted there
     local classArmor = CLASS_ARMOR[select(2, UnitClass('player'))]
-    if classArmor and not addon.Util.IsForever then
+    if gear.HideSubOptimalArmor and classArmor and not addon.Util.IsForever then
         local expected = (addon.Util.IsMainline or UnitLevel('player') >= 40) and classArmor[1] or classArmor[2]
         local actual = best or 1
         Add(actual == expected and 'PASS' or 'FAIL', ('best armor %d for this class and level, %d found from the proficiencies (1 cloth to 4 plate)'):format(expected, actual))
@@ -1112,7 +1115,8 @@ local function CheckGear()
     for _, index in ipairs(container:GetIndices()) do
         inList[index] = true
     end
-    local pieces, hidden, wrong = 0, 0, {}
+    local rangeOn = filters.ItemLevelShown and (gear.MinItemLevel > 0 or gear.MaxItemLevel > 0)
+    local pieces, hidden, wrong, noLevel = 0, 0, {}, 0
     for index = 1, GetMerchantNumItems() do
         local itemId = GetMerchantItemID(index)
         local _, _, _, equipLoc, _, classId, subClassId = C_Item.GetItemInfoInstant(itemId or 0)
@@ -1120,9 +1124,14 @@ local function CheckGear()
             pieces = pieces + 1
             local info = merchantItemSlot.GetItemInfo(index)
             local quality = C_Item.GetItemQualityByID(itemId)
+            local itemLevel = rangeOn and filters.GetMerchantItemLevel(index)
+            if rangeOn and not itemLevel then
+                noLevel = noLevel + 1
+            end
             local breaks = (gear.UsableOnly and info and info.name and not info.isUsable)
                 or (best and gear.HideSubOptimalArmor and classId == Enum.ItemClass.Armor and subClassId >= 1 and subClassId < best and equipLoc ~= 'INVTYPE_CLOAK')
                 or (gear.MinQuality > 0 and quality and quality < gear.MinQuality)
+                or (itemLevel and ((gear.MinItemLevel > 0 and itemLevel < gear.MinItemLevel) or (gear.MaxItemLevel > 0 and itemLevel > gear.MaxItemLevel)))
             if not inList[index] then
                 hidden = hidden + 1
             elseif breaks then
@@ -1133,6 +1142,9 @@ local function CheckGear()
     if pieces == 0 then
         Add('SKIP', 'Gear: this vendor sells no weapons or armor')
         return
+    end
+    if rangeOn then
+        Note(('item level range %d to %d (0 is off); %d pieces without a level yet, kept'):format(gear.MinItemLevel, gear.MaxItemLevel, noLevel))
     end
     Add(#wrong == 0 and 'PASS' or 'FAIL', ('Gear: %d of %d weapon and armor pieces hidden'):format(hidden, pieces) .. (#wrong > 0 and ('; shown though they should not be: ' .. table.concat(wrong, ', ')) or ''))
 end
@@ -1342,6 +1354,7 @@ end
 local function RestoreOptions()
     local gear = filters.db.profile.Gear
     gear.UsableOnly, gear.HideSubOptimalArmor, gear.MinQuality = saved.Gear.UsableOnly, saved.Gear.HideSubOptimalArmor, saved.Gear.MinQuality
+    gear.MinItemLevel, gear.MaxItemLevel = saved.Gear.MinItemLevel, saved.Gear.MaxItemLevel
     local tokenBanner = addon.Options.db.profile.TokenBanner
     tokenBanner.GoldTotal, tokenBanner.HideNone = saved.GoldTotal, saved.HideNone
     local hideCollected = filters.db.profile.HideCollected
@@ -1490,6 +1503,40 @@ steps = {
         Run = function()
             local gear = filters.db.profile.Gear
             gear.UsableOnly, gear.HideSubOptimalArmor, gear.MinQuality = true, true, 2
+            KrowiEVU_FilterButton:SetFilter(LE_LOOT_FILTER_ALL)
+        end,
+        Check = function()
+            CheckMerchantTab()
+            CheckGear()
+        end,
+    },
+    {
+        -- A range from the vendor's own weapon and armor levels: above the lowest, and below the highest when there are three or more;
+        -- at a vendor whose gear has one level, a minimum just above it, so every piece goes (#107)
+        Name = 'gear-item-level',
+        Text = 'filter All, Gear: an item level range from the vendor\'s own levels',
+        Run = function()
+            RestoreOptions()
+            if not filters.ItemLevelShown then
+                return 'the item level range is not shown on this client'
+            end
+            local seen, levels = {}, {}
+            for index = 1, GetMerchantNumItems() do
+                local _, _, _, _, _, classId = C_Item.GetItemInfoInstant(GetMerchantItemID(index) or 0)
+                local itemLevel = (classId == Enum.ItemClass.Armor or classId == Enum.ItemClass.Weapon) and filters.GetMerchantItemLevel(index)
+                if itemLevel and not seen[itemLevel] then
+                    seen[itemLevel] = true
+                    tinsert(levels, itemLevel)
+                end
+            end
+            table.sort(levels)
+            if #levels == 0 then
+                return 'this vendor sells no weapons or armor with an item level'
+            end
+            local gear = filters.db.profile.Gear
+            gear.MinItemLevel = levels[2] or levels[1] + 1
+            gear.MaxItemLevel = #levels >= 3 and levels[#levels - 1] or 0
+            current.Text = ('filter All, Gear: item level %d to %s (vendor levels %s)'):format(gear.MinItemLevel, gear.MaxItemLevel > 0 and gear.MaxItemLevel or 'any', table.concat(levels, ', '))
             KrowiEVU_FilterButton:SetFilter(LE_LOOT_FILTER_ALL)
         end,
         Check = function()

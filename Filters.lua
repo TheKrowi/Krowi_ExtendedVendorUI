@@ -97,6 +97,8 @@ local defaults = {
 			UsableOnly = false,
 			HideSubOptimalArmor = false,
 			MinQuality = 0, -- An Enum.ItemQuality value; 0 is off
+			MinItemLevel = 0, -- 0 is off; Retail, WoW Forever and Mists only (#107)
+			MaxItemLevel = 0, -- 0 is off
 		},
 		Sort = { -- The order of the list, at every vendor (#55)
 			By = 'Vendor', -- One of filters.SortKeys
@@ -338,10 +340,56 @@ function filters:GetBestArmorSubClass()
 	return bestArmorSubClass
 end
 
+-- The clients that show item levels to the player; Classic Era and TBC Anniversary have them in the data only (#107)
+filters.ItemLevelShown = addon.Util.IsModern or addon.Util.IsMistsClassic
+
+-- The item level the vendor sells (a vendor's link carries its upgrade and difficulty), or nil while it is not loaded
+function filters.GetMerchantItemLevel(index)
+	local link = GetMerchantItemLink(index)
+	return link and C_Item.GetDetailedItemLevelInfo(link) or nil
+end
+
+local function IsItemLevelRangeOn(gear)
+	return filters.ItemLevelShown and (gear.MinItemLevel > 0 or gear.MaxItemLevel > 0)
+end
+
+-- Outside the item level range; each bound is optional, 0 is off
+function filters:IsOutsideItemLevelRange(index)
+	local gear = self.db.profile.Gear
+	if not IsItemLevelRangeOn(gear) then
+		return false
+	end
+	local itemLevel = self.GetMerchantItemLevel(index)
+	if not itemLevel then
+		-- Kept for now; the list is built again when the item's data arrives, as for the sorts
+		local itemId = GetMerchantItemID(index)
+		if itemId then
+			C_Item.RequestLoadItemDataByID(itemId)
+		end
+		addon.Gui.MerchantItemSlot.WaitForItemInfo()
+		return false
+	end
+	return (gear.MinItemLevel > 0 and itemLevel < gear.MinItemLevel) or (gear.MaxItemLevel > 0 and itemLevel > gear.MaxItemLevel)
+end
+
+-- Writes one bound ('MinItemLevel' or 'MaxItemLevel'); the other moves along when the range would be inverted, then the list is built again
+function filters:SetItemLevelBound(key, value)
+	local gear = self.db.profile.Gear
+	gear[key] = value
+	if value > 0 then
+		if key == 'MinItemLevel' and gear.MaxItemLevel > 0 and gear.MaxItemLevel < value then
+			gear.MaxItemLevel = value
+		elseif key == 'MaxItemLevel' and gear.MinItemLevel > value then
+			gear.MinItemLevel = value
+		end
+	end
+	self:SetFilter(self:GetFilter())
+end
+
 -- Weapons and armor only; an item whose data is not loaded yet stays in the list
 function filters:ValidateGear(index, itemId)
 	local gear = self.db.profile.Gear
-	if not (gear.UsableOnly or gear.HideSubOptimalArmor or gear.MinQuality > 0) then
+	if not (gear.UsableOnly or gear.HideSubOptimalArmor or gear.MinQuality > 0 or IsItemLevelRangeOn(gear)) then
 		return true
 	end
 	local _, _, _, equipLoc, _, classId, subClassId = C_Item.GetItemInfoInstant(itemId)
@@ -363,6 +411,9 @@ function filters:ValidateGear(index, itemId)
 		if quality and quality < gear.MinQuality then
 			return false
 		end
+	end
+	if self:IsOutsideItemLevelRange(index) then
+		return false
 	end
 	return true
 end
