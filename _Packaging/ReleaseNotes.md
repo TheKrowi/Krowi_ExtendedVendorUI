@@ -51,3 +51,7 @@
 
 ### Added (24.5)
 - Mark collected items, under Collected items in the filter menu: items you already have stay in the list, marked in green, gray or a color you pick on the options page. With Already Known it is on by default and uses Already Known's color, as before 23.0
+
+### Added (24.6)
+- Gear options Minimum item level and Maximum item level in the filter menu: weapons and armor outside the range are hidden (Retail, WoW Forever, Mists Classic)
+- German, French, Italian and Russian texts for the filter menu's Gear options

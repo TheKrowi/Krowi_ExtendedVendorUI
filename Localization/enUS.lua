@@ -5,7 +5,7 @@ KrowiEVU.PluginsApi:LoadPluginLocalization(L)
 
 -- [[ Everything after this line is automatically generated from CurseForge and is not meant for manual edit - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2026-11-25 21-44-00 ]] --
+-- [[ Exported at 2026-11-27 22-37-04 ]] --
 L["Are you sure you want to hide the options button?"] = [=[Are you sure you want to hide the options button?
 The options button can be shown again via {gameMenu} {arrow} {interface} {arrow} {addOns} {arrow} {addonName} {arrow} {general} {arrow} {options}]=]
 L["Arsenals"] = true
@@ -26,6 +26,8 @@ L["Ensembles"] = true
 L["Enter housing quantity"] = "Enter housing quantity (1-999):"
 L["Enter number of columns"] = "Enter number of columns (2-99):"
 L["Enter number of rows"] = "Enter number of rows (1-99):"
+L["Enter the maximum item level"] = "Enter the maximum item level (0 is off):"
+L["Enter the minimum item level"] = "Enter the minimum item level (0 is off):"
 L["Filters"] = true
 L["ForeverGamepadNotLoaded"] = "Extended Vendor UI does not work with WoW Forever's gamepad interface, so it is not loaded. To use it, turn off the gamepad interface on the Gamepad page of the game options and type /reload."
 L["ForeverGamepadReload"] = "WoW Forever's gamepad interface is on, which Extended Vendor UI does not work with. Type /reload to get Blizzard's vendor window."
@@ -49,7 +51,9 @@ L["MarkLook_Color"] = "Color"
 L["MarkLook_Custom"] = "Custom color"
 L["MarkLook_Gray"] = "Gray"
 L["Max"] = true
+L["Maximum item level"] = true
 L["Maximum purchase"] = true
+L["Minimum item level"] = true
 L["Minimum quality"] = true
 L["Mounts"] = true
 L["Need"] = true
@@ -129,7 +133,3 @@ L["Toys"] = true
 L["Vendor has"] = true
 L["You can afford"] = true
 L["You can fit"] = true
-L["Enter the maximum item level"] = "Enter the maximum item level (0 is off):"
-L["Enter the minimum item level"] = "Enter the minimum item level (0 is off):"
-L["Maximum item level"] = true
-L["Minimum item level"] = true

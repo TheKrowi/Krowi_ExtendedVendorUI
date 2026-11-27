@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 24.6
+## 24.6 - 2026-11-27
 ### Added
 - Gear options Minimum item level and Maximum item level in the filter menu: weapons and armor outside the range are hidden (Retail, WoW Forever, Mists Classic)
 - German, French, Italian and Russian texts for the filter menu's Gear options

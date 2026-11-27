@@ -6,7 +6,7 @@ KrowiEVU.PluginsApi:LoadPluginLocalization(L)
 
 -- [[ 此行之后的所有内容均由 CurseForge 自动生成，请勿手动编辑 - SOURCETOKEN - AUTOGENTOKEN ]] --
 
--- [[ Exported at 2026-11-25 21-44-00 ]] --
+-- [[ Exported at 2026-11-27 22-37-04 ]] --
 L["Are you sure you want to hide the options button?"] = [=[是否隐藏设置按钮？
 可在此重新显示：主菜单 → 选项 → 插件 → {addonName} → {general} → {options}]=]
 L["Arsenals"] = "军械库"
@@ -27,6 +27,8 @@ L["Ensembles"] = "家具"
 L["Enter housing quantity"] = "输入住宅装饰数量 (1-999):"
 L["Enter number of columns"] = "输入列数 (2-99):"
 L["Enter number of rows"] = "输入行数 (1-99):"
+L["Enter the maximum item level"] = "输入最高物品等级（0为关闭）:"
+L["Enter the minimum item level"] = "输入最低物品等级（0为关闭）:"
 L["Filters"] = "筛选器"
 L["ForeverGamepadNotLoaded"] = "Extended Vendor UI 无法与 WoW Forever 的手柄界面同时使用，因此未加载。如需使用，请在游戏选项的手柄页面关闭手柄界面，然后输入 /reload。"
 L["ForeverGamepadReload"] = "WoW Forever 的手柄界面已开启，Extended Vendor UI 无法与其同时使用。输入 /reload 以使用暴雪的商人窗口。"
@@ -50,7 +52,9 @@ L["MarkLook_Color"] = "彩色"
 L["MarkLook_Custom"] = "自定义颜色"
 L["MarkLook_Gray"] = "灰色"
 L["Max"] = "最大"
+L["Maximum item level"] = "最高物品等级"
 L["Maximum purchase"] = "最大购买数量"
+L["Minimum item level"] = "最低物品等级"
 L["Minimum quality"] = "最低品质"
 L["Mounts"] = "坐骑"
 L["Need"] = "未拥有"
@@ -117,7 +121,3 @@ L["Toys"] = "玩具"
 L["Vendor has"] = "商人库存"
 L["You can afford"] = "可负担"
 L["You can fit"] = "背包可容纳"
-L["Enter the maximum item level"] = "输入最高物品等级（0为关闭）:"
-L["Enter the minimum item level"] = "输入最低物品等级（0为关闭）:"
-L["Maximum item level"] = "最高物品等级"
-L["Minimum item level"] = "最低物品等级"
