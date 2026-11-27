@@ -139,7 +139,7 @@ end
 function KrowiEVU_FilterButtonMixin:CreateItemLevelSubmenu(menu, text, prompt, key)
 	local mb = self.menuBuilder
 	local submenu = mb:CreateSubmenuButton(menu, text)
-	mb:CreateCustomRadio(submenu, NONE,
+	mb:CreateCustomRadio(submenu, OFF, -- Blizzard's Off of its settings (Krowi, 2026-11-27)
 		function()
 			return addon.Filters.db.profile.Gear[key] == 0
 		end,

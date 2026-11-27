@@ -8,3 +8,5 @@ Class: feature
 | 2026-11-27 | design | Which clients show the options | Retail, Forever, Mists | "Retail, Forever, Mists (Recommended)" | took |
 | 2026-11-27 | scope | Equipped item level as a preset for the minimum | No, not now | "No, not now (Recommended)" | took |
 | 2026-11-27 | plan | plan.md, with the Gear section's older strings translated | Go | "Go (Recommended)" | took |
+| 2026-11-27 | look | The two submenus on Retail (artifact Xy48UuWVVusXKJbL73C3uG) | Looks good | "Looks good but should be off by default" | amended |
+| 2026-11-27 | look | Rename the first choice None to Off | (none) | "Off" | own |
