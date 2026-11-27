@@ -1,5 +1,5 @@
 # Plan: The arrows in the hide-options-button text never show
-Spec: [spec.md](spec.md). Status: built; the in-game check is pending
+Spec: [spec.md](spec.md). Status: done (shipped in 24.2, 2026-10-30)
 
 ## Files that change
 - `Gui/OptionsButton/OptionsButtonMixin.lua`: line 2 takes `addonName`, line 50 builds the media path from it (commit 3cd3e2a).

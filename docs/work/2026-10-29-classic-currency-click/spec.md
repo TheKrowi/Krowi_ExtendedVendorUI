@@ -1,5 +1,5 @@
 # Spec: Clicking a currency in the token banner errors on Classic
-Intent: [intent.md](intent.md). Status: accepted
+Intent: [intent.md](intent.md). Status: done (shipped in 24.2, 2026-10-30)
 
 ## Requirements
 1. Clicking a currency in the token banner never gives a Lua error, on any client.

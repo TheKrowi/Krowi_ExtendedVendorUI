@@ -1,5 +1,5 @@
 # Plan: Bulk purchase calls the deprecated GetInventorySlotInfo
-Spec: [spec.md](spec.md). Status: built; the in-game check is pending
+Spec: [spec.md](spec.md). Status: done (shipped in 24.2, 2026-10-30)
 
 ## Files that change
 - `Gui/BulkPurchase/BulkPurchaseMixin.lua`: the local `GetInventorySlotInfo_` and its use in `HasBagEquippedInSlot` (commit 9f7d12d).

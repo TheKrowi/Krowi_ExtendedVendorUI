@@ -1,5 +1,5 @@
 # Spec: Hide collected never hides illusions
-Intent: [intent.md](intent.md). Status: accepted (Krowi, 2026-10-29: "tackle the things you know so far"); the in-game proof is pending
+Intent: [intent.md](intent.md). Status: done (accepted by Krowi, 2026-10-29: "tackle the things you know so far"; shipped in 24.2, 2026-10-30)
 
 ## Requirements
 1. With Hide collected, Illusions on, an illusion the account has is left out of the list, under Only show Illusions, Custom and All (Retail, Forever).

@@ -1,5 +1,5 @@
 # Spec: The search box reads the vendor's name without a secret-value probe
-Intent: [intent.md](intent.md). Status: accepted
+Intent: [intent.md](intent.md). Status: done (shipped in 24.2, 2026-10-30)
 
 ## Requirements
 1. Opening a vendor never gives a Lua error from the search box's `MerchantFrame` `OnShow` hook, on any client, whether the vendor's name can be read or not.

@@ -1,5 +1,5 @@
 # Plan: Clicking a currency in the token banner errors on Classic
-Spec: [spec.md](spec.md). Status: built; the in-game check is pending
+Spec: [spec.md](spec.md). Status: done (shipped in 24.2, 2026-10-30)
 
 ## Files that change
 - `Gui/TokenBanner/TokenMixin.lua`: `OnClick` calls a local `ToggleCurrencyTab`: `ToggleTokenFrame` on Retail and Forever; on Classic `ToggleCharacter('TokenFrame')` where Blizzard's `CHARACTERFRAME_SUBFRAMES` has it and there are currencies (Mists), else `ToggleCharacter('PVPFrame')` where that is a tab (Anniversary), else nothing (Era) (commit 18c6a96).

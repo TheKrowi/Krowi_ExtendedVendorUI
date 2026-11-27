@@ -1,5 +1,5 @@
 # Plan: Hide collected never hides illusions
-Spec: [spec.md](spec.md). Status: built; the in-game check is pending
+Spec: [spec.md](spec.md). Status: done (shipped in 24.2, 2026-10-30)
 
 ## Files that change
 - `Filters.lua`: `filters.IsIllusionCollected` reads the Already known line.
