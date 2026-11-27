@@ -1721,8 +1721,65 @@ local function Capture()
     After(AFTER_SHOT, NextStep)
 end
 
+-- [[ Kit input ]] --
+-- While Krowi_ClaudeKit's marker addon is loaded (KrowiGameInput, dev only; the kit's docs/work/2026-11-05-kit-test-runs
+-- and 2026-11-07-marker-click), a step that needs the mouse asks it for the click or hover once, and the kit decides
+-- under its own guard; the step's own hook still decides whether it happened, so a click by hand counts too. Without
+-- the marker a person does it, as before. The request is cleared as soon as the step is over, so a -WaitForDone started
+-- again never clicks twice (docs/work/2026-11-27-kevutest-input)
+local function ClearInput()
+    if KrowiGameInput then
+        KrowiGameInput.Clear()
+    end
+end
+
+local function FirstCurrencyToken()
+    local i = 1
+    while _G['KrowiEVU_TokenBannerToken' .. i] do
+        local token = _G['KrowiEVU_TokenBannerToken' .. i]
+        if token:IsVisible() and token.IsCurrency then
+            return token
+        end
+        i = i + 1
+    end
+end
+
+local function FirstItemButton()
+    local i = 1
+    while GetItemSlot(i) do
+        local button = GetItemSlot(i).ItemButton
+        if button:IsVisible() and button.link then
+            return button
+        end
+        i = i + 1
+    end
+end
+
+-- Per mouse step: ask the kit, true when it was asked
+local ASK_KIT = {
+    currency = function(kit)
+        local token = FirstCurrencyToken()
+        return token and kit.ClickAt and kit.ClickAt(token) or false
+    end,
+    repair = function(kit)
+        return kit.HoverAt(MerchantRepairAllButton)
+    end,
+    hover = function(kit)
+        local button = FirstItemButton()
+        return button and kit.HoverAt(button) or false
+    end,
+    buyback = function(kit)
+        return kit.ClickAt and kit.ClickAt(MerchantFrameTab2) or false
+    end,
+    merchant = function(kit)
+        return kit.ClickAt and kit.ClickAt(MerchantFrameTab1) or false
+    end,
+}
+local askedKit
+
 local function Continue(delay)
     waitingFor = nil
+    ClearInput()
     if waitTimer then
         waitTimer:Cancel()
         waitTimer = nil
@@ -1737,10 +1794,19 @@ local function Wait(what)
         return
     end
     waitingFor = what
+    askedKit = nil
+    if KrowiGameInput and ASK_KIT[what] then
+        local ok, asked = pcall(ASK_KIT[what], KrowiGameInput)
+        askedKit = ok and asked or false
+    end
     waitTimer = C_Timer.NewTimer(MOUSE_WAIT, function()
         waitTimer = nil
         waitingFor = nil
-        Add('SKIP', ('not done within %d s'):format(MOUSE_WAIT))
+        ClearInput()
+        local why = not KrowiGameInput and 'nobody did it (the kit\'s marker addon is not loaded)'
+            or askedKit and 'the kit was asked, and it did not happen'
+            or 'nobody did it (the kit could not be asked: no place on the screen)'
+        Add('SKIP', ('not done within %d s: %s'):format(MOUSE_WAIT, why))
         NextStep()
     end)
 end
@@ -1912,6 +1978,7 @@ Stop = function(reason)
     end
     running = false
     waitingFor = nil
+    ClearInput()
     if waitTimer then
         waitTimer:Cancel()
         waitTimer = nil
@@ -1950,6 +2017,10 @@ Stop = function(reason)
         end
     end
     print(prefix .. ('%s%d passed, %d failed, %d skipped. /reload to save the results.'):format(reason and (reason .. '; ') or '', counts.PASS, counts.FAIL, counts.SKIP))
+    -- However the run ended: the kit's -WaitForDone returns, and Run-GameTests.ps1 types /reload
+    if KrowiGameInput then
+        KrowiGameInput.Done()
+    end
 end
 
 -- onOpen: started by the vendor window opening, so the first step sees its first draw
@@ -2023,6 +2094,7 @@ function tests.Start(onOpen)
     end
     local seconds = math.ceil((#steps - mouseSteps) * (SETTLE + AFTER_SHOT) / 5) * 5
     print(prefix .. ('%d steps, about %d s, then %d that need the mouse; /kevutest again stops it'):format(#steps, seconds, mouseSteps))
+    ClearInput() -- A done left by an earlier run never counts for this one
     RunStep(1)
 end
 
