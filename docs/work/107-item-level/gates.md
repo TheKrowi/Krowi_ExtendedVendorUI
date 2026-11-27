@@ -14,3 +14,5 @@ Class: feature
 | 2026-11-27 | scope | Where the in-game runs happen | (none) | "Tell me a vendor in silvermoon i can test it on on retail. Not moving chars on other clients" | own |
 | 2026-11-27 | test | The item level step at a vendor with one level: a minimum one above it, every piece hidden (Knight-Lord Bloodvalor, all 289) | (none) | (decided without asking) | auto |
 | 2026-11-27 | scope | PR now, other clients' runs with the release gate; /kevutest asking the kit for its clicks as its own work item | PR now | "ok to all" | took |
+| 2026-11-27 | merge | PR #136 | Merge | "Merge (Recommended)" | took |
+| 2026-11-27 | scope | Export the new strings to CurseForge now | Export now | "Export now (Recommended)" | took |
