@@ -129,3 +129,7 @@ L["Toys"] = true
 L["Vendor has"] = true
 L["You can afford"] = true
 L["You can fit"] = true
+L["Enter the maximum item level"] = "Enter the maximum item level (0 is off):"
+L["Enter the minimum item level"] = "Enter the minimum item level (0 is off):"
+L["Maximum item level"] = true
+L["Minimum item level"] = true
