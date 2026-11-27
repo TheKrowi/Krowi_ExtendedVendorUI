@@ -361,6 +361,12 @@ function filters:IsOutsideItemLevelRange(index)
 	end
 	local itemLevel = self.GetMerchantItemLevel(index)
 	if not itemLevel then
+		-- Kept for now; the list is built again when the item's data arrives, as for the sorts
+		local itemId = GetMerchantItemID(index)
+		if itemId then
+			C_Item.RequestLoadItemDataByID(itemId)
+		end
+		addon.Gui.MerchantItemSlot.WaitForItemInfo()
 		return false
 	end
 	return (gear.MinItemLevel > 0 and itemLevel < gear.MinItemLevel) or (gear.MaxItemLevel > 0 and itemLevel > gear.MaxItemLevel)
