@@ -1,5 +1,5 @@
 # Spec: Scrap's button outside the window at a repair vendor
-Intent: [intent.md](intent.md). Status: accepted (Krowi, 2026-10-29)
+Intent: [intent.md](intent.md). Status: done (accepted by Krowi, 2026-10-29; shipped in 24.2, 2026-10-30)
 
 ## Requirements
 1. Mists, Anniversary and Era with Scrap: at a repair vendor Scrap's button is inside the vendor window, right of the last repair button.

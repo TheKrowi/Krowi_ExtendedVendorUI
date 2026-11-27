@@ -1,5 +1,5 @@
 # Spec: Sort the vendor list
-Intent: [intent.md](intent.md). Status: accepted
+Intent: [intent.md](intent.md). Status: done (shipped in 24.2, 2026-10-30)
 
 ## Requirements
 1. The filter menu has a Sort section after Gear: Vendor order (default), Name, Gold price, Token price, Quality (and the extra keys Krowi picks), as radio buttons, plus a Reverse order checkbox.

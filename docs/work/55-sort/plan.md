@@ -1,5 +1,5 @@
 # Plan: Sort the vendor list
-Spec: [spec.md](spec.md). Status: built; the in-game check is pending
+Spec: [spec.md](spec.md). Status: done (shipped in 24.2, 2026-10-30)
 
 ## Files that change
 - `Filters.lua`: `Sort` in the profile defaults; `filters.SortKeys`, `filters:GetTokenOrder`, `filters:SortList` (called at the end of `BuildList`).

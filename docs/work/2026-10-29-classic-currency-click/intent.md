@@ -1,5 +1,5 @@
 # Intent: Clicking a currency in the token banner errors on Classic
-Author: Krowi (maintainer), from the known-debt list in `CLAUDE.md`. Source: known debt (found 2026-10-15, rechecked 2026-10-29). Status: accepted
+Author: Krowi (maintainer), from the known-debt list in `CLAUDE.md`. Source: known debt (found 2026-10-15, rechecked 2026-10-29). Status: done (shipped in 24.2, 2026-10-30)
 
 ## Problem
 Clicking a currency in the token banner opens the Currency tab (GitHub #77). The click calls `CharacterFrame:ToggleTokenFrame()` (`Gui/TokenBanner/TokenMixin.lua:139`), which only Retail and WoW Forever have (`CharacterFrameMixin:ToggleTokenFrame`, live `CharacterFrame.lua:67`, forever `CharacterFrame.lua:60`). On Mists Classic, TBC Anniversary and Classic Era the method is nil, so the click gives a Lua error and nothing opens. All three Classic clients do have a Currency tab, opened with `ToggleCharacter("TokenFrame")` (`CharacterFrame.lua:60` and `Blizzard_TokenUI.lua` in the classic, classic_anniversary and classic_era sources).

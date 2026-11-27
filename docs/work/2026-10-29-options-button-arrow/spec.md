@@ -1,5 +1,5 @@
 # Spec: The arrows in the hide-options-button text never show
-Intent: [intent.md](intent.md). Status: accepted
+Intent: [intent.md](intent.md). Status: done (shipped in 24.2, 2026-10-30)
 
 ## Requirements
 1. The confirmation for hiding the options button shows an arrow texture between the steps of the path, on every client.

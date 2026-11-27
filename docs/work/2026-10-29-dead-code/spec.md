@@ -1,5 +1,5 @@
 # Spec: Remove dead code and a stale editor global
-Intent: [intent.md](intent.md). Status: accepted (Krowi, 2026-10-29: "tackle the things you know so far")
+Intent: [intent.md](intent.md). Status: done (accepted by Krowi, 2026-10-29: "tackle the things you know so far"; shipped in 24.2, 2026-10-30)
 
 ## Requirements
 1. `addon.IsWrathClassic`, `addon.IsDragonflightRetail` and the version locals that only fed them are gone from `Krowi_ExtendedVendorUI.lua`.

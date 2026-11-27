@@ -1,5 +1,5 @@
 # Plan: The search box reads the vendor's name without a secret-value probe
-Spec: [spec.md](spec.md). Status: built; the in-game check is pending
+Spec: [spec.md](spec.md). Status: done (shipped in 24.2, 2026-10-30)
 
 ## Files that change
 - `Gui/SearchBox/SearchBoxMixin.lua`: the `OnShow` hook sets a secret name to nil, and the same-vendor test needs a name (commit b8d27d5).

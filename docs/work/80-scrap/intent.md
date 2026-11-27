@@ -1,5 +1,5 @@
 # Intent: Scrap's button outside the window at a repair vendor
-Author: phant (#80, 2026-04-05; also Scrap #301 by Starlynk1, 2026-02-09). Status: accepted (Krowi, 2026-10-29: "plan a test run tonight")
+Author: phant (#80, 2026-04-05; also Scrap #301 by Starlynk1, 2026-02-09). Status: done (accepted by Krowi, 2026-10-29: "plan a test run tonight"; shipped in 24.2, 2026-10-30)
 
 ## Problem
 On TBC Anniversary with Scrap (12.0.0, 12.0.1), at a vendor that repairs, Scrap's button sits outside the vendor window, left of the repair buttons (#80's screenshot), and with guild repair the repair-all button is stretched (Scrap #301's screenshot). Reported on 21.3.

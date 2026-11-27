@@ -1,5 +1,5 @@
 # Spec: Bulk purchase calls the deprecated GetInventorySlotInfo
-Intent: [intent.md](intent.md). Status: accepted
+Intent: [intent.md](intent.md). Status: done (shipped in 24.2, 2026-10-30)
 
 ## Requirements
 1. On Retail and Forever, Bulk Purchase reads the bag slots through `C_PaperDollInfo.GetInventorySlotInfo`, so it works without `loadDeprecationFallbacks`.

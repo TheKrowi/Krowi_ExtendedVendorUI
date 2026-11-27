@@ -1,5 +1,5 @@
 # Plan: Scrap's button outside the window at a repair vendor
-Spec: [spec.md](spec.md). Status: built; the in-game check is pending
+Spec: [spec.md](spec.md). Status: done (shipped in 24.2, 2026-10-30)
 
 ## Files that change
 - `Plugins/Scrap.lua` (new), `Plugins/Files.xml`.

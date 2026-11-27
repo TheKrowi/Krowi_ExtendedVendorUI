@@ -1,5 +1,5 @@
 # Intent: The search box reads the vendor's name without a secret-value probe
-Author: Krowi (maintainer), from the known-debt list in `CLAUDE.md`. Source: known debt (found 2026-10-15, rechecked 2026-10-29). Status: accepted
+Author: Krowi (maintainer), from the known-debt list in `CLAUDE.md`. Source: known debt (found 2026-10-15, rechecked 2026-10-29). Status: done (shipped in 24.2, 2026-10-30)
 
 ## Problem
 When the vendor window opens, the search box's `MerchantFrame` `OnShow` hook (`Gui/SearchBox/SearchBoxMixin.lua:49-66`) reads `UnitName('npc')`, keeps it, and with Remember search on and Remember search between vendors off compares it with the previous vendor's name (line 60) to decide whether to keep the search. On Retail 12.x `UnitName` is `SecretWhenUnitNameIdentityRestricted` (live `UnitDocumentation.lua`). Where that restriction is on, the name is a secret value and the comparison errors. No player has reported it yet.

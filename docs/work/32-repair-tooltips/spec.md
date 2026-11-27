@@ -1,5 +1,5 @@
 # Spec: Tooltips on the repair buttons with nothing to repair
-Issue #32 (filliph, 2024-07-25). Status: accepted (Krowi, 2026-10-29: "#32 want"). Intent folded in: an unambiguous request.
+Issue #32 (filliph, 2024-07-25). Status: done (accepted by Krowi, 2026-10-29: "#32 want"; shipped in 24.2, 2026-10-30). Intent folded in: an unambiguous request.
 
 ## Problem
 With nothing to repair the repair-all buttons (own money, guild money) are disabled and show no tooltip, so a player cannot tell them apart (filliph, 2024-07-26 and 2026-06-05). Blizzard's own window behaves the same.
