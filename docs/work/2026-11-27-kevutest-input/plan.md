@@ -18,6 +18,6 @@ Spec: [spec.md](spec.md). Status: done (accepted by Krowi, 2026-11-27: "Go")
 - **`Done()` before the screenshots are written:** screenshots are written at once; saved variables need the `/reload` the script types.
 
 ## Proof
-- Done: Retail, 2026-11-27 21:11, `Run-GameTests.ps1 -NoReload -Vendor 935,495` at Knight-Lord Bloodvalor with nobody at the PC: the kit right-clicked the vendor, clicked the currency, hovered the item, clicked Buyback and Merchant; 125 passed, 0 failed, 5 skipped (repair: he does not repair), exit 0, no Lua error. Built departure: `-Vendor` takes `935,495` as PowerShell passes it (two values), joined in the script.
+- Done: Retail, 2026-11-27 21:11, `Run-GameTests.ps1 -NoReload -Vendor 935,495` at Knight-Lord Bloodvalor with nobody at the PC: the kit right-clicked the vendor, clicked the currency, hovered the item, clicked Buyback and Merchant; 125 passed, 0 failed, 5 skipped (repair: he does not repair), exit 0, no Lua error. After the review fixes (f2bd33f), again at 21:25: 125 passed, 0 failed, exit 0. Built departure: `-Vendor` takes `935,495` as PowerShell passes it (two values), joined in the script.
 - Syntax hook clean.
 - Retail `Run-GameTests.ps1`: exit 0, the run's summary line with currency, tooltip, buyback and merchant PASS (repair SKIP: Knight-Lord Bloodvalor does not repair), no "not done within", the wait ending within about 2 minutes.
