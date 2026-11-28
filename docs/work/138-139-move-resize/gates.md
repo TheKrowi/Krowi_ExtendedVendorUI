@@ -10,3 +10,4 @@ Class: feature
 | 2026-11-28 | design | BlizzMove (asked again after KAF's silent skip was explained): settings greyed with a line, or silent as KAF? | Step aside, settings greyed | "blizzmove makes it movable, that setting can be greyed out but remember position should still work" | amended |
 | 2026-11-28 | design | Grip redraw while dragging: Snap, Outline, or both behind a switch to pick in game? | Both, you pick in game | "Both, you pick in game (Recommended)" | took |
 | 2026-11-28 | plan | plan.md: WindowMover.lua and ResizeGrip.lua, Window tab with KAF's settings, MoveAny treated as BlizzMove, seven /kevutest steps, changelog 24.7; Retail look check first | Go | "Go (Recommended)" | took |
+| 2026-11-28 | look | Look check on Retail (Artifact page with the /kevutest screenshots; BlizzMove on): which grip redraw to keep, Snap or Outline, or both as a setting? | Snap, look is fine | "Snap, look is fine (Recommended)" | took |

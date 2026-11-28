@@ -108,4 +108,4 @@ Krowi, 2026-11-28:
 - Scope: one work item and one pull request for both issues.
 - Defaults: as KAF's code, Make Window Movable on and Remember Window Position off.
 - BlizzMove: after the question how KAF handles it (KAF skips a frame that is already movable, silently), "blizzmove makes it movable, that setting can be greyed out but remember position should still work" (requirement 8, Design: BlizzMove).
-- Grip redraw: both Snap and Outline behind a temporary switch, and Krowi picks in game at the look gate.
+- Grip redraw: both Snap and Outline behind a temporary switch, and Krowi picks in game at the look gate. At the look gate on Retail: "Snap, look is fine".
