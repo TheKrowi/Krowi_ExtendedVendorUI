@@ -26,6 +26,10 @@
             "PowerShell(& \"E:\\World of Warcraft Addon Development\\Krowi_ClaudeKit\\skills\\release\\Check-ReleaseReady.ps1\" *)",
             "PowerShell(& \"E:\\World of Warcraft Addon Development\\Krowi_ClaudeKit\\skills\\release\\Show-ReleaseZip.ps1\")",
             "PowerShell(& \"E:\\World of Warcraft Addon Development\\Krowi_ClaudeKit\\skills\\release\\Show-ReleaseZip.ps1\" *)"
+        ],
+        "deny": [
+            "Edit(//e/World of Warcraft Addon Development/wow-ui-source/**)",
+            "Write(//e/World of Warcraft Addon Development/wow-ui-source/**)"
         ]
     },
     "worktree": {

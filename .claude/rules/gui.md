@@ -1,0 +1,13 @@
+---
+paths:
+  - "Gui/**"
+  - "Plugins/**"
+  - "Tests/**"
+---
+# Item slots, paging and the Gui folder
+
+From `CLAUDE.md`, Architecture, which keeps the summary; the taint rules for these files are in its Taint-sensitive areas.
+
+- **Drawing a slot** (`Gui/MerchantItemSlot.lua`) copies Blizzard's per-item code: Mainline mirrors live `MerchantFrame.lua:275-403`, which WoW Forever's `Mainline/MerchantFrame.lua` has unchanged (forever 1.60.1); one Classic variant mirrors classic TBC `MerchantFrame.lua:196-321` for Mists, Anniversary and Era; the alternate-currency part copies `MerchantFrame_UpdateAltCurrency`, which only finds `MerchantItemN`. When a patch changes Blizzard's per-item code, change the copy the same way. One deliberate difference: an empty slot, and a new one, has `hasItem = false` where Blizzard sets nil (Blizzard only tests it for truth), because Transmog Loot Helper retries every frame while the first slot's is nil (#101). `merchantItemSlot.GetItemInfo` returns the `C_MerchantFrame.GetItemInfo` table on every client (built from `GetMerchantItemInfo` on Classic); the token banner and Bulk Purchase use it too.
+- **Paging** (`Gui/Paging/`): own previous and next buttons (copies of Blizzard's XML) and page text, anchored in `Gui/MerchantFrame.lua`, following Blizzard's paging rules with the filtered count; mouse-wheel paging through a `HookScript` on `MerchantFrame`. `Gui/MerchantFrame.lua` resizes `MerchantFrame` (`SetMerchantFrameSize`) and re-anchors its insets and repair buttons (`UpdateMerchantInfoLayout`); the two repair-all buttons run their mouse scripts while disabled (`SetMotionScriptsWhileDisabled`) and a `HookScript('OnEnter')` says Nothing to repair then (#32).
+- `Gui/`: `FilterButton/`, `SearchBox/` and `OptionsButton/` (modern and classic variants through local `CreateModern`/`CreateClassic`), `TokenBanner/` (gold, currency and item totals over the filtered list, keyed by currency or item id, replacing Blizzard's money and token row; pooled tokens are cleared before each use and a cost without data is skipped; the update runs 0.25 s after a request on its own pending flag, not Krowi_Util's `DelayFunction`, whose slot stays taken after an error; options Gold total and Hide currencies you have none of sit at the end of Krowi_Currency's Money and Currency sections), `BulkPurchase/` (a shift-click on an item opens `KrowiEVU_BulkPurchaseFrame`, which buys stack by stack every 0.5 s through `BuyMerchantItem` with the real index; its room in the bags counts the reagent bag, bag 5 on Retail and Forever, only for crafting reagents, since that bag reports type 0 like a plain bag).
