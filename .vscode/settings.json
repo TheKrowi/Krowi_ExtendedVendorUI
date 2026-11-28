@@ -188,6 +188,8 @@
         "KrowiEVU_MerchantBuybackInset",
         "KrowiEVU_MerchantButtonsInset",
         "KrowiEVU_MerchantEmptyInset",
+        "KrowiEVU_MerchantResizeGrip",
+        "BlizzMoveAPI",
         "MerchantFrameBtnCornerLeft",
         "MerchantFrameBtnCornerRight",
         "BuybackBG",
