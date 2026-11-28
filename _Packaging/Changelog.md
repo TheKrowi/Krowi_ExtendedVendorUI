@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 24.7
+### Changed
+- Krowi_PopupDialog library updated to 2.1
+
+### Fixed
+- After setting custom rows, columns, housing quantity or an item level with the mouse, the next text box in a game window takes letters again (such as the box where you type DELETE)
+
 ## 24.6 - 2026-11-27
 ### Added
 - Gear options Minimum item level and Maximum item level in the filter menu: weapons and armor outside the range are hidden (Retail, WoW Forever, Mists Classic)
