@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 24.7
+### Added
+- The vendor window can be moved: drag it by its background. Options, Window tab: Make Window Movable, Remember Window Position and Reset Position. With BlizzMove or MoveAny, those addons move the window and the remembered position still works
+- A grip in the vendor window's bottom-right corner: drag it to add or remove columns and rows
+
 ## 24.6 - 2026-11-27
 ### Added
 - Gear options Minimum item level and Maximum item level in the filter menu: weapons and armor outside the range are hidden (Retail, WoW Forever, Mists Classic)

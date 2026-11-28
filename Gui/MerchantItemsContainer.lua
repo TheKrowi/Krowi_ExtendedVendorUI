@@ -78,6 +78,9 @@ function merchantItemsContainer:HideAll()
     for i = 1, BUYBACK_ITEMS_PER_PAGE, 1 do
         GetBlizzardItemSlot(i):Hide()
     end
+    if KrowiEVU_MerchantResizeGrip then -- Krowi_Vendorer's grid has no use for this addon's grip
+        KrowiEVU_MerchantResizeGrip:Hide()
+    end
 end
 
 -- [[ Placement ]] --

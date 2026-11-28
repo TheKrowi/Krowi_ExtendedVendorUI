@@ -4,6 +4,8 @@
     <Include file='Paging/Paging.xml'/>
     <Script file='MerchantItemsContainer.lua'/>
     <Script file='MerchantFrame.lua'/>
+    <Script file='WindowMover.lua'/>
+    <Script file='ResizeGrip.lua'/>
     <Include file='OptionsButton/OptionsButton.xml'/>
     <Include file='FilterButton/FilterButton.xml'/>
     <Include file='SearchBox/SearchBox.xml'/>

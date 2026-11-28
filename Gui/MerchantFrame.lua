@@ -84,21 +84,68 @@ do
 	end
 end
 
+-- One column and one row of the merchant tab's grid, in the window's size
+function merchantFrame.GetGridStep()
+	return merchantItemsContainer.OffsetX + merchantItemsContainer.ItemWidth, merchantItemsContainer.OffsetMerchantInfoY + merchantItemsContainer.ItemHeight
+end
+
+-- The merchant tab's window size for a grid; withPaging false for the 36 px less while the page controls are hidden
+function merchantFrame.GetMerchantInfoSize(numColumns, numRows, withPaging)
+	local columnWidth, rowHeight = merchantFrame.GetGridStep()
+	local width = originalWidth + (numColumns - merchantItemsContainer.DefaultMerchantInfoNumColumns) * columnWidth
+	local height = originalHeight + (numRows - merchantItemsContainer.DefaultMerchantInfoNumRows) * rowHeight + MerchantMoneyInset:GetHeight() - 23
+	if not withPaging then
+		height = height - 36
+	end
+	return width, height
+end
+
 function merchantFrame.SetMerchantFrameSize()
 	if MerchantFrame.selectedTab == 1 then
-		local numExtraColumns = addon.Options.db.profile.NumColumns - merchantItemsContainer.DefaultMerchantInfoNumColumns
-		local numExtraRows = addon.Options.db.profile.NumRows - merchantItemsContainer.DefaultMerchantInfoNumRows
-		local itemWidth = merchantItemsContainer.OffsetX + merchantItemsContainer.ItemWidth
-		local itemHeight = merchantItemsContainer.OffsetMerchantInfoY + merchantItemsContainer.ItemHeight
-		local width = originalWidth + numExtraColumns * itemWidth
-		local height = originalHeight + numExtraRows * itemHeight + MerchantMoneyInset:GetHeight() - 23
-		if not addon.Gui.Paging:IsShown() then
-			height = height - 36
-		end
-		MerchantFrame:SetSize(width, height)
+		local profile = addon.Options.db.profile
+		MerchantFrame:SetSize(merchantFrame.GetMerchantInfoSize(profile.NumColumns, profile.NumRows, addon.Gui.Paging:IsShown()))
 	elseif MerchantFrame.selectedTab == 2 then
 		MerchantFrame:SetSize(originalWidth, originalHeight)
 	end
+end
+
+-- [[ Grid size by dragging ]] --
+-- The resize grip (#139, Gui/ResizeGrip.lua) and /kevutest size the grid here: the gear menu's limits (rows 1-99, columns
+-- 2-99, OptionsButtonMixin.lua:153-156, 186) and no larger than fits between the window's top-left and the screen's
+-- bottom-right, unless the grid already is (then it may only shrink). The window is anchored by its top-left, by the panel
+-- manager and by a moved spot, so that corner stays put.
+local MIN_ROWS, MIN_COLUMNS, MAX_GRID = 1, 2, 99
+function merchantFrame.GetMaxGrid()
+	local profile = addon.Options.db.profile
+	local left, top = MerchantFrame:GetLeft(), MerchantFrame:GetTop()
+	if not left or not top then
+		return math.max(profile.NumColumns, MIN_COLUMNS), math.max(profile.NumRows, MIN_ROWS)
+	end
+	local ratio = UIParent:GetEffectiveScale() / MerchantFrame:GetEffectiveScale()
+	local columnWidth, rowHeight = merchantFrame.GetGridStep()
+	local baseWidth, baseHeight = merchantFrame.GetMerchantInfoSize(MIN_COLUMNS, MIN_ROWS, true)
+	local maxColumns = MIN_COLUMNS + math.floor((UIParent:GetRight() * ratio - left - baseWidth) / columnWidth)
+	local maxRows = MIN_ROWS + math.floor((top - baseHeight) / rowHeight)
+	maxColumns = math.min(MAX_GRID, math.max(maxColumns, profile.NumColumns, MIN_COLUMNS))
+	maxRows = math.min(MAX_GRID, math.max(maxRows, profile.NumRows, MIN_ROWS))
+	return maxColumns, maxRows
+end
+
+function merchantFrame.ClampGrid(numColumns, numRows)
+	local maxColumns, maxRows = merchantFrame.GetMaxGrid()
+	return math.max(MIN_COLUMNS, math.min(numColumns, maxColumns)), math.max(MIN_ROWS, math.min(numRows, maxRows))
+end
+
+-- Writes the gear menu's Rows and Columns and redraws as the gear menu does; true when the grid changed
+function merchantFrame.ResizeTo(numColumns, numRows)
+	numColumns, numRows = merchantFrame.ClampGrid(numColumns, numRows)
+	local profile = addon.Options.db.profile
+	if profile.NumColumns == numColumns and profile.NumRows == numRows then
+		return false
+	end
+	profile.NumColumns, profile.NumRows = numColumns, numRows
+	addon.Gui.OptionsButton.UpdateView()
+	return true
 end
 
 function merchantFrame.UpdateMerchantInfoLayout()
@@ -132,6 +179,7 @@ function merchantFrame.UpdateMerchantInfoLayout()
 		MerchantToken4:SetPoint('BOTTOMRIGHT', -185, 8)
 	end
 	MerchantFrameBottomLeftBorder:Hide()
+	KrowiEVU_MerchantResizeGrip:Show()
 end
 hooksecurefunc('MerchantFrame_UpdateMerchantInfo', merchantFrame.UpdateMerchantInfoLayout)
 
@@ -147,4 +195,5 @@ hooksecurefunc('MerchantFrame_UpdateBuybackInfo', function()
 	KrowiEVU_MerchantButtonsInset:Hide()
 	KrowiEVU_MerchantBuybackInset:Hide()
 	KrowiEVU_MerchantEmptyInset:Hide()
+	KrowiEVU_MerchantResizeGrip:Hide() -- The Buyback tab keeps Blizzard's size
 end)

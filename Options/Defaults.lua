@@ -19,6 +19,10 @@ addon.Options.Defaults = {
             Enabled = true,
             ShowConfirm = true,
         },
+        Window = { -- Krowi_AchievementFilter's Window > Movable defaults (#138); Position ({X, Y}) only while remembered
+            Movable = true,
+            RememberPosition = false,
+        },
         TokenBanner = {
             MoneyLabel = 'Icon',
             MoneyAbbreviate = 'None',

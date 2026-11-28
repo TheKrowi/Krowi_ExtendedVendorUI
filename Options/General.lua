@@ -243,6 +243,61 @@ local collectedItems = {
     }
 }
 
+-- Krowi_AchievementFilter's Window > Movable settings (#138, Gui/WindowMover.lua). Gui/ loads after this file, so the
+-- window mover is only read inside the functions. While BlizzMove or MoveAny moves the window it does the dragging;
+-- remembering and resetting the spot still work.
+local function GetOtherMover()
+    return addon.Gui.WindowMover and addon.Gui.WindowMover.GetOtherMover()
+end
+
+local window = {
+    order = OrderPP(), type = 'group',
+    name = addon.L['Window'],
+    args = {
+        Movable = {
+            order = OrderPP(), type = 'group', inline = true,
+            name = addon.L['Movable'],
+            args = {
+                MakeWindowMovable = {
+                    order = OrderPP(), type = 'toggle', width = AdjustedWidth(2),
+                    name = addon.L['Make Window Movable'],
+                    desc = function()
+                        local otherMover = GetOtherMover()
+                        if otherMover then
+                            return addon.L['Moved by other addon']:K_ReplaceVars{addon = otherMover}
+                        end
+                        return addon.L['Make Window Movable Desc']:KEVU_AddDefaultValueText('Window.Movable')
+                    end,
+                    disabled = function() return GetOtherMover() ~= nil end,
+                    get = function() return addon.Options.db.profile.Window.Movable end,
+                    set = function(_, value) addon.Options.db.profile.Window.Movable = value end
+                },
+                Blank1 = {order = OrderPP(), type = 'description', width = AdjustedWidth(), name = ''},
+                RememberWindowPosition = {
+                    order = OrderPP(), type = 'toggle', width = AdjustedWidth(2),
+                    name = addon.L['Remember Window Position'],
+                    desc = addon.L['Remember Window Position Desc']:KEVU_AddDefaultValueText('Window.RememberPosition'),
+                    get = function() return addon.Options.db.profile.Window.RememberPosition end,
+                    set = function(_, value) addon.Gui.WindowMover.SetRememberPosition(value) end
+                },
+                ResetPosition = {
+                    order = OrderPP(), type = 'execute', width = AdjustedWidth(),
+                    name = addon.L['Reset Position'],
+                    desc = function()
+                        local otherMover = GetOtherMover()
+                        local desc = addon.L['Reset Position Desc']
+                        if otherMover then
+                            desc = desc .. '\n\n' .. addon.L['Reset Position other addon']:K_ReplaceVars{addon = otherMover}
+                        end
+                        return desc
+                    end,
+                    func = function() addon.Gui.WindowMover.Reset() end
+                },
+            }
+        }
+    }
+}
+
 options.OptionsTable.args['General'] = {
     type = 'group', childGroups = 'tab',
     name = addon.Util.L['General'],
@@ -252,6 +307,7 @@ options.OptionsTable.args['General'] = {
         Options = optionsButton,
         BulkPurchase = bulkPurchase,
         CollectedItems = collectedItems,
+        Window = window,
     }
 }
 
@@ -259,4 +315,7 @@ function RefreshOptions()
     local profile = addon.Options.db.profile
     MinimapShowMinimapIconSet(nil, profile.ShowMinimapIcon)
     OptionsButtonShowOptionsButtonSet(nil, profile.ShowOptionsButton)
+    if addon.Gui.WindowMover then -- The profile's remembered spot, or back to Blizzard's place without one
+        addon.Gui.WindowMover.SetState(addon.Gui.WindowMover.GetState())
+    end
 end

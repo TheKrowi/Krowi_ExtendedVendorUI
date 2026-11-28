@@ -1282,10 +1282,75 @@ local function CheckBuyback()
     local _, relativeTo, _, x, y = MerchantItem1:GetPoint(1)
     local placed = relativeTo == MerchantFrame and math.abs(x - container.FirstOffsetX) < 0.5 and math.abs(y - container.FirstOffsetY) < 0.5
     Add(placed and 'PASS' or 'FAIL', ('buyback slot 1 at %s, %s from the window\'s top left'):format(tostring(x), tostring(y)))
+    Add(not KrowiEVU_MerchantResizeGrip:IsShown() and 'PASS' or 'FAIL', 'resize grip ' .. (KrowiEVU_MerchantResizeGrip:IsShown() and 'shown on Buyback' or 'hidden on Buyback'))
+end
+
+-- [[ Window mover and resize grip ]] --
+-- Moving the window (#138) and sizing the grid with the corner grip (#139), through the functions the drags call: the kit
+-- cannot drag. Gui/WindowMover.lua stores a spot as the window's top-left offset from UIParent's top-left.
+local windowMover = addon.Gui.WindowMover
+local merchantFrameGui = addon.Gui.MerchantFrame
+local windowSpot -- {X, Y} the move step put the window at
+
+local function GetTopLeft()
+    local ratio = UIParent:GetEffectiveScale() / MerchantFrame:GetEffectiveScale()
+    return MerchantFrame:GetLeft(), MerchantFrame:GetTop() - UIParent:GetTop() * ratio
+end
+
+local function IsNear(a, b)
+    return a and b and math.abs(a - b) < 1
+end
+
+local function CheckWindowAt(x, y, what)
+    local left, top = GetTopLeft()
+    Add(IsNear(left, x) and IsNear(top, y) and 'PASS' or 'FAIL', ('window %s: top-left at %.1f, %.1f, expected %.1f, %.1f'):format(what, left or -1, top or -1, x, y))
+end
+
+local function CheckWindowOnScreen()
+    local ratio = UIParent:GetEffectiveScale() / MerchantFrame:GetEffectiveScale()
+    local left, top = GetTopLeft()
+    local onScreen = left + MerchantFrame:GetWidth() >= 39 and left <= UIParent:GetWidth() * ratio - 39 and top <= 0.5 and top >= 19 - UIParent:GetHeight() * ratio
+    Add(onScreen and 'PASS' or 'FAIL', ('window clamped: top-left at %.1f, %.1f, %dx%d, screen %dx%d'):format(left, top, MerchantFrame:GetWidth(), MerchantFrame:GetHeight(), UIParent:GetWidth() * ratio, UIParent:GetHeight() * ratio))
+end
+
+local function CheckWindowEnvironment()
+    Add(not MerchantFrame:IsProtected() and 'PASS' or 'FAIL', 'MerchantFrame is ' .. (MerchantFrame:IsProtected() and 'protected: moving it in combat would be blocked' or 'not protected'))
+    local otherMover = windowMover.GetOtherMover()
+    Note('other window mover: ' .. (otherMover or 'none') .. (otherMover and ' (it drags; Make Window Movable greyed out)' or ''))
+end
+
+-- The window's size against SetMerchantFrameSize's formula, its top-left where it was, and the grip in the corner
+local function CheckGripGrid(numColumns, numRows, topLeft)
+    local profile = addon.Options.db.profile
+    Add(profile.NumColumns == numColumns and profile.NumRows == numRows and 'PASS' or 'FAIL', ('grid %dx%d (columns x rows), expected %dx%d'):format(profile.NumColumns, profile.NumRows, numColumns, numRows))
+    local width, height = merchantFrameGui.GetMerchantInfoSize(numColumns, numRows, paging:IsShown())
+    Add(IsNear(MerchantFrame:GetWidth(), width) and IsNear(MerchantFrame:GetHeight(), height) and 'PASS' or 'FAIL', ('window %dx%d, expected %dx%d'):format(MerchantFrame:GetWidth(), MerchantFrame:GetHeight(), width, height))
+    CheckWindowAt(topLeft[1], topLeft[2], 'top-left kept')
+    local grip = KrowiEVU_MerchantResizeGrip
+    local inCorner = grip:IsVisible() and IsNear(grip:GetRight(), MerchantFrame:GetRight() - 3) and IsNear(grip:GetBottom(), MerchantFrame:GetBottom() + 3)
+    Add(inCorner and 'PASS' or 'FAIL', 'resize grip ' .. (inCorner and 'shown in the bottom-right corner' or ('not in the corner (shown: ' .. tostring(grip:IsVisible()) .. ')')))
+end
+
+local function GripStep(name, text, getGrid)
+    local topLeft, numColumns, numRows
+    return {
+        Name = name,
+        Text = text,
+        Run = function()
+            topLeft = { GetTopLeft() }
+            numColumns, numRows = getGrid()
+            numColumns, numRows = merchantFrameGui.ClampGrid(numColumns, numRows)
+            merchantFrameGui.ResizeTo(numColumns, numRows)
+        end,
+        Check = function()
+            CheckMerchantTab()
+            CheckGripGrid(numColumns, numRows, topLeft)
+        end,
+    }
 end
 
 -- [[ Choices ]] --
-local CUSTOM_FILTERS = { 'TRANSMOG', 'MOUNTS', 'PETS', 'TOYS', 'RECIPES', 'TRANSMOG_SETS', 'ILLUSIONS', 'HOUSING' }
+local CUSTOM_FILTERS ={ 'TRANSMOG', 'MOUNTS', 'PETS', 'TOYS', 'RECIPES', 'TRANSMOG_SETS', 'ILLUSIONS', 'HOUSING' }
 
 -- The custom filter that keeps the most items while still leaving some out
 local function PickFilter()
@@ -1394,6 +1459,7 @@ local function Restore()
     KrowiEVU_Filters.LastFilter = saved.LastFilter
     addon.Options.db.profile.HighlightOptionsButton = saved.HighlightOptionsButton
     KrowiEVU_OptionsButton:UpdateHighlight()
+    windowMover.SetState(saved.Window)
 end
 
 -- The gear's first-time highlight (a fresh install): shown and pulsing while HighlightOptionsButton is set, gone and the
@@ -1419,6 +1485,11 @@ steps = {
         Text = 'the window as it opened',
         Run = function()
             Note(run.OnOpen and 'started as the vendor opened: this is the first draw' or 'started at an open vendor: not its first draw')
+            local spot = windowMover.GetPosition()
+            if spot then -- A moved or remembered spot: the window opened there (#138)
+                local x, y = windowMover.Clamp(spot.X, spot.Y)
+                CheckWindowAt(x, y, 'at its moved spot')
+            end
             -- Every item's data, for the tooltip reads of the known step: an item a Hide collected option hides is never drawn
             for index = 1, GetMerchantNumItems() do
                 local itemId = GetMerchantItemID(index)
@@ -1643,6 +1714,80 @@ steps = {
         end,
         Check = CheckHighlight,
     },
+    {
+        -- What a drag stores, 100 px right and down of where the window is (#138)
+        Name = 'window-move',
+        Text = 'the window moved 100 px right and down',
+        Run = function()
+            local left, top = GetTopLeft()
+            windowSpot = { left + 100, top - 100 }
+            windowMover.SetPosition(windowSpot[1], windowSpot[2])
+            windowMover.Apply()
+        end,
+        Check = function()
+            CheckWindowAt(windowSpot[1], windowSpot[2], 'moved')
+            CheckWindowEnvironment()
+            local point = windowMover.GetBlizzardPoint()
+            Note('Blizzard\'s point: ' .. (point and ('%s %s %.1f, %.1f'):format(point[1], point[3], point[4], point[5]) or 'none recorded'))
+        end,
+    },
+    {
+        -- The panel manager re-places the window at Blizzard's point; the post-hook on UpdateUIPanelPositions then runs Apply.
+        -- The test cannot run the panel manager (from addon code that would lay out every panel tainted), so it sets the point.
+        Name = 'window-reapply',
+        Text = 'the window put back after Blizzard placed it again',
+        Run = function()
+            local point = windowMover.GetBlizzardPoint()
+            if not point then
+                return 'no point from Blizzard recorded this session'
+            end
+            MerchantFrame:ClearAllPoints()
+            MerchantFrame:SetPoint(unpack(point))
+            windowMover.Apply()
+        end,
+        Check = function()
+            CheckWindowAt(windowSpot[1], windowSpot[2], 'after a layout')
+        end,
+    },
+    {
+        Name = 'window-clamp',
+        Text = 'a spot far off the screen',
+        Run = function()
+            windowMover.SetPosition(-5000, 5000)
+            windowMover.Apply()
+        end,
+        Check = CheckWindowOnScreen,
+    },
+    {
+        Name = 'window-reset',
+        Text = 'Reset Position',
+        Run = function()
+            windowMover.Reset()
+        end,
+        Check = function()
+            local point = windowMover.GetBlizzardPoint()
+            if point then
+                local p, relativeTo, relativePoint, x, y = MerchantFrame:GetPoint(1)
+                local back = p == point[1] and relativeTo == point[2] and relativePoint == point[3] and IsNear(x, point[4]) and IsNear(y, point[5])
+                Add(back and 'PASS' or 'FAIL', ('window at Blizzard\'s point again: %s %s %.1f, %.1f'):format(tostring(p), tostring(relativePoint), x or -1, y or -1))
+            end
+            local stored = windowMover.GetPosition() or addon.Options.db.profile.Window.Position
+            Add(not stored and 'PASS' or 'FAIL', 'moved spot ' .. (stored and 'still stored' or 'forgotten'))
+        end,
+    },
+    GripStep('grip-grow', 'resize grip: one column and one row more', function()
+        local profile = addon.Options.db.profile
+        return profile.NumColumns + 1, profile.NumRows + 1
+    end),
+    GripStep('grip-shrink', 'resize grip: back to the grid as it was', function()
+        return saved.Columns, saved.Rows
+    end),
+    GripStep('grip-max', 'resize grip: as large as fits on the screen', function()
+        return 99, 99
+    end),
+    GripStep('grip-back', 'resize grip: back to the grid as it was', function()
+        return saved.Columns, saved.Rows
+    end),
     {
         Name = 'currency',
         Text = 'click a currency in the token banner',
@@ -2076,6 +2221,7 @@ function tests.Start(onOpen)
         MarkCollected = CopyTable(filters.db.profile.MarkCollected), -- Enabled may be nil: it then follows Already Known
         Sort = CopyTable(filters.db.profile.Sort),
         HighlightOptionsButton = profile.HighlightOptionsButton,
+        Window = windowMover.GetState(),
     }
 
     run = { Time = date('%Y-%m-%d %H:%M:%S'), Steps = {}, OnOpen = onOpen }
