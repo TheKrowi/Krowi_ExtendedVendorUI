@@ -4,7 +4,7 @@ Intent: [intent.md](intent.md). Status: done 2026-11-28
 ## Requirements
 1. Every `file:line` reference in `CLAUDE.md` to the repo's own files points at the code it names.
 2. Claude Code refuses an Edit or Write under `wow-ui-source`; reads stay allowed.
-3. `CLAUDE.md` loads about 21 KB instead of 33 KB: the six blocks that move measure 13.4 KB (Filters 4.0, the `/kevutest` coverage 4.1, Public API 2.9, `Gui/` 0.9, Drawing a slot 0.9, Paging 0.6), less the first sentence and pointer each keeps. The moved text lives in `.claude/rules/*.md` with `paths:` frontmatter, verbatim, and `CLAUDE.md` names each rule file where its text was.
+3. `CLAUDE.md` loads about 22 KB instead of 33 KB: the six blocks that move measure 13.4 KB (Filters 4.0, the `/kevutest` coverage 4.1, Public API 2.9, `Gui/` 0.9, Drawing a slot 0.9, Paging 0.6), less the summary and pointer each keeps. Measured after the build: 22.0 KB with no rule loaded (a locale or TOC change); 26.3 KB after reading `Filters.lua`; 32.1 KB after reading `Gui/MerchantItemsContainer.lua` (three rules); 36.5 KB after reading anything under `Tests/**` (all four rules, 3.3 KB more than before). The moved text lives in `.claude/rules/*.md` with `paths:` frontmatter, verbatim, and `CLAUDE.md` names each rule file where its text was.
 4. A pull request opened on GitHub starts from a template that asks for what Krowi checks: Conventional Commits title, a changelog line, the clients tested.
 5. `raw/` and `wiki/` are gone from the tree, or kept, as Krowi decides.
 
@@ -18,7 +18,7 @@ Intent: [intent.md](intent.md). Status: done 2026-11-28
 ## Design
 1. `CLAUDE.md`: `Krowi_ExtendedVendorUI.lua:108-146`, `BulkPurchaseMixin.lua:187`.
 2. `.claude/settings.json`: `"deny": ["Edit(//e/World of Warcraft Addon Development/wow-ui-source/**)", "Write(//e/World of Warcraft Addon Development/wow-ui-source/**)"]`, the form Krowi_AchievementFilter uses (permissions.md: a Windows path `E:\x` is written `//e/x`).
-3. Four path rules, each section moved verbatim; in `CLAUDE.md` each bullet keeps its first sentence and ends with "Details: `.claude/rules/<file>`":
+3. Four path rules, each section moved verbatim; in `CLAUDE.md` each bullet keeps a short summary (its contracts, such as the plugin methods' stable signatures and Krowi_Vendorer's `HideAll`) and names its rule file:
    - `filters.md` (`Filters.lua`, `Gui/FilterButton/**`, `Gui/SearchBox/**`, `Gui/MerchantItemSlot.lua`, `Gui/MerchantItemsContainer.lua`, `Gui/TokenBanner/**`, `Options/**`, `Tests/**`): the Filters bullet of Architecture.
    - `gui.md` (`Gui/**`, `Plugins/**`, `Tests/**`): Drawing a slot, Paging and the `Gui/` bullet.
    - `plugins.md` (`Api/**`, `Plugins/**`, `Gui/MerchantItemsContainer.lua`, `Gui/MerchantItemSlot.lua`, `Krowi_ExtendedVendorUI.lua`, `Tests/**`): the Public API bullet. The callers of `BuildList`, `GetTokenOrder` and the plugin methods were added after `/code-review` (2026-11-28).
@@ -35,7 +35,7 @@ Intent: [intent.md](intent.md). Status: done 2026-11-28
 - **Item 4, a template (recommended)**: ten outside PRs since 2024, cheap. Against **none**: Krowi asks for the changelog line by hand.
 
 ## Areas of concern
-- Taint and secret values; clients; Blizzard API changes; other addons; saved variables; localization; embedded libraries; player-facing text: none, nothing that ships or deploys changes (`Deploy.ps1:61` leaves out `.claude`, `.github`, `raw`, `wiki` and `docs`).
+- Taint and secret values; clients; Blizzard API changes; other addons; saved variables; localization; embedded libraries; player-facing text: none, nothing that ships or deploys changes (`Deploy.ps1:61` and the addon manager's `zipper.py:19` leave out `.claude`, `.github`, `raw`, `wiki` and `docs`).
 - Harness: an existing line of `settings.json` changes and the instruction files move, so the class is `harness`. Risk: a fact a session needs before it reads a file sits in a rule and is missed; the first sentences kept in `CLAUDE.md`, with the rule's name, guard it.
 - Project settings load from the main checkout, so the deny rules take effect after the merge.
 

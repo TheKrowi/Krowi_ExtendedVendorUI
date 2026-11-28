@@ -29,5 +29,5 @@ Spec: [spec.md](spec.md). Status: done 2026-11-28
 - The sentence check: 0 sentences of the old `CLAUDE.md` missing from the new `CLAUDE.md` plus the rules.
 - `(Get-Item CLAUDE.md).Length` about 21 KB or less.
 - `Select-String` prints the code lines that `Krowi_ExtendedVendorUI.lua:108-146` and `BulkPurchaseMixin.lua:187` name.
-- `Get-ChangeClass.ps1` says `harness`; `Deploy.ps1 -WhatIf` shows no change to what a client gets.
+- `Get-ChangeClass.ps1` says `harness`; no shipped file in the diff. Built: `Deploy.ps1 -WhatIf` from the worktree listed 38 bundled-lib copies, which are this worktree's CRLF checkout against the main checkout's LF files, not this change (`git diff main -- Libs` empty), so the shipped-file check replaced it.
 - After the merge: an Edit under `wow-ui-source` refused by permission.
