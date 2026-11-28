@@ -2,6 +2,9 @@
 paths:
   - "Api/**"
   - "Plugins/**"
+  - "Gui/MerchantItemsContainer.lua"
+  - "Gui/MerchantItemSlot.lua"
+  - "Krowi_ExtendedVendorUI.lua"
   - "Tests/**"
 ---
 # Public API and plugins

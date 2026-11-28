@@ -1,5 +1,5 @@
 # Spec: Act on the Claude Code setup review of 2026-11-28
-Intent: [intent.md](intent.md). Status: accepted
+Intent: [intent.md](intent.md). Status: done 2026-11-28
 
 ## Requirements
 1. Every `file:line` reference in `CLAUDE.md` to the repo's own files points at the code it names.
@@ -19,9 +19,9 @@ Intent: [intent.md](intent.md). Status: accepted
 1. `CLAUDE.md`: `Krowi_ExtendedVendorUI.lua:108-146`, `BulkPurchaseMixin.lua:187`.
 2. `.claude/settings.json`: `"deny": ["Edit(//e/World of Warcraft Addon Development/wow-ui-source/**)", "Write(//e/World of Warcraft Addon Development/wow-ui-source/**)"]`, the form Krowi_AchievementFilter uses (permissions.md: a Windows path `E:\x` is written `//e/x`).
 3. Four path rules, each section moved verbatim; in `CLAUDE.md` each bullet keeps its first sentence and ends with "Details: `.claude/rules/<file>`":
-   - `filters.md` (`Filters.lua`, `Gui/FilterButton/**`, `Gui/SearchBox/**`, `Options/**`, `Tests/**`): the Filters bullet of Architecture.
+   - `filters.md` (`Filters.lua`, `Gui/FilterButton/**`, `Gui/SearchBox/**`, `Gui/MerchantItemSlot.lua`, `Gui/MerchantItemsContainer.lua`, `Gui/TokenBanner/**`, `Options/**`, `Tests/**`): the Filters bullet of Architecture.
    - `gui.md` (`Gui/**`, `Plugins/**`, `Tests/**`): Drawing a slot, Paging and the `Gui/` bullet.
-   - `plugins.md` (`Api/**`, `Plugins/**`, `Tests/**`): the Public API bullet.
+   - `plugins.md` (`Api/**`, `Plugins/**`, `Gui/MerchantItemsContainer.lua`, `Gui/MerchantItemSlot.lua`, `Krowi_ExtendedVendorUI.lua`, `Tests/**`): the Public API bullet. The callers of `BuildList`, `GetTokenOrder` and the plugin methods were added after `/code-review` (2026-11-28).
    - `testing.md` (`Tests/**`, `.claude/tools/**`, `.claude/release-gate.ps1`): what `/kevutest` covers. `CLAUDE.md` keeps how to run and read a run.
 
    Clients and loading, Taint, Localization, Code style and Git and release stay: they apply to any change. `Tests/**` is in every rule because the test routine reads every area.

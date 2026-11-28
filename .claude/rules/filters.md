@@ -4,6 +4,8 @@ paths:
   - "Gui/FilterButton/**"
   - "Gui/SearchBox/**"
   - "Gui/MerchantItemSlot.lua"
+  - "Gui/MerchantItemsContainer.lua"
+  - "Gui/TokenBanner/**"
   - "Options/**"
   - "Tests/**"
 ---

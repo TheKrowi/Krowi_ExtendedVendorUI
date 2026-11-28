@@ -1,5 +1,5 @@
 # Plan: Act on the Claude Code setup review of 2026-11-28
-Spec: [spec.md](spec.md). Status: accepted
+Spec: [spec.md](spec.md). Status: done 2026-11-28
 
 ## Files that change
 - `CLAUDE.md`: the two line references; the Drawing a slot, Paging, Filters, `Gui/` and Public API bullets and the `/kevutest` coverage paragraph cut to their first sentence plus "Details: `.claude/rules/<file>`"; the `raw/` and `wiki/` bullet in Git and release removed.
