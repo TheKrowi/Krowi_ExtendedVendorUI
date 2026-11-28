@@ -1383,9 +1383,15 @@ local function GetDragTarget()
         dragTarget = CreateFrame('Frame', nil, UIParent)
         dragTarget:SetFrameStrata('FULLSCREEN_DIALOG')
         dragTarget:SetSize(24, 24)
-        dragTarget:EnableMouse(true)
-        dragTarget:SetScript('OnEnter', function()
-            OnDragTargetEnter()
+        -- No OnEnter: while a frame is being moved the game sends none to other frames (Mists, 2026-11-28), so the target
+        -- watches the cursor itself
+        dragTarget:SetScript('OnUpdate', function(self)
+            local scale = UIParent:GetEffectiveScale()
+            local cursorX, cursorY = GetCursorPosition()
+            local centerX, centerY = self:GetCenter()
+            if math.abs(cursorX / scale - centerX) < 4 and math.abs(cursorY / scale - centerY) < 4 then
+                OnDragTargetEnter()
+            end
         end)
         dragTarget:Hide()
     end
@@ -1838,12 +1844,16 @@ steps = {
             local cursorDx, cursorDy = cursorX - dragStart.X, cursorY - dragStart.Y
             local followed = math.abs(movedX - cursorDx) < 3 and math.abs(movedY - cursorDy) < 3 and math.abs(cursorDx) > 50
             Add(followed and 'PASS' or 'FAIL', ('window moved %.1f, %.1f with the cursor\'s %.1f, %.1f'):format(movedX, movedY, cursorDx, cursorDy))
+            windowSpot = { left, top } -- The currency step checks the window stays here when the character window opens
             local spot = windowMover.GetPosition()
-            local x, y = spot and windowMover.Clamp(spot.X, spot.Y)
-            Add(spot and IsNear(x, left) and IsNear(y, top) and 'PASS' or 'FAIL', 'dragged spot ' .. (spot and ('stored at %.1f, %.1f, window at %.1f, %.1f'):format(x, y, left, top) or 'not stored'))
+            if spot then
+                local x, y = windowMover.Clamp(spot.X, spot.Y)
+                Add(IsNear(x, left) and IsNear(y, top) and 'PASS' or 'FAIL', ('dragged spot stored at %.1f, %.1f, window at %.1f, %.1f'):format(x, y, left, top))
+            else
+                Add('FAIL', 'dragged spot not stored')
+            end
             local point, relativeTo, relativePoint = MerchantFrame:GetPoint(1)
             Add(point == 'TOPLEFT' and relativeTo == UIParent and relativePoint == 'TOPLEFT' and 'PASS' or 'FAIL', ('window anchored %s to UIParent %s after the drag'):format(tostring(point), tostring(relativePoint)))
-            windowSpot = { left, top } -- The currency step checks the window stays here when the character window opens
         end,
     },
     GripStep('grip-grow', 'resize grip: one column and one row more', function()
@@ -2048,7 +2058,8 @@ local function Continue(delay)
     After(delay or MOUSE_SETTLE, Capture)
 end
 
--- The kit's mouse reached the drag target: the mouse-up the window's own hook would get
+-- The kit's mouse reached the drag target: the mouse-up the window's own hook would get (the target is shown only while
+-- the drag step waits)
 function OnDragTargetEnter()
     if waitingFor ~= 'drag' then
         return
