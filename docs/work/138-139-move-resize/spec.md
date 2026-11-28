@@ -1,5 +1,5 @@
 # Spec: Move the vendor window, and resize it by dragging in whole columns and rows
-Intent: [intent.md](intent.md). Status: accepted (Krowi, 2026-11-28)
+Intent: [intent.md](intent.md). Status: done (accepted by Krowi, 2026-11-28)
 
 ## Requirements
 Moving (#138), with Krowi_AchievementFilter's settings and behaviour (Krowi, 2026-11-28: "check kaf how making the window movable works, i want the same settings and behavior"):

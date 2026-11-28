@@ -1,5 +1,12 @@
 # Plan: Move the vendor window, and resize it by dragging in whole columns and rows
-Spec: [spec.md](spec.md). Status: accepted (Krowi, 2026-11-28)
+Spec: [spec.md](spec.md). Status: done (accepted by Krowi, 2026-11-28)
+
+## Results (2026-11-28)
+- `/kevutest`, final Snap build (`f3c1fe5`), no FAIL and no Lua error from this addon on any client: Retail 172 passed (BlizzMove loaded, so its step-aside ran), Mists 149, Anniversary 184, Era 150, Forever 150 (no other mover).
+- After the code review fixes (`4037241`, window mover only, no client branch), Retail again: 172 passed, 0 failed. The other clients run again in the release gate.
+- `krowi:taint-reviewer`: no taint or secret-value findings. Two low guards (`StartMoving` and the reapply test step while protected in combat) and the cursor-item drag were fixed in `f557f5f`.
+- `/code-review` (medium): five findings, all fixed in `4037241`: Reset after a drag, profile change, 4 px click threshold, the Remember description, and one restyled `Tests.lua` line.
+- `Find-DeprecatedApi.ps1`: only `GetMerchantCurrencies` in `Tests.lua:321`, which was already there and is not part of this change.
 
 ## Files that change
 | File | Change |
