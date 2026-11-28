@@ -3,7 +3,22 @@ Spec: [spec.md](spec.md). Status: done (accepted by Krowi, 2026-11-28)
 
 ## Results (2026-11-28)
 - `/kevutest`, final Snap build (`f3c1fe5`), no FAIL and no Lua error from this addon on any client: Retail 172 passed (BlizzMove loaded, so its step-aside ran), Mists 149, Anniversary 184, Era 150, Forever 150 (no other mover).
-- After the code review fixes (`4037241`, window mover only, no client branch), Retail again: 172 passed, 0 failed. The other clients run again in the release gate.
+- After the code review fixes (`4037241`), Retail again: 172 passed, 0 failed.
+- The advisor review found that this addon's own drag and the put-back after a real Blizzard layout had never run in game: Retail has BlizzMove, so BlizzMove did the dragging. Added in `0c1bf89` and `2752cb3`:
+  - `window-drag`: a click that must change nothing, then a kit mouse move the window must follow. The step watches the cursor, because the game sends no `OnEnter` while a frame is being moved.
+  - The currency step checks the moved window stays put when the character window opens.
+  - `grip-max` checks the window ends inside the screen.
+  - No drag starts while the window is not movable.
+- Final runs on `2752cb3`, no FAIL and no Lua error from this addon on any client:
+
+  | Client | Passed | Window checks |
+  |---|---|---|
+  | Mists | 155 | Own drag 148.5 px with the cursor, put-back after the character window opened |
+  | Anniversary | 189 | Own drag (no currency, so no character window) |
+  | Era | 155 | Own drag |
+  | Forever | 155 | Own drag |
+  | Retail | 174 | BlizzMove drags, so the drag step is skipped; put-back after the character window opened |
+- Not checked: the grip under ElvUI, GW2_UI and EllesmereUI skins. None of them was loaded in these runs.
 - `krowi:taint-reviewer`: no taint or secret-value findings. Two low guards (`StartMoving` and the reapply test step while protected in combat) and the cursor-item drag were fixed in `f557f5f`.
 - `/code-review` (medium): five findings, all fixed in `4037241`: Reset after a drag, profile change, 4 px click threshold, the Remember description, and one restyled `Tests.lua` line.
 - `Find-DeprecatedApi.ps1`: only `GetMerchantCurrencies` in `Tests.lua:321`, which was already there and is not part of this change.
