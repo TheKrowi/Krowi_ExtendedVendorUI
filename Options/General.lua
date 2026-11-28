@@ -316,6 +316,6 @@ function RefreshOptions()
     MinimapShowMinimapIconSet(nil, profile.ShowMinimapIcon)
     OptionsButtonShowOptionsButtonSet(nil, profile.ShowOptionsButton)
     if addon.Gui.WindowMover then -- The profile's remembered spot, or back to Blizzard's place without one
-        addon.Gui.WindowMover.SetState(addon.Gui.WindowMover.GetState())
+        addon.Gui.WindowMover.OnProfileChanged()
     end
 end

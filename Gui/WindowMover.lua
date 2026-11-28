@@ -17,6 +17,7 @@ local mouseDownLeft, mouseDownTop
 local moving
 
 local MIN_ON_SCREEN_X, MIN_ON_SCREEN_Y = 40, 20 -- How much of the window's top strip always stays on screen
+local MIN_MOVE = 4 -- Pixels the window must move for a press on its background to count as a move, not a click
 
 local function GetSettings()
     return addon.Options.db and addon.Options.db.profile.Window
@@ -76,8 +77,9 @@ local function CanSetPoint()
     return MerchantFrame:IsShown() and not (InCombatLockdown() and MerchantFrame:IsProtected())
 end
 
--- The panel manager always sets TOPLEFT against UIParent's TOPLEFT (live Shared/UIParentPanelManager.lua:634); a point that
--- is not the addon's own then is Blizzard's. The client's own anchor after a drag is not relative to TOPLEFT.
+-- The panel manager always sets TOPLEFT against UIParent's TOPLEFT (live Shared/UIParentPanelManager.lua:634); after one of
+-- its layouts a point that is not the addon's own is Blizzard's. Only read then: after a drag the client's own anchor can be
+-- TOPLEFT against UIParent too.
 local function NoteBlizzardPoint()
     local point, relativeTo, relativePoint, x, y = MerchantFrame:GetPoint(1)
     if point ~= 'TOPLEFT' or relativePoint ~= 'TOPLEFT' or (relativeTo ~= UIParent and relativeTo ~= nil) then
@@ -89,20 +91,42 @@ local function NoteBlizzardPoint()
     blizzardPoint = { 'TOPLEFT', UIParent, 'TOPLEFT', x, y }
 end
 
--- Puts the window at the moved spot; after a layout of the panel manager it first notes where Blizzard put it
-function windowMover.Apply()
-    if not CanSetPoint() then
-        return
-    end
-    NoteBlizzardPoint()
+local function PlaceAtPosition()
     local position = windowMover.GetPosition()
-    if not position then
+    if not position or not CanSetPoint() then
         return
     end
     local x, y = windowMover.Clamp(position.X, position.Y)
     lastApplied = { X = x, Y = y }
     MerchantFrame:ClearAllPoints()
     MerchantFrame:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', x, y)
+end
+
+-- After a layout of the panel manager (or the open): notes where Blizzard put the window, then puts it at the moved spot
+function windowMover.Apply()
+    if not CanSetPoint() then
+        return
+    end
+    NoteBlizzardPoint()
+    PlaceAtPosition()
+end
+
+local function PlaceAtBlizzardPoint()
+    lastApplied = nil
+    if blizzardPoint and CanSetPoint() then
+        MerchantFrame:ClearAllPoints()
+        MerchantFrame:SetPoint(unpack(blizzardPoint))
+    end
+end
+
+-- Another profile, or a reset one: its remembered spot, or Blizzard's place, and the session's spot dropped
+function windowMover.OnProfileChanged()
+    sessionPosition = nil
+    if windowMover.GetPosition() then
+        PlaceAtPosition()
+    else
+        PlaceAtBlizzardPoint()
+    end
 end
 
 -- The spot for this session, and saved while Remember Window Position is on
@@ -117,15 +141,11 @@ end
 -- Back where Blizzard places the window, at once while it is shown, and the moved spot forgotten
 function windowMover.Reset()
     sessionPosition = nil
-    lastApplied = nil
     local settings = GetSettings()
     if settings then
         settings.Position = nil
     end
-    if blizzardPoint and CanSetPoint() then
-        MerchantFrame:ClearAllPoints()
-        MerchantFrame:SetPoint(unpack(blizzardPoint))
-    end
+    PlaceAtBlizzardPoint()
 end
 
 -- Remember Window Position: on keeps the session's spot for later sessions too, off resets (as Krowi_AchievementFilter)
@@ -184,6 +204,7 @@ MerchantFrame:HookScript('OnMouseUp', function(self, button)
     if button ~= 'LeftButton' then
         return
     end
+    local wasMoving = moving
     if moving then
         moving = nil
         self:StopMovingOrSizing()
@@ -192,13 +213,23 @@ MerchantFrame:HookScript('OnMouseUp', function(self, button)
     local downLeft, downTop = mouseDownLeft, mouseDownTop
     mouseDownLeft, mouseDownTop = nil, nil
     local left, top = self:GetLeft(), self:GetTop()
-    if not (downLeft and left) or (math.abs(left - downLeft) < 1 and math.abs(top - downTop) < 1) then
-        return -- A click, not a move
+    if not (downLeft and left) then
+        return
+    end
+    if math.abs(left - downLeft) < MIN_MOVE and math.abs(top - downTop) < MIN_MOVE then
+        if wasMoving then -- A click with a twitch: back where it was, nothing stored
+            if windowMover.GetPosition() then
+                PlaceAtPosition()
+            else
+                PlaceAtBlizzardPoint()
+            end
+        end
+        return
     end
     local x, y = ReadPosition()
     if x then
         windowMover.SetPosition(x, y)
-        windowMover.Apply() -- The addon's own TOPLEFT anchor in place of the client's drag anchor
+        PlaceAtPosition() -- The addon's own TOPLEFT anchor in place of the client's drag anchor, not taken for Blizzard's
     end
 end)
 
@@ -211,6 +242,9 @@ MerchantFrame:HookScript('OnHide', function(self)
 end)
 
 -- [[ Putting it back ]] --
-hooksecurefunc('UpdateUIPanelPositions', windowMover.Apply)
-hooksecurefunc('UpdateScaleForFitForOpenPanels', windowMover.Apply) -- UI scale changes lay out through the delegate's own method
-MerchantFrame:HookScript('OnShow', windowMover.Apply)
+local function OnLayout()
+    windowMover.Apply()
+end
+hooksecurefunc('UpdateUIPanelPositions', OnLayout)
+hooksecurefunc('UpdateScaleForFitForOpenPanels', OnLayout) -- UI scale changes lay out through the delegate's own method
+MerchantFrame:HookScript('OnShow', OnLayout)

@@ -1350,7 +1350,7 @@ local function GripStep(name, text, getGrid)
 end
 
 -- [[ Choices ]] --
-local CUSTOM_FILTERS ={ 'TRANSMOG', 'MOUNTS', 'PETS', 'TOYS', 'RECIPES', 'TRANSMOG_SETS', 'ILLUSIONS', 'HOUSING' }
+local CUSTOM_FILTERS = {'TRANSMOG', 'MOUNTS', 'PETS', 'TOYS', 'RECIPES', 'TRANSMOG_SETS', 'ILLUSIONS', 'HOUSING' }
 
 -- The custom filter that keeps the most items while still leaving some out
 local function PickFilter()
