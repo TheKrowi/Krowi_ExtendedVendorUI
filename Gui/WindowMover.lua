@@ -172,7 +172,9 @@ MerchantFrame:HookScript('OnMouseDown', function(self, button)
         return
     end
     mouseDownLeft, mouseDownTop = self:GetLeft(), self:GetTop()
-    if windowMover.CanDrag() then
+    -- An item on the cursor is sold by Blizzard's OnMouseUp on the window (MerchantFrame.xml:620-628), so no drag then;
+    -- StartMoving is protected, so none either if another addon ever made the window protected in combat
+    if windowMover.CanDrag() and not GetCursorInfo() and CanSetPoint() then
         self:StartMoving()
         moving = true
     end

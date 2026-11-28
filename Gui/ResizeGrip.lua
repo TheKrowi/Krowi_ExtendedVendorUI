@@ -124,7 +124,11 @@ grip:SetScript('OnEnter', function(self)
     GameTooltip:AddLine(addon.L['Resize grip Desc'], 1, 1, 1, true)
     GameTooltip:Show()
 end)
-grip:SetScript('OnLeave', GameTooltip_Hide)
+grip:SetScript('OnLeave', function(self)
+    if GameTooltip:IsOwned(self) then
+        GameTooltip:Hide()
+    end
+end)
 
 -- [[ Temporary switch for the look gate ]] --
 SLASH_KEVUGRIP1 = '/kevugrip'

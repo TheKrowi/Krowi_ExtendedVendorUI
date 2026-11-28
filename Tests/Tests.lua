@@ -1741,6 +1741,9 @@ steps = {
             if not point then
                 return 'no point from Blizzard recorded this session'
             end
+            if InCombatLockdown() and MerchantFrame:IsProtected() then
+                return 'the window is protected in combat'
+            end
             MerchantFrame:ClearAllPoints()
             MerchantFrame:SetPoint(unpack(point))
             windowMover.Apply()
