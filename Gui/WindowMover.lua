@@ -187,20 +187,27 @@ end
 -- A left-button drag on the window's background, as Krowi_AchievementFilter's windows move (Gui/MovableFrames.lua:41-46);
 -- item slots, buttons and tabs take their own clicks. Mouse down and up rather than RegisterForDrag, which BlizzMove's own
 -- OnMouseUp stop could miss. A spot is stored only when the window moved, also after BlizzMove or MoveAny moved it.
-MerchantFrame:HookScript('OnMouseDown', function(self, button)
+-- Named on windowMover so /kevutest can drive a drag with the kit's mouse moves (StartMoving follows the cursor until it
+-- stops, whatever the buttons do)
+function windowMover.OnMouseDown(self, button)
     if button ~= 'LeftButton' then
         return
     end
     mouseDownLeft, mouseDownTop = self:GetLeft(), self:GetTop()
     -- An item on the cursor is sold by Blizzard's OnMouseUp on the window (MerchantFrame.xml:620-628), so no drag then;
-    -- StartMoving is protected, so none either if another addon ever made the window protected in combat
-    if windowMover.CanDrag() and not GetCursorInfo() and CanSetPoint() then
+    -- StartMoving is protected, so none either if another addon ever made the window protected in combat; and BlizzMove
+    -- makes the window unmovable when its vendor window entry is disabled mid-session (MakeFrameUnmovable), until a reload
+    if windowMover.CanDrag() and not GetCursorInfo() and CanSetPoint() and self:IsMovable() then
         self:StartMoving()
         moving = true
     end
-end)
+end
 
-MerchantFrame:HookScript('OnMouseUp', function(self, button)
+function windowMover.IsMoving()
+    return moving or false
+end
+
+function windowMover.OnMouseUp(self, button)
     if button ~= 'LeftButton' then
         return
     end
@@ -231,15 +238,20 @@ MerchantFrame:HookScript('OnMouseUp', function(self, button)
         windowMover.SetPosition(x, y)
         PlaceAtPosition() -- The addon's own TOPLEFT anchor in place of the client's drag anchor, not taken for Blizzard's
     end
-end)
+end
 
-MerchantFrame:HookScript('OnHide', function(self)
-    if moving then -- Closed while dragging (Escape, walking away)
+-- A drag that never got its mouse-up: the window closed (Escape, walking away), or a /kevutest step gave up
+function windowMover.StopMoving()
+    if moving then
         moving = nil
-        self:StopMovingOrSizing()
-        self:SetUserPlaced(false)
+        MerchantFrame:StopMovingOrSizing()
+        MerchantFrame:SetUserPlaced(false)
     end
-end)
+end
+
+MerchantFrame:HookScript('OnMouseDown', windowMover.OnMouseDown)
+MerchantFrame:HookScript('OnMouseUp', windowMover.OnMouseUp)
+MerchantFrame:HookScript('OnHide', windowMover.StopMoving)
 
 -- [[ Putting it back ]] --
 local function OnLayout()

@@ -1331,12 +1331,26 @@ local function CheckGripGrid(numColumns, numRows, topLeft)
     Add(inCorner and 'PASS' or 'FAIL', 'resize grip ' .. (inCorner and 'shown in the bottom-right corner' or ('not in the corner (shown: ' .. tostring(grip:IsVisible()) .. ')')))
 end
 
-local function GripStep(name, text, getGrid)
-    local topLeft, numColumns, numRows
+local dragTarget, dragStart, OnDragTargetEnter -- The kit's drag (below); OnDragTargetEnter is set with the runner
+
+-- A drag step that gave up (no mouse within MOUSE_WAIT): the window stops following the cursor, the target goes
+local function EndDrag()
+    windowMover.StopMoving()
+    if dragTarget then
+        dragTarget:Hide()
+    end
+end
+
+-- checkFit: the window must end inside the screen, unless the grid already went past it before the step
+local function GripStep(name, text, getGrid, checkFit)
+    local topLeft, numColumns, numRows, fitBefore
     return {
         Name = name,
         Text = text,
         Run = function()
+            EndDrag()
+            local ratio = UIParent:GetEffectiveScale() / MerchantFrame:GetEffectiveScale()
+            fitBefore = MerchantFrame:GetRight() <= UIParent:GetRight() * ratio + 1 and MerchantFrame:GetBottom() >= -1
             topLeft = { GetTopLeft() }
             numColumns, numRows = getGrid()
             numColumns, numRows = merchantFrameGui.ClampGrid(numColumns, numRows)
@@ -1345,8 +1359,37 @@ local function GripStep(name, text, getGrid)
         Check = function()
             CheckMerchantTab()
             CheckGripGrid(numColumns, numRows, topLeft)
+            if checkFit then
+                local ratio = UIParent:GetEffectiveScale() / MerchantFrame:GetEffectiveScale()
+                local right, bottom, screenRight = MerchantFrame:GetRight(), MerchantFrame:GetBottom(), UIParent:GetRight() * ratio
+                local fits = right <= screenRight + 1 and bottom >= -1
+                local columnWidth, rowHeight = merchantFrameGui.GetGridStep()
+                local noRoomLeft = right + columnWidth > screenRight + 1 or bottom - rowHeight < -1 -- One more would not fit
+                if fitBefore then
+                    Add(fits and noRoomLeft and 'PASS' or 'FAIL', ('window inside the screen and no room for one more column or row: right %d of %d, bottom %d'):format(right, screenRight, bottom))
+                else
+                    Note(('the grid was already past the screen before this step: right %d of %d, bottom %d'):format(right, screenRight, bottom))
+                end
+            end
         end,
     }
+end
+
+-- [[ A drag by the kit ]] --
+-- The mouse-down the window's own hook gets, then the kit moves the mouse onto a target 150 px away: the window follows
+-- (StartMoving), and the target's OnEnter gives the mouse-up. Checks the window moved with the cursor and the spot stored.
+local function GetDragTarget()
+    if not dragTarget then
+        dragTarget = CreateFrame('Frame', nil, UIParent)
+        dragTarget:SetFrameStrata('FULLSCREEN_DIALOG')
+        dragTarget:SetSize(24, 24)
+        dragTarget:EnableMouse(true)
+        dragTarget:SetScript('OnEnter', function()
+            OnDragTargetEnter()
+        end)
+        dragTarget:Hide()
+    end
+    return dragTarget
 end
 
 -- [[ Choices ]] --
@@ -1459,6 +1502,7 @@ local function Restore()
     KrowiEVU_Filters.LastFilter = saved.LastFilter
     addon.Options.db.profile.HighlightOptionsButton = saved.HighlightOptionsButton
     KrowiEVU_OptionsButton:UpdateHighlight()
+    EndDrag()
     windowMover.SetState(saved.Window)
 end
 
@@ -1753,6 +1797,94 @@ steps = {
         end,
     },
     {
+        Name = 'window-drag',
+        Text = 'the window dragged by its background (the kit moves the mouse 150 px)',
+        Wait = 'drag',
+        Run = function()
+            local otherMover = windowMover.GetOtherMover()
+            if otherMover then
+                return otherMover .. ' drags the window here; this addon\'s own drag is not used'
+            end
+            -- A press without a move first: the window stays and nothing new is stored
+            local before, beforeLeft, beforeTop = windowMover.GetPosition(), GetTopLeft()
+            windowMover.OnMouseDown(MerchantFrame, 'LeftButton')
+            windowMover.OnMouseUp(MerchantFrame, 'LeftButton')
+            local afterLeft, afterTop = GetTopLeft()
+            local still = IsNear(beforeLeft, afterLeft) and IsNear(beforeTop, afterTop) and windowMover.GetPosition() == before
+            Add(still and 'PASS' or 'FAIL', 'a click on the background ' .. (still and 'leaves the window and its spot alone' or 'moved the window or stored a spot'))
+            -- The drag: a target 150 px beside the cursor, the way back if that leaves the screen
+            local scale = UIParent:GetEffectiveScale()
+            local cursorX, cursorY = GetCursorPosition()
+            cursorX, cursorY = cursorX / scale, cursorY / scale
+            local dx = cursorX + 150 < UIParent:GetWidth() - 20 and 150 or -150
+            local target = GetDragTarget()
+            target:ClearAllPoints()
+            target:SetPoint('CENTER', UIParent, 'BOTTOMLEFT', cursorX + dx, cursorY)
+            target:Show()
+            dragStart = { Left = afterLeft, Top = afterTop, X = cursorX, Y = cursorY }
+            windowMover.OnMouseDown(MerchantFrame, 'LeftButton')
+            if not windowMover.IsMoving() then
+                target:Hide()
+                return 'the window did not start moving (Make Window Movable off, or the window is not movable)'
+            end
+        end,
+        Check = function()
+            local scale = UIParent:GetEffectiveScale()
+            local cursorX, cursorY = GetCursorPosition()
+            cursorX, cursorY = cursorX / scale, cursorY / scale
+            local left, top = GetTopLeft()
+            local ratio = UIParent:GetEffectiveScale() / MerchantFrame:GetEffectiveScale()
+            local movedX, movedY = (left - dragStart.Left) / ratio, (top - dragStart.Top) / ratio
+            local cursorDx, cursorDy = cursorX - dragStart.X, cursorY - dragStart.Y
+            local followed = math.abs(movedX - cursorDx) < 3 and math.abs(movedY - cursorDy) < 3 and math.abs(cursorDx) > 50
+            Add(followed and 'PASS' or 'FAIL', ('window moved %.1f, %.1f with the cursor\'s %.1f, %.1f'):format(movedX, movedY, cursorDx, cursorDy))
+            local spot = windowMover.GetPosition()
+            local x, y = spot and windowMover.Clamp(spot.X, spot.Y)
+            Add(spot and IsNear(x, left) and IsNear(y, top) and 'PASS' or 'FAIL', 'dragged spot ' .. (spot and ('stored at %.1f, %.1f, window at %.1f, %.1f'):format(x, y, left, top) or 'not stored'))
+            local point, relativeTo, relativePoint = MerchantFrame:GetPoint(1)
+            Add(point == 'TOPLEFT' and relativeTo == UIParent and relativePoint == 'TOPLEFT' and 'PASS' or 'FAIL', ('window anchored %s to UIParent %s after the drag'):format(tostring(point), tostring(relativePoint)))
+            windowSpot = { left, top } -- The currency step checks the window stays here when the character window opens
+        end,
+    },
+    GripStep('grip-grow', 'resize grip: one column and one row more', function()
+        local profile = addon.Options.db.profile
+        return profile.NumColumns + 1, profile.NumRows + 1
+    end),
+    GripStep('grip-shrink', 'resize grip: back to the grid as it was', function()
+        return saved.Columns, saved.Rows
+    end),
+    GripStep('grip-max', 'resize grip: as large as fits on the screen', function()
+        return 99, 99
+    end, true),
+    GripStep('grip-back', 'resize grip: back to the grid as it was', function()
+        return saved.Columns, saved.Rows
+    end),
+    {
+        Name = 'currency',
+        Text = 'click a currency in the token banner',
+        Wait = 'currency',
+        Run = function()
+            local i, found = 1, false
+            while _G['KrowiEVU_TokenBannerToken' .. i] do
+                local token = _G['KrowiEVU_TokenBannerToken' .. i]
+                found = found or (token:IsShown() and token.IsCurrency) or false
+                i = i + 1
+            end
+            if not found then
+                return 'the token banner shows no currency at this vendor'
+            end
+            characterShownBefore = CharacterFrame:IsShown()
+        end,
+        Check = function()
+            CheckCurrencyClick()
+            -- The character window opened through Blizzard's panel manager, which placed the vendor window again: the
+            -- post-hook on UpdateUIPanelPositions put it back at its moved spot (#138)
+            if CharacterFrame:IsShown() and not characterShownBefore and windowSpot then
+                CheckWindowAt(windowSpot[1], windowSpot[2], 'kept after the character window opened beside it')
+            end
+        end,
+    },
+    {
         Name = 'window-clamp',
         Text = 'a spot far off the screen',
         Run = function()
@@ -1777,37 +1909,6 @@ steps = {
             local stored = windowMover.GetPosition() or addon.Options.db.profile.Window.Position
             Add(not stored and 'PASS' or 'FAIL', 'moved spot ' .. (stored and 'still stored' or 'forgotten'))
         end,
-    },
-    GripStep('grip-grow', 'resize grip: one column and one row more', function()
-        local profile = addon.Options.db.profile
-        return profile.NumColumns + 1, profile.NumRows + 1
-    end),
-    GripStep('grip-shrink', 'resize grip: back to the grid as it was', function()
-        return saved.Columns, saved.Rows
-    end),
-    GripStep('grip-max', 'resize grip: as large as fits on the screen', function()
-        return 99, 99
-    end),
-    GripStep('grip-back', 'resize grip: back to the grid as it was', function()
-        return saved.Columns, saved.Rows
-    end),
-    {
-        Name = 'currency',
-        Text = 'click a currency in the token banner',
-        Wait = 'currency',
-        Run = function()
-            local i, found = 1, false
-            while _G['KrowiEVU_TokenBannerToken' .. i] do
-                local token = _G['KrowiEVU_TokenBannerToken' .. i]
-                found = found or (token:IsShown() and token.IsCurrency) or false
-                i = i + 1
-            end
-            if not found then
-                return 'the token banner shows no currency at this vendor'
-            end
-            characterShownBefore = CharacterFrame:IsShown()
-        end,
-        Check = CheckCurrencyClick,
     },
     {
         Name = 'repair',
@@ -1923,6 +2024,9 @@ local ASK_KIT = {
     merchant = function(kit)
         return kit.ClickAt and kit.ClickAt(MerchantFrameTab1) or false
     end,
+    drag = function(kit)
+        return dragTarget and dragTarget:IsShown() and kit.HoverAt and kit.HoverAt(dragTarget) or false
+    end,
 }
 local askedKit, askError
 
@@ -1942,6 +2046,16 @@ local function Continue(delay)
         waitTimer = nil
     end
     After(delay or MOUSE_SETTLE, Capture)
+end
+
+-- The kit's mouse reached the drag target: the mouse-up the window's own hook would get
+function OnDragTargetEnter()
+    if waitingFor ~= 'drag' then
+        return
+    end
+    windowMover.OnMouseUp(MerchantFrame, 'LeftButton')
+    dragTarget:Hide()
+    Continue()
 end
 
 local function Wait(what)
